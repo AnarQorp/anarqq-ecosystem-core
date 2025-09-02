@@ -1,0 +1,33 @@
+AnarQ&Q Ecosystem Demo - Release v1.0.0
+============================================
+
+Fecha de Release: mar 02 sep 2025 21:56:54 CEST
+Versión: 1.0.0
+Plataformas Soportadas: Linux, macOS, Windows
+
+Instaladores Incluidos:
+- install-anarqq.sh (Instalador maestro con detección automática)
+- install-anarqq-demo.sh (Instalador Bash para Linux/macOS)
+- install-anarqq-demo.py (Instalador Python GUI multiplataforma)
+- install-anarqq-demo.ps1 (Instalador PowerShell para Windows)
+- install-anarqq-demo.bat (Instalador Batch para Windows)
+- verify-installation.sh (Script de verificación post-instalación)
+
+Documentación:
+- README.md (Guía de inicio rápido)
+- README-INSTALLERS.md (Documentación completa)
+- RELEASE_INFO.txt (Este archivo)
+- SHA256SUMS (Checksums de verificación)
+
+Uso Rápido:
+1. Descargar y extraer este paquete
+2. Ejecutar: ./install-anarqq.sh
+3. Seguir las instrucciones en pantalla
+4. Verificar con: ./verify-installation.sh
+
+Soporte:
+- Email: anarqorp@proton.me
+- GitHub: https://github.com/AnarQorp/anarqq-ecosystem-demo
+- Issues: https://github.com/AnarQorp/anarqq-ecosystem-demo/issues
+
+¡Gracias por usar AnarQ&Q Ecosystem Demo!
