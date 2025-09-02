@@ -1,50 +1,28 @@
-## Description
-Brief description of the changes in this PR.
+## Descripción
 
-## Type of Change
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Performance improvement
-- [ ] Code refactoring
+Breve descripción de los cambios realizados.
 
-## Module(s) Affected
-- [ ] Frontend
-- [ ] Backend
-- [ ] sQuid (Identity)
-- [ ] Qlock (Encryption)
-- [ ] Qonsent (Privacy)
-- [ ] Qindex (Metadata)
-- [ ] Qerberos (Security)
-- [ ] Qwallet (Finance)
-- [ ] Qflow (Workflow)
-- [ ] QNET (Network)
-- [ ] Qdrive (Storage)
-- [ ] QpiC (Compression)
-- [ ] Qmarket (Commerce)
-- [ ] Qmail (Email)
-- [ ] Qchat (Chat)
-- [ ] DAO (Governance)
-- [ ] Qmask (Privacy)
+## Tipo de cambio
 
-## Testing
-- [ ] Unit tests pass
-- [ ] Integration tests pass
-- [ ] Manual testing completed
-- [ ] Security review completed (if applicable)
+- [ ] Bug fix (cambio que no rompe funcionalidad existente y arregla un issue)
+- [ ] Nueva funcionalidad (cambio que no rompe funcionalidad existente y agrega una nueva característica)
+- [ ] Breaking change (fix o feature que causaría que funcionalidad existente no funcione como se espera)
+- [ ] Actualización de documentación
 
-## Checklist
-- [ ] My code follows the project's style guidelines
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
+## ¿Cómo se ha probado?
 
-## Screenshots (if applicable)
-Add screenshots to help explain your changes.
+Describe las pruebas que ejecutaste para verificar tus cambios.
 
-## Additional Notes
-Any additional information that reviewers should know.
+- [ ] Tests unitarios
+- [ ] Tests de integración
+- [ ] Tests manuales
+
+## Checklist:
+
+- [ ] Mi código sigue las guías de estilo del proyecto
+- [ ] He realizado una auto-revisión de mi código
+- [ ] He comentado mi código, particularmente en áreas difíciles de entender
+- [ ] He realizado los cambios correspondientes a la documentación
+- [ ] Mis cambios no generan nuevas advertencias
+- [ ] He agregado tests que prueban que mi fix es efectivo o que mi feature funciona
+- [ ] Los tests unitarios nuevos y existentes pasan localmente con mis cambios
