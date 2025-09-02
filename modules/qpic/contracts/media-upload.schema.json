@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Media Upload Request",
+  "type": "object",
+  "required": ["file", "filename"],
+  "properties": {
+    "file": {
+      "type": "string",
+      "format": "binary",
+      "description": "Media file to upload"
+    },
+    "filename": {
+      "type": "string",
+      "description": "Original filename",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "maxLength": 255
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "maxItems": 20
+        },
+        "category": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "license": {
+          "type": "string",
+          "enum": ["CC0", "CC-BY", "CC-BY-SA", "CC-BY-NC", "CC-BY-ND", "CC-BY-NC-SA", "CC-BY-NC-ND", "PROPRIETARY"]
+        }
+      }
+    },
+    "privacyProfile": {
+      "type": "string",
+      "description": "Privacy profile to apply via Qmask"
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "extractMetadata": {
+          "type": "boolean",
+          "default": true
+        },
+        "generateThumbnails": {
+          "type": "boolean",
+          "default": true
+        },
+        "virusScan": {
+          "type": "boolean",
+          "default": true
+        },
+        "autoTranscode": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  }
+}

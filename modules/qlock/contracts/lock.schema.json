@@ -1,0 +1,160 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://anarq.com/schemas/qlock/lock.json",
+  "title": "Qlock Distributed Lock Schema",
+  "description": "Schema for Qlock distributed lock operations",
+  "definitions": {
+    "LockRequest": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["acquire", "release", "extend", "status"]
+        },
+        "lockId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "Unique lock identifier"
+        },
+        "identityId": {
+          "type": "string",
+          "description": "sQuid identity ID acquiring the lock"
+        },
+        "ttl": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 3600000,
+          "default": 30000,
+          "description": "Lock TTL in milliseconds"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "resource": {
+              "type": "string",
+              "description": "Resource being locked"
+            },
+            "operation": {
+              "type": "string",
+              "description": "Operation requiring the lock"
+            },
+            "priority": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "default": 5
+            }
+          }
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "waitTimeout": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "description": "Max time to wait for lock acquisition (ms)"
+            },
+            "autoExtend": {
+              "type": "boolean",
+              "default": false,
+              "description": "Automatically extend lock before expiry"
+            },
+            "exclusive": {
+              "type": "boolean",
+              "default": true,
+              "description": "Whether lock is exclusive"
+            }
+          }
+        }
+      },
+      "required": ["action", "lockId", "identityId"]
+    },
+    "LockResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["ok", "error"]
+        },
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "lockId": {
+              "type": "string"
+            },
+            "acquired": {
+              "type": "boolean"
+            },
+            "owner": {
+              "type": "string"
+            },
+            "expiresAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "ttl": {
+              "type": "integer"
+            },
+            "metadata": {
+              "$ref": "#/definitions/LockMetadata"
+            }
+          },
+          "required": ["lockId", "acquired"]
+        }
+      },
+      "required": ["status", "code", "message"]
+    },
+    "LockMetadata": {
+      "type": "object",
+      "properties": {
+        "lockId": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer"
+        },
+        "acquiredAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ttl": {
+          "type": "integer"
+        },
+        "exclusive": {
+          "type": "boolean"
+        },
+        "autoExtend": {
+          "type": "boolean"
+        },
+        "extensions": {
+          "type": "integer",
+          "default": 0
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": ["lockId", "owner", "acquiredAt", "expiresAt", "ttl", "version"]
+    }
+  }
+}

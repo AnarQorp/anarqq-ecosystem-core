@@ -1,0 +1,161 @@
+{
+  "name": "squid",
+  "version": "1.0.0",
+  "description": "sQuid Identity & Subidentities MCP Tools",
+  "tools": [
+    {
+      "name": "squid.verifyIdentity",
+      "description": "Verify identity ownership and authenticity",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "identityId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identity DID to verify"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Cryptographic signature for verification"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message that was signed"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp of the verification request"
+          }
+        },
+        "required": ["identityId", "signature", "message"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "verified": {
+            "type": "boolean",
+            "description": "Whether the identity is verified"
+          },
+          "identity": {
+            "$ref": "#/definitions/Identity"
+          },
+          "verificationLevel": {
+            "type": "string",
+            "enum": ["UNVERIFIED", "BASIC", "ENHANCED", "INSTITUTIONAL"]
+          },
+          "reputation": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    {
+      "name": "squid.activeContext",
+      "description": "Get active identity context for current session",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "Session identifier"
+          },
+          "includeSubidentities": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include subidentities in the context"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "activeIdentity": {
+            "$ref": "#/definitions/Identity"
+          },
+          "subidentities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Identity"
+            }
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sessionInfo": {
+            "type": "object",
+            "properties": {
+              "sessionId": {
+                "type": "string"
+              },
+              "startedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "lastActivity": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "Identity": {
+      "type": "object",
+      "properties": {
+        "did": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["ROOT", "DAO", "ENTERPRISE", "CONSENTIDA", "AID"]
+        },
+        "parentId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "rootId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ACTIVE", "INACTIVE", "SUSPENDED", "DELETED", "PENDING_VERIFICATION"]
+        },
+        "verificationLevel": {
+          "type": "string",
+          "enum": ["UNVERIFIED", "BASIC", "ENHANCED", "INSTITUTIONAL"]
+        },
+        "reputation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

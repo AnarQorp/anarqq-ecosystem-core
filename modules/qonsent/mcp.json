@@ -1,0 +1,175 @@
+{
+  "name": "qonsent",
+  "version": "2.0.0",
+  "description": "Policies & Permissions module with UCAN policy engine",
+  "tools": [
+    {
+      "name": "qonsent.check",
+      "description": "Check if an identity has permission to perform an action on a resource",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "resource": {
+            "type": "string",
+            "description": "Resource identifier (e.g., 'qdrive:file:abc123')"
+          },
+          "identity": {
+            "type": "string",
+            "description": "Identity DID to check permissions for"
+          },
+          "action": {
+            "type": "string",
+            "description": "Action to check (e.g., 'read', 'write', 'delete')"
+          },
+          "context": {
+            "type": "object",
+            "description": "Additional context for permission check",
+            "additionalProperties": true
+          }
+        },
+        "required": ["resource", "identity", "action"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "allowed": {
+            "type": "boolean",
+            "description": "Whether the action is allowed"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason for the decision"
+          },
+          "policy": {
+            "type": "object",
+            "description": "Applied policy details"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the permission expires"
+          }
+        }
+      }
+    },
+    {
+      "name": "qonsent.grant",
+      "description": "Grant permissions to an identity for a resource",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "resource": {
+            "type": "string",
+            "description": "Resource identifier"
+          },
+          "identity": {
+            "type": "string",
+            "description": "Target identity DID"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of permissions to grant"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Optional expiration time"
+          },
+          "conditions": {
+            "type": "object",
+            "description": "Additional conditions for the grant",
+            "additionalProperties": true
+          }
+        },
+        "required": ["resource", "identity", "permissions"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "grantId": {
+            "type": "string",
+            "description": "Unique identifier for the grant"
+          },
+          "resource": {
+            "type": "string"
+          },
+          "identity": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    {
+      "name": "qonsent.revoke",
+      "description": "Revoke permissions from an identity for a resource",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "resource": {
+            "type": "string",
+            "description": "Resource identifier"
+          },
+          "identity": {
+            "type": "string",
+            "description": "Target identity DID"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Specific permissions to revoke (if empty, revokes all)"
+          }
+        },
+        "required": ["resource", "identity"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "resource": {
+            "type": "string"
+          },
+          "identity": {
+            "type": "string"
+          },
+          "revokedPermissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  ],
+  "server": {
+    "host": "localhost",
+    "port": 3003,
+    "basePath": "/mcp/v1"
+  },
+  "authentication": {
+    "type": "bearer",
+    "description": "sQuid identity token required"
+  }
+}

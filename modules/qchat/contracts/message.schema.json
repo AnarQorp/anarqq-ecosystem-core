@@ -1,0 +1,173 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qchat/message.schema.json",
+  "title": "Chat Message Schema",
+  "description": "Schema for chat message data structure",
+  "type": "object",
+  "properties": {
+    "messageId": {
+      "type": "string",
+      "pattern": "^qchat_msg_[a-zA-Z0-9_-]+$",
+      "description": "Unique message identifier"
+    },
+    "roomId": {
+      "type": "string",
+      "pattern": "^qchat_room_[a-zA-Z0-9_-]+$",
+      "description": "Room identifier"
+    },
+    "senderId": {
+      "type": "string",
+      "pattern": "^squid_[a-zA-Z0-9_-]+$",
+      "description": "Sender sQuid identity ID"
+    },
+    "content": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10000,
+      "description": "Message content (decrypted)"
+    },
+    "encryptedContent": {
+      "type": "string",
+      "description": "Encrypted message content"
+    },
+    "messageType": {
+      "type": "string",
+      "enum": ["TEXT", "IMAGE", "FILE", "SYSTEM", "REACTION"],
+      "description": "Type of message"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Message creation timestamp"
+    },
+    "editedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last edit timestamp"
+    },
+    "replyTo": {
+      "type": "string",
+      "pattern": "^qchat_msg_[a-zA-Z0-9_-]+$",
+      "description": "Message ID being replied to"
+    },
+    "mentions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^squid_[a-zA-Z0-9_-]+$"
+      },
+      "maxItems": 20,
+      "description": "Array of mentioned sQuid IDs"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "cid": {
+            "type": "string",
+            "pattern": "^Qm[a-zA-Z0-9]{44}$"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "thumbnail": {
+            "type": "string",
+            "pattern": "^Qm[a-zA-Z0-9]{44}$"
+          }
+        },
+        "required": ["name", "cid", "size", "mimeType"]
+      },
+      "maxItems": 10,
+      "description": "File attachments"
+    },
+    "reactions": {
+      "type": "object",
+      "patternProperties": {
+        "^[\\u{1F600}-\\u{1F64F}\\u{1F300}-\\u{1F5FF}\\u{1F680}-\\u{1F6FF}\\u{1F1E0}-\\u{1F1FF}\\u{2600}-\\u{26FF}\\u{2700}-\\u{27BF}]+$": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^squid_[a-zA-Z0-9_-]+$"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "description": "Message reactions by emoji"
+    },
+    "deliveryStatus": {
+      "type": "string",
+      "enum": ["SENT", "DELIVERED", "READ", "FAILED"],
+      "description": "Message delivery status"
+    },
+    "encryptionLevel": {
+      "type": "string",
+      "enum": ["STANDARD", "HIGH", "QUANTUM"],
+      "description": "Message encryption level"
+    },
+    "ephemeral": {
+      "type": "boolean",
+      "description": "Message disappears after reading"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Message expiration timestamp"
+    },
+    "deleted": {
+      "type": "boolean",
+      "description": "Message has been deleted"
+    },
+    "deletedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Message deletion timestamp"
+    },
+    "deletedBy": {
+      "type": "string",
+      "pattern": "^squid_[a-zA-Z0-9_-]+$",
+      "description": "Who deleted the message"
+    },
+    "signature": {
+      "type": "string",
+      "description": "Message cryptographic signature"
+    },
+    "encryptedCid": {
+      "type": "string",
+      "pattern": "^Qm[a-zA-Z0-9]{44}$",
+      "description": "IPFS CID of encrypted message"
+    }
+  },
+  "required": [
+    "messageId",
+    "roomId",
+    "senderId",
+    "messageType",
+    "timestamp",
+    "deliveryStatus",
+    "encryptionLevel"
+  ],
+  "oneOf": [
+    {
+      "properties": {
+        "content": true
+      },
+      "required": ["content"]
+    },
+    {
+      "properties": {
+        "encryptedContent": true
+      },
+      "required": ["encryptedContent"]
+    }
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,111 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: qflow-metrics
+  namespace: qflow
+  labels:
+    app.kubernetes.io/name: qflow
+    app.kubernetes.io/component: monitoring
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: qflow
+      app.kubernetes.io/component: automation-engine
+  endpoints:
+  - port: websocket
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+  - port: http
+    path: /api/v1/metrics
+    interval: 60s
+    scrapeTimeout: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: qflow-alerts
+  namespace: qflow
+  labels:
+    app.kubernetes.io/name: qflow
+    app.kubernetes.io/component: monitoring
+spec:
+  groups:
+  - name: qflow.rules
+    rules:
+    - alert: QflowHighErrorRate
+      expr: rate(qflow_errors_total[5m]) > 0.1
+      for: 2m
+      labels:
+        severity: warning
+        service: qflow
+      annotations:
+        summary: "High error rate in Qflow"
+        description: "Qflow error rate is {{ $value }} errors per second"
+        runbook_url: "https://docs.qflow.example.com/runbooks/high-error-rate"
+    
+    - alert: QflowHighLatency
+      expr: histogram_quantile(0.95, rate(qflow_request_duration_seconds_bucket[5m])) > 1
+      for: 5m
+      labels:
+        severity: warning
+        service: qflow
+      annotations:
+        summary: "High latency in Qflow"
+        description: "95th percentile latency is {{ $value }} seconds"
+        runbook_url: "https://docs.qflow.example.com/runbooks/high-latency"
+    
+    - alert: QflowServiceDown
+      expr: up{job="qflow"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        service: qflow
+      annotations:
+        summary: "Qflow service is down"
+        description: "Qflow service has been down for more than 1 minute"
+        runbook_url: "https://docs.qflow.example.com/runbooks/service-down"
+    
+    - alert: QflowHighMemoryUsage
+      expr: (container_memory_usage_bytes{pod=~"qflow-.*"} / container_spec_memory_limit_bytes{pod=~"qflow-.*"}) > 0.8
+      for: 5m
+      labels:
+        severity: warning
+        service: qflow
+      annotations:
+        summary: "High memory usage in Qflow"
+        description: "Memory usage is {{ $value | humanizePercentage }} of limit"
+        runbook_url: "https://docs.qflow.example.com/runbooks/high-memory-usage"
+    
+    - alert: QflowHighCPUUsage
+      expr: rate(container_cpu_usage_seconds_total{pod=~"qflow-.*"}[5m]) > 0.8
+      for: 5m
+      labels:
+        severity: warning
+        service: qflow
+      annotations:
+        summary: "High CPU usage in Qflow"
+        description: "CPU usage is {{ $value | humanizePercentage }} of limit"
+        runbook_url: "https://docs.qflow.example.com/runbooks/high-cpu-usage"
+    
+    - alert: QflowValidationPipelineFailure
+      expr: rate(qflow_validation_failures_total[5m]) > 0.05
+      for: 2m
+      labels:
+        severity: critical
+        service: qflow
+      annotations:
+        summary: "Validation pipeline failures in Qflow"
+        description: "Validation pipeline failure rate is {{ $value }} failures per second"
+        runbook_url: "https://docs.qflow.example.com/runbooks/validation-failures"
+    
+    - alert: QflowFlowExecutionFailures
+      expr: rate(qflow_flow_execution_failures_total[5m]) > 0.1
+      for: 3m
+      labels:
+        severity: warning
+        service: qflow
+      annotations:
+        summary: "High flow execution failure rate"
+        description: "Flow execution failure rate is {{ $value }} failures per second"
+        runbook_url: "https://docs.qflow.example.com/runbooks/execution-failures"

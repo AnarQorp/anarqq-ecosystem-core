@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  qmask:
+    build: .
+    ports:
+      - "3007:3007"
+    environment:
+      - NODE_ENV=development
+      - PORT=3007
+      - MONGODB_URI=mongodb://mongo:27017/qmask
+      - REDIS_URL=redis://redis:6379
+      - SQUID_URL=http://mock-squid:3001
+      - QONSENT_URL=http://mock-qonsent:3003
+      - QERBEROS_URL=http://mock-qerberos:3006
+      - DEFAULT_RISK_THRESHOLD=0.7
+      - ANONYMIZATION_STRENGTH=high
+      - GDPR_MODE=enabled
+    depends_on:
+      - mongo
+      - redis
+      - mock-squid
+      - mock-qonsent
+      - mock-qerberos
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+    command: npm run dev
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - qmask_mongo_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - qmask_redis_data:/data
+
+  # Mock services for standalone operation
+  mock-squid:
+    image: node:18-alpine
+    ports:
+      - "3001:3001"
+    working_dir: /app
+    volumes:
+      - ./src/mocks:/app
+    command: node squid-mock.js
+
+  mock-qonsent:
+    image: node:18-alpine
+    ports:
+      - "3003:3003"
+    working_dir: /app
+    volumes:
+      - ./src/mocks:/app
+    command: node qonsent-mock.js
+
+  mock-qerberos:
+    image: node:18-alpine
+    ports:
+      - "3006:3006"
+    working_dir: /app
+    volumes:
+      - ./src/mocks:/app
+    command: node qerberos-mock.js
+
+volumes:
+  qmask_mongo_data:
+  qmask_redis_data:

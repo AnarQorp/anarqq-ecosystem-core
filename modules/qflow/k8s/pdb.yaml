@@ -1,0 +1,14 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: qflow-pdb
+  namespace: qflow
+  labels:
+    app.kubernetes.io/name: qflow
+    app.kubernetes.io/component: availability
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: qflow
+      app.kubernetes.io/component: automation-engine

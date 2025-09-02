@@ -1,0 +1,172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qdrive/file-metadata.json",
+  "title": "File Metadata",
+  "description": "Schema for file metadata in Qdrive",
+  "type": "object",
+  "properties": {
+    "cid": {
+      "type": "string",
+      "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^baf[a-z0-9]{56}$",
+      "description": "IPFS Content ID"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "description": "File name"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "File description"
+    },
+    "size": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "File size in bytes"
+    },
+    "mimeType": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9!#$&\\-\\^_]*\/[a-zA-Z0-9][a-zA-Z0-9!#$&\\-\\^_.]*$",
+      "description": "MIME type"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      },
+      "maxItems": 20,
+      "uniqueItems": true,
+      "description": "File tags"
+    },
+    "privacy": {
+      "type": "string",
+      "enum": ["public", "private", "dao-only"],
+      "description": "Privacy level"
+    },
+    "encrypted": {
+      "type": "boolean",
+      "description": "Whether the file is encrypted"
+    },
+    "owner": {
+      "type": "string",
+      "pattern": "^squid_[a-zA-Z0-9]{32}$",
+      "description": "sQuid ID of the file owner"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    },
+    "accessCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of times file was accessed"
+    },
+    "lastAccessed": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last access timestamp"
+    },
+    "retentionPolicy": {
+      "type": "object",
+      "properties": {
+        "days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3650,
+          "description": "Retention period in days"
+        },
+        "deleteAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Scheduled deletion time"
+        },
+        "policy": {
+          "type": "string",
+          "enum": ["delete", "archive", "anonymize"],
+          "description": "Retention action"
+        }
+      },
+      "required": ["days", "deleteAt", "policy"],
+      "additionalProperties": false
+    },
+    "encryption": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "enum": ["AES-256-GCM", "ChaCha20-Poly1305"],
+          "description": "Encryption algorithm used"
+        },
+        "keyId": {
+          "type": "string",
+          "description": "Key ID for decryption"
+        },
+        "iv": {
+          "type": "string",
+          "description": "Initialization vector"
+        }
+      },
+      "required": ["algorithm", "keyId"],
+      "additionalProperties": false
+    },
+    "shares": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "shareId": {
+            "type": "string",
+            "description": "Share identifier"
+          },
+          "recipient": {
+            "type": "string",
+            "pattern": "^squid_[a-zA-Z0-9]{32}$",
+            "description": "Recipient sQuid ID"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["read", "download", "share"]
+            },
+            "uniqueItems": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Share expiration"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Share creation time"
+          }
+        },
+        "required": ["shareId", "recipient", "permissions", "createdAt"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "cid",
+    "name",
+    "size",
+    "mimeType",
+    "privacy",
+    "encrypted",
+    "owner",
+    "createdAt",
+    "updatedAt"
+  ],
+  "additionalProperties": false
+}

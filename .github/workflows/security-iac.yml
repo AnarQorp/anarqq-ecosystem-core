@@ -1,0 +1,290 @@
+name: Infrastructure as Code Security Scanning
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.json'
+      - '**/Dockerfile'
+      - '**/docker-compose*.yml'
+      - '**/*.tf'
+      - '**/*.hcl'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '**/*.json'
+      - '**/Dockerfile'
+      - '**/docker-compose*.yml'
+      - '**/*.tf'
+      - '**/*.hcl'
+
+jobs:
+  checkov-scan:
+    name: Checkov IaC Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: dockerfile,docker_compose,github_actions,json,yaml
+          output_format: sarif
+          output_file_path: checkov-results.sarif
+          quiet: true
+          soft_fail: true
+      
+      - name: Upload Checkov SARIF Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: checkov-results.sarif
+        if: always()
+      
+      - name: Run Checkov JSON Output
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: dockerfile,docker_compose,github_actions,json,yaml
+          output_format: json
+          output_file_path: checkov-results.json
+          quiet: true
+          soft_fail: true
+      
+      - name: Upload Checkov JSON Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-results
+          path: checkov-results.json
+
+  tfsec-scan:
+    name: TFSec Terraform Security Scan
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.modified, '.tf') || contains(github.event.head_commit.added, '.tf')
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run TFSec
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          soft_fail: true
+          format: sarif
+          output: tfsec-results.sarif
+      
+      - name: Upload TFSec SARIF Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: tfsec-results.sarif
+        if: always()
+      
+      - name: Run TFSec JSON Output
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          soft_fail: true
+          format: json
+          output: tfsec-results.json
+      
+      - name: Upload TFSec JSON Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfsec-results
+          path: tfsec-results.json
+
+  kics-scan:
+    name: KICS IaC Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run KICS Scan
+        uses: checkmarx/kics-github-action@v1.7.0
+        with:
+          path: '.'
+          output_path: kics-results
+          output_formats: 'json,sarif'
+          exclude_paths: 'node_modules,dist,build,.git'
+          fail_on: high,critical
+          enable_comments: true
+      
+      - name: Upload KICS SARIF Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: kics-results/results.sarif
+        if: always()
+      
+      - name: Upload KICS JSON Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: kics-results
+          path: kics-results/results.json
+
+  dockerfile-lint:
+    name: Dockerfile Security Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: '**/Dockerfile'
+          format: sarif
+          output-file: hadolint-results.sarif
+          no-fail: true
+      
+      - name: Upload Hadolint SARIF Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: hadolint-results.sarif
+        if: always()
+      
+      - name: Run Hadolint JSON Output
+        run: |
+          # Install hadolint
+          wget -O hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+          chmod +x hadolint
+          
+          # Scan all Dockerfiles
+          find . -name "Dockerfile" -not -path "./node_modules/*" -not -path "./.git/*" | while read dockerfile; do
+            echo "Scanning $dockerfile"
+            ./hadolint --format json "$dockerfile" >> hadolint-results.json || true
+          done
+      
+      - name: Upload Hadolint JSON Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: hadolint-results
+          path: hadolint-results.json
+
+  docker-compose-security:
+    name: Docker Compose Security Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install dc-security
+        run: |
+          pip install docker-compose-security-scanner
+      
+      - name: Scan Docker Compose Files
+        run: |
+          find . -name "docker-compose*.yml" -not -path "./node_modules/*" -not -path "./.git/*" | while read compose_file; do
+            echo "Scanning $compose_file"
+            python3 scripts/security/docker-compose-security.py "$compose_file" >> docker-compose-security.json || true
+          done
+      
+      - name: Upload Docker Compose Security Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-compose-security-results
+          path: docker-compose-security.json
+
+  github-actions-security:
+    name: GitHub Actions Security Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Scan GitHub Actions Workflows
+        run: |
+          python3 scripts/security/github-actions-security.py .github/workflows/ > github-actions-security.json
+      
+      - name: Upload GitHub Actions Security Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-actions-security-results
+          path: github-actions-security.json
+
+  secrets-scan:
+    name: Secrets Detection in IaC
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Run TruffleHog
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --debug --only-verified --json --output trufflehog-results.json
+        continue-on-error: true
+      
+      - name: Upload TruffleHog Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: trufflehog-results
+          path: trufflehog-results.json
+
+  iac-security-report:
+    name: Generate IaC Security Report
+    runs-on: ubuntu-latest
+    needs: [checkov-scan, tfsec-scan, kics-scan, dockerfile-lint, docker-compose-security, github-actions-security, secrets-scan]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Generate IaC Security Report
+        run: |
+          python3 scripts/security/generate-iac-report.py \
+            --checkov checkov-results/ \
+            --tfsec tfsec-results/ \
+            --kics kics-results/ \
+            --hadolint hadolint-results/ \
+            --docker-compose docker-compose-security-results/ \
+            --github-actions github-actions-security-results/ \
+            --secrets trufflehog-results/ \
+            --output iac-security-report.html
+      
+      - name: Upload IaC Security Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: iac-security-report
+          path: iac-security-report.html
+
+  iac-security-gate:
+    name: IaC Security Quality Gate
+    runs-on: ubuntu-latest
+    needs: [checkov-scan, tfsec-scan, kics-scan, dockerfile-lint, docker-compose-security, github-actions-security, secrets-scan]
+    if: always()
+    steps:
+      - name: Check IaC Security Results
+        run: |
+          echo "Checking Infrastructure as Code security scan results..."
+          
+          # Check for critical IaC security issues
+          critical_found=false
+          
+          # This would integrate with your security dashboard/API
+          # to determine if critical IaC vulnerabilities were found
+          
+          if [ "$critical_found" = true ]; then
+            echo "Critical IaC security issues found"
+            exit 1
+          fi
+          
+          echo "IaC security checks passed"

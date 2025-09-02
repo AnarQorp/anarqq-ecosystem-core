@@ -1,0 +1,18 @@
+{
+  "samples": [
+    {
+      "contentId": "content_demo_sample_01",
+      "title": "Demo Document 1",
+      "type": "application/pdf",
+      "size": 1048576,
+      "checksum": "demo_checksum_01"
+    },
+    {
+      "contentId": "content_demo_sample_02",
+      "title": "Demo Image 1",
+      "type": "image/jpeg",
+      "size": 2097152,
+      "checksum": "demo_checksum_02"
+    }
+  ]
+}

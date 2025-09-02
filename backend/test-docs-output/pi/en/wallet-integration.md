@@ -1,0 +1,207 @@
+# Pi Wallet Integration with Qwallet
+
+## Overview
+
+This guide explains how to integrate Pi Wallet with Qwallet for cross-chain transactions and unified identity management.
+
+## Prerequisites
+
+### System Requirements
+
+- Node.js 18+
+- Pi Network Developer Account
+- Access to Pi Browser or Pi SDK
+- Configured Qwallet instance
+
+### Environment Variables
+
+```bash
+PI_API_KEY=your_pi_api_key
+PI_APP_ID=your_pi_app_id
+PI_WEBHOOK_SECRET=your_webhook_secret
+PI_PRIVATE_KEY=your_private_key
+```
+
+## Installation
+
+```bash
+npm install @anarq/pi-integration
+```
+
+## Configuration
+
+### Basic Configuration
+
+```javascript
+import { PiIntegrationLayer } from '@anarq/pi-integration';
+import { QwalletIntegrationService } from '@anarq/qwallet';
+
+const piIntegration = new PiIntegrationLayer({
+  environment: 'sandbox', // sandbox, testnet, mainnet
+  eventBus: eventBusInstance,
+  observability: observabilityInstance
+});
+
+await piIntegration.initialize();
+```
+
+### Environment Configuration
+
+| Environment | Description | API Endpoint |
+|-----------|-------------|-------------|
+| sandbox | Development and testing environment | https://api.minepi.com/v2/sandbox |
+| testnet | Pre-production testing network | https://api.minepi.com/v2/testnet |
+| mainnet | Production Pi Network | https://api.minepi.com/v2 |
+
+## Usage
+
+### Integrate Pi Wallet
+
+```javascript
+// Integrate Pi Wallet with existing Qwallet instance
+const integrationResult = await piIntegration.integratePiWallet(
+  qwalletInstance,
+  {
+    piUserId: 'pi_user_123',
+    accessToken: 'pi_access_token',
+    walletAddress: '0x...',
+    walletVersion: '2.0.0'
+  }
+);
+
+if (integrationResult.success) {
+  console.log('Integration successful:', integrationResult.integrationId);
+  console.log('Available features:', integrationResult.features);
+} else {
+  console.error('Integration error:', integrationResult.error);
+}
+```
+
+### Execute Cross-Chain Transactions
+
+```javascript
+// Execute Pi transaction with Qflow context
+const transactionResult = await piIntegration.executePiTransaction(
+  {
+    fromSquidId: 'squid_123',
+    toAddress: '0x...',
+    amount: 10.5,
+    currency: 'PI',
+    memo: 'Payment for services'
+  },
+  {
+    workflowId: 'qflow_workflow_456',
+    executionId: 'exec_789',
+    stepId: 'payment_step'
+  }
+);
+
+if (transactionResult.success) {
+  console.log('Transaction submitted:', transactionResult.txHash);
+  console.log('Required confirmations:', transactionResult.requiredConfirmations);
+}
+```
+
+### Sync Balances
+
+```javascript
+// Sync balances between Pi Wallet and Qwallet
+const syncResult = await piIntegration.syncWalletBalances(integrationId);
+
+console.log('Synced balances:', {
+  pi: syncResult.balances.pi,
+  qtoken: syncResult.balances.qtoken,
+  lastSync: syncResult.lastSyncAt
+});
+```
+
+## Examples
+
+### Complete Integration Example
+
+```javascript
+import { PiIntegrationLayer } from '@anarq/pi-integration';
+import { QwalletIntegrationService } from '@anarq/qwallet';
+
+class PiWalletDemo {
+  constructor() {
+    this.piIntegration = new PiIntegrationLayer({
+      environment: 'sandbox'
+    });
+    this.qwallet = new QwalletIntegrationService();
+  }
+
+  async initialize() {
+    await this.piIntegration.initialize();
+    await this.qwallet.initialize();
+  }
+
+  async demonstrateIntegration() {
+    try {
+      // 1. Create Qwallet instance
+      const qwalletInstance = await this.qwallet.createWallet({
+        squidId: 'demo_squid_123',
+        walletType: 'standard'
+      });
+
+      // 2. Integrate with Pi Wallet
+      const integration = await this.piIntegration.integratePiWallet(
+        qwalletInstance,
+        {
+          piUserId: 'demo_pi_user',
+          accessToken: 'demo_token',
+          walletAddress: '0x1234567890abcdef'
+        }
+      );
+
+      // 3. Execute test transaction
+      const transaction = await this.piIntegration.executePiTransaction(
+        {
+          fromSquidId: 'demo_squid_123',
+          toAddress: '0xabcdef1234567890',
+          amount: 1.0,
+          currency: 'PI',
+          memo: 'Test transaction'
+        }
+      );
+
+      return {
+        integration: integration.success,
+        transaction: transaction.success,
+        integrationId: integration.integrationId,
+        txHash: transaction.txHash
+      };
+    } catch (error) {
+      console.error('Demo error:', error);
+      throw error;
+    }
+  }
+}
+
+// Demo usage
+const demo = new PiWalletDemo();
+await demo.initialize();
+const result = await demo.demonstrateIntegration();
+console.log('Demo result:', result);
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### Error: "Invalid Pi API Key"
+
+**Solution**: Verify that PI_API_KEY is correctly configured in environment variables.
+
+#### Error: "Pi Wallet integration not found"
+
+**Solution**: Ensure the integration completed successfully before executing transactions.
+
+#### Slow Transactions
+
+**Solution**: Check environment configuration and required confirmation blocks.
+
+---
+
+*Last Updated: 2025-08-31T09:42:47.560Z*  
+*Generated by: DocumentationGenerator v1.0.0*

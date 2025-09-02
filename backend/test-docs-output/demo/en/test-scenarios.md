@@ -1,0 +1,241 @@
+# Demo Test Scenarios
+
+## Overview
+
+Available demonstration scenarios to showcase AnarQ&Q ecosystem capabilities.
+
+## Available Scenarios
+
+- **Identity Flow**: sQuid creation, Qwallet, transaction and audit
+- **Content Flow**: Upload, encryption, indexing and storage
+- **DAO Flow**: Governance, voting, execution and distribution
+- **Pi Network Integration**: Complete Pi Network integration with Qwallet
+
+## Scenario 1: Identity Flow
+
+### Description
+Demonstrates sQuid identity creation, Qwallet linking, transaction execution, and Qerberos auditing.
+
+### Scenario Steps
+
+1. **Create sQuid Identity**
+   - Generate new decentralized identity
+   - Configure profile metadata
+   - Register on IPFS
+
+2. **Set up Qwallet**
+   - Create wallet instance
+   - Link with sQuid identity
+   - Configure Qonsent permissions
+
+3. **Execute Transaction**
+   - Create test transaction
+   - Process through Qflow
+   - Confirm on QNET
+
+4. **Qerberos Audit**
+   - Log all operations
+   - Generate audit CID
+   - Verify integrity
+
+### Execution Command
+
+```bash
+# Run identity scenario
+npm run demo:identity
+
+# With custom parameters
+npm run demo:identity -- --username="demo_user" --email="demo@example.com"
+```
+
+### Expected Results
+
+```json
+{
+  "scenario": "identity-flow",
+  "success": true,
+  "duration": 15432,
+  "steps": {
+    "create_squid": {
+      "success": true,
+      "squidId": "squid_abc123",
+      "ipfsCid": "QmXYZ...",
+      "duration": 2341
+    },
+    "setup_qwallet": {
+      "success": true,
+      "walletId": "wallet_def456",
+      "integrationId": "integration_ghi789",
+      "duration": 3456
+    },
+    "execute_transaction": {
+      "success": true,
+      "transactionId": "tx_jkl012",
+      "qflowExecutionId": "exec_mno345",
+      "duration": 5678
+    },
+    "qerberos_audit": {
+      "success": true,
+      "auditCid": "QmABC...",
+      "integrityVerified": true,
+      "duration": 3957
+    }
+  }
+}
+```
+
+## Scenario 2: Content Flow
+
+### Description
+Demonstrates content upload, Qlock encryption, Qindex indexing, and IPFS storage.
+
+### Scenario Steps
+
+1. **Prepare Content**
+   - Generate test file
+   - Configure metadata
+   - Validate format
+
+2. **Encrypt with Qlock**
+   - Apply encryption
+   - Generate access keys
+   - Configure permissions
+
+3. **Index with Qindex**
+   - Extract metadata
+   - Create search indices
+   - Register relationships
+
+4. **Store on IPFS**
+   - Upload encrypted content
+   - Generate CID
+   - Verify availability
+
+### Execution Command
+
+```bash
+# Run content scenario
+npm run demo:content
+
+# With specific file
+npm run demo:content -- --file="./test-content.pdf" --title="Demo Document"
+```
+
+## Scenario 3: DAO Flow
+
+### Description
+Demonstrates decentralized governance, voting, Qflow execution, and QNET distribution.
+
+### Scenario Steps
+
+1. **Create Proposal**
+   - Define governance proposal
+   - Configure voting parameters
+   - Publish to DAO
+
+2. **Voting Process**
+   - Simulate member votes
+   - Calculate quorum
+   - Determine result
+
+3. **Qflow Execution**
+   - Trigger approved workflow
+   - Execute on distributed nodes
+   - Monitor progress
+
+4. **QNET Distribution**
+   - Propagate results
+   - Synchronize state
+   - Confirm consensus
+
+### Execution Command
+
+```bash
+# Run DAO scenario
+npm run demo:dao
+
+# With custom proposal
+npm run demo:dao -- --proposal="upgrade-protocol" --voters=5
+```
+
+## Scenario 4: Pi Network Integration
+
+### Description
+Demonstrates complete Pi Network integration, including wallet, contracts, and transactions.
+
+### Scenario Steps
+
+1. **Set up Pi Integration**
+   - Initialize PiIntegrationLayer
+   - Configure sandbox environment
+   - Validate credentials
+
+2. **Integrate Pi Wallet**
+   - Connect with Qwallet
+   - Sync balances
+   - Configure permissions
+
+3. **Deploy Pi Contract**
+   - Compile test contract
+   - Deploy to Pi testnet
+   - Integrate with Qflow
+
+4. **Execute Cross-Chain Transaction**
+   - Create Pi transaction
+   - Process in Qflow
+   - Audit with Qerberos
+
+### Execution Command
+
+```bash
+# Run Pi Network scenario
+npm run demo:pi-integration
+
+# Sandbox environment only
+npm run demo:pi-integration -- --environment=sandbox --amount=1.0
+```
+
+## Multi-Scenario Execution
+
+### Run All Scenarios
+
+```bash
+# Run complete demo suite
+npm run demo:all
+
+# With inter-scenario validation
+npm run demo:all -- --validate-between-scenarios
+```
+
+### Parallel Execution
+
+```bash
+# Run scenarios in parallel (for load testing)
+npm run demo:parallel -- --scenarios="identity,content" --instances=3
+```
+
+## Performance Metrics
+
+### Performance Targets
+
+| Scenario | Max Duration | Success Rate |
+|----------|--------------|-------------|
+| Identity Flow | 30s | 95% |
+| Content Flow | 30s | 95% |
+| DAO Flow | 30s | 95% |
+| Pi Integration | 30s | 95% |
+
+### Real-time Monitoring
+
+```bash
+# Monitor demo execution
+npm run demo:monitor
+
+# View real-time metrics
+npm run demo:metrics -- --live
+```
+
+---
+
+*Last Updated: 2025-08-31T09:42:47.576Z*  
+*Generated by: DocumentationGenerator v1.0.0*

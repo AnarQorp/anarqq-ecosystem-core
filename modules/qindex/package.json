@@ -1,0 +1,50 @@
+{
+  "name": "@anarq/qindex",
+  "version": "1.0.0",
+  "description": "Qindex - Indexing & Pointers Module for Q Ecosystem",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node src/index.js",
+    "start": "node src/index.js",
+    "start:production": "NODE_ENV=production node src/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src/",
+    "validate:openapi": "swagger-codegen validate -i openapi.yaml",
+    "validate:mcp": "ajv validate -s ../../../schemas/mcp.schema.json -d mcp.json"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^7.1.5",
+    "joi": "^17.11.0",
+    "uuid": "^9.0.1",
+    "crypto": "^1.0.1",
+    "node-cron": "^3.0.3",
+    "pino": "^8.16.2",
+    "pino-pretty": "^10.2.3"
+  },
+  "devDependencies": {
+    "vitest": "^1.0.4",
+    "supertest": "^6.3.3",
+    "eslint": "^8.55.0",
+    "@types/node": "^20.10.4"
+  },
+  "keywords": [
+    "qindex",
+    "indexing",
+    "pointers",
+    "q-ecosystem",
+    "anarq",
+    "decentralized"
+  ],
+  "author": "AnarQ Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

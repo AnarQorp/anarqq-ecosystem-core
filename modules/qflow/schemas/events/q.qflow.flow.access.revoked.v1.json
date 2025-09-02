@@ -1,0 +1,56 @@
+{
+  "$id": "q.qflow.flow.access.revoked.v1",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Qflow Flow Access Revoked Event",
+  "description": "Event emitted when access permissions are revoked from a flow",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity that performed the action"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "flowId": {
+          "type": "string",
+          "description": "Unique identifier of the flow"
+        },
+        "revokedFrom": {
+          "type": "string",
+          "description": "sQuid identity that lost access"
+        },
+        "revokedBy": {
+          "type": "string",
+          "description": "sQuid identity that revoked access"
+        },
+        "revokedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When access was revoked"
+        }
+      },
+      "required": ["flowId", "revokedFrom", "revokedBy", "revokedAt"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

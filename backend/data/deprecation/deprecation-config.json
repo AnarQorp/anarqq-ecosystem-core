@@ -1,0 +1,144 @@
+{
+  "version": "1.0.0",
+  "settings": {
+    "notificationIntervals": {
+      "announcement": 0,
+      "warning90Days": 90,
+      "warning30Days": 30,
+      "finalWarning": 7,
+      "sunset": 0
+    },
+    "defaultSupportLevels": {
+      "FULL": {
+        "description": "Full support including new features and bug fixes",
+        "duration": "P6M"
+      },
+      "MAINTENANCE": {
+        "description": "Bug fixes and security updates only",
+        "duration": "P3M"
+      },
+      "SECURITY_ONLY": {
+        "description": "Security updates only",
+        "duration": "P1M"
+      },
+      "NONE": {
+        "description": "No support provided",
+        "duration": "P0D"
+      }
+    },
+    "migrationStepTypes": {
+      "CONFIG_UPDATE": {
+        "description": "Update configuration files",
+        "rollbackSupported": true
+      },
+      "API_MIGRATION": {
+        "description": "Migrate API calls to new endpoints",
+        "rollbackSupported": true
+      },
+      "DATA_MIGRATION": {
+        "description": "Migrate data structures",
+        "rollbackSupported": false
+      },
+      "DEPENDENCY_UPDATE": {
+        "description": "Update dependencies",
+        "rollbackSupported": true
+      }
+    },
+    "validationRuleTypes": {
+      "API_COMPATIBILITY": {
+        "description": "Validate API compatibility",
+        "required": true
+      },
+      "DATA_INTEGRITY": {
+        "description": "Validate data integrity",
+        "required": true
+      },
+      "FUNCTIONALITY": {
+        "description": "Validate functionality",
+        "required": false
+      }
+    },
+    "compatibilityLayerTypes": {
+      "ADAPTER": {
+        "description": "Adapter pattern for API compatibility",
+        "maxDuration": "P6M"
+      },
+      "PROXY": {
+        "description": "Proxy pattern for request forwarding",
+        "maxDuration": "P3M"
+      },
+      "WRAPPER": {
+        "description": "Wrapper pattern for legacy support",
+        "maxDuration": "P1Y"
+      }
+    }
+  },
+  "templates": {
+    "migrationSteps": {
+      "apiMigration": {
+        "name": "API Migration",
+        "type": "API_MIGRATION",
+        "description": "Migrate from old API to new API",
+        "configuration": {
+          "oldEndpoint": "",
+          "newEndpoint": "",
+          "mappings": {},
+          "transformations": []
+        }
+      },
+      "configUpdate": {
+        "name": "Configuration Update",
+        "type": "CONFIG_UPDATE",
+        "description": "Update configuration files",
+        "configuration": {
+          "configFile": "",
+          "updates": {},
+          "backupLocation": ""
+        }
+      }
+    },
+    "validationRules": {
+      "apiCompatibility": {
+        "name": "API Compatibility Check",
+        "type": "API_COMPATIBILITY",
+        "description": "Verify API compatibility after migration",
+        "configuration": {
+          "endpoints": [],
+          "testCases": []
+        }
+      },
+      "dataIntegrity": {
+        "name": "Data Integrity Check",
+        "type": "DATA_INTEGRITY",
+        "description": "Verify data integrity after migration",
+        "configuration": {
+          "checksums": {},
+          "validationQueries": []
+        }
+      }
+    }
+  },
+  "notifications": {
+    "channels": {
+      "email": {
+        "enabled": true,
+        "templates": {
+          "announcement": "deprecation-announcement.html",
+          "warning": "deprecation-warning.html",
+          "finalWarning": "deprecation-final-warning.html",
+          "sunset": "deprecation-sunset.html"
+        }
+      },
+      "slack": {
+        "enabled": false,
+        "webhook": "",
+        "channel": "#deprecations"
+      },
+      "webhook": {
+        "enabled": false,
+        "url": "",
+        "headers": {}
+      }
+    }
+  }
+}

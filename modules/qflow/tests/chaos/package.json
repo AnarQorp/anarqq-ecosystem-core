@@ -1,0 +1,56 @@
+{
+  "name": "@qflow/chaos-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive chaos engineering and failure testing suite for Qflow",
+  "main": "ChaosTestSuite.ts",
+  "scripts": {
+    "test": "npm run test:chaos",
+    "test:chaos": "ts-node run-chaos-tests.ts",
+    "test:chaos:nodes": "ts-node run-chaos-tests.ts nodes",
+    "test:chaos:network": "ts-node run-chaos-tests.ts network",
+    "test:chaos:resources": "ts-node run-chaos-tests.ts resources",
+    "test:chaos:distributed": "ts-node run-chaos-tests.ts distributed",
+    "test:chaos:byzantine": "ts-node run-chaos-tests.ts byzantine",
+    "test:all": "ts-node run-chaos-tests.ts all",
+    "build": "tsc",
+    "clean": "rm -rf dist reports",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "prepare-reports": "mkdir -p ../../reports/chaos"
+  },
+  "keywords": [
+    "chaos-engineering",
+    "failure-testing",
+    "resilience-testing",
+    "distributed-systems",
+    "qflow",
+    "automation",
+    "serverless"
+  ],
+  "author": "Qflow Chaos Engineering Team",
+  "license": "MIT",
+  "dependencies": {
+    "vitest": "^1.0.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anarq/qflow.git",
+    "directory": "modules/qflow/tests/chaos"
+  },
+  "bugs": {
+    "url": "https://github.com/anarq/qflow/issues"
+  },
+  "homepage": "https://github.com/anarq/qflow#readme"
+}

@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q-ecosystem.com/events/squid/subidentity-created.json",
+  "title": "Subidentity Created Event",
+  "description": "Event published when a new subidentity is created",
+  "type": "object",
+  "required": [
+    "eventId",
+    "timestamp",
+    "version",
+    "source",
+    "type",
+    "data"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "v1",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "const": "squid",
+      "description": "Source module that published the event"
+    },
+    "type": {
+      "type": "string",
+      "const": "subidentity.created",
+      "description": "Event type identifier"
+    },
+    "correlationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Correlation ID for tracing related events"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "identity",
+        "parentId",
+        "creator"
+      ],
+      "properties": {
+        "identity": {
+          "$ref": "https://schemas.q-ecosystem.com/squid/identity.json",
+          "description": "The created subidentity object"
+        },
+        "parentId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Parent identity DID"
+        },
+        "creator": {
+          "type": "object",
+          "required": [
+            "identityId",
+            "ip",
+            "sessionId"
+          ],
+          "properties": {
+            "identityId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Identity DID of the creator"
+            },
+            "ip": {
+              "type": "string",
+              "format": "ipv4",
+              "description": "IP address of the creator"
+            },
+            "userAgent": {
+              "type": "string",
+              "description": "User agent string"
+            },
+            "sessionId": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Session identifier"
+            },
+            "deviceFingerprint": {
+              "type": "string",
+              "description": "Device fingerprint for security"
+            }
+          },
+          "additionalProperties": false
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Additional event metadata"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

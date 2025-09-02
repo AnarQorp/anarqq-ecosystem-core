@@ -1,0 +1,758 @@
+openapi: 3.0.3
+info:
+  title: Qmarket API
+  description: Content Marketplace Module for AnarQ&Q Ecosystem
+  version: 1.0.0
+  contact:
+    name: AnarQ Team
+    url: https://github.com/anarq/q-ecosystem
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3008
+    description: Development server
+  - url: https://api.anarq.com/qmarket
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /api/listings:
+    post:
+      summary: Create marketplace listing
+      operationId: createListing
+      security:
+        - squidAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListingRequest'
+      responses:
+        '201':
+          description: Listing created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListingResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      summary: Search marketplace listings
+      operationId: searchListings
+      parameters:
+        - name: query
+          in: query
+          description: Search query
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: Filter by category
+          schema:
+            type: string
+            enum: [digital-art, media, documents, software, data, services]
+        - name: minPrice
+          in: query
+          description: Minimum price filter
+          schema:
+            type: number
+            minimum: 0
+        - name: maxPrice
+          in: query
+          description: Maximum price filter
+          schema:
+            type: number
+            minimum: 0
+        - name: currency
+          in: query
+          description: Filter by currency
+          schema:
+            type: string
+            enum: [QToken, PI]
+        - name: tags
+          in: query
+          description: Filter by tags (comma-separated)
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter by status
+          schema:
+            type: string
+            enum: [active, sold, expired, deleted]
+            default: active
+        - name: limit
+          in: query
+          description: Number of results to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Number of results to skip
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: sortBy
+          in: query
+          description: Sort field
+          schema:
+            type: string
+            enum: [createdAt, updatedAt, price, title, viewCount]
+            default: createdAt
+        - name: sortOrder
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+
+  /api/listings/{listingId}:
+    get:
+      summary: Get listing details
+      operationId: getListing
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          description: Listing ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Listing details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListingResponse'
+        '404':
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update listing
+      operationId: updateListing
+      security:
+        - squidAuth: []
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          description: Listing ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateListingRequest'
+      responses:
+        '200':
+          description: Listing updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListingResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - not listing owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete listing
+      operationId: deleteListing
+      security:
+        - squidAuth: []
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          description: Listing ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Listing deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - not listing owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/listings/{listingId}/purchase:
+    post:
+      summary: Purchase listing
+      operationId: purchaseListing
+      security:
+        - squidAuth: []
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          description: Listing ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseRequest'
+      responses:
+        '200':
+          description: Purchase completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseResponse'
+        '400':
+          description: Invalid request or purchase not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '402':
+          description: Payment required or failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/purchases:
+    get:
+      summary: Get purchase history
+      operationId: getPurchaseHistory
+      security:
+        - squidAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: offset
+          in: query
+          description: Number of results to skip
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Purchase history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseHistoryResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/sales:
+    get:
+      summary: Get sales history
+      operationId: getSalesHistory
+      security:
+        - squidAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: Number of results to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: offset
+          in: query
+          description: Number of results to skip
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Sales history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesHistoryResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/stats:
+    get:
+      summary: Get marketplace statistics
+      operationId: getMarketplaceStats
+      responses:
+        '200':
+          description: Marketplace statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketplaceStatsResponse'
+
+components:
+  securitySchemes:
+    squidAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: sQuid identity token
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        marketplace:
+          type: object
+          properties:
+            totalListings:
+              type: integer
+            activeListings:
+              type: integer
+            categories:
+              type: integer
+
+    CreateListingRequest:
+      type: object
+      required:
+        - title
+        - description
+        - price
+        - fileCid
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 100
+        description:
+          type: string
+          minLength: 10
+          maxLength: 1000
+        price:
+          type: number
+          minimum: 0.01
+        currency:
+          type: string
+          enum: [QToken, PI]
+          default: QToken
+        category:
+          type: string
+          enum: [digital-art, media, documents, software, data, services]
+          default: media
+        tags:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        fileCid:
+          type: string
+          description: IPFS CID of the content
+        fileMetadata:
+          type: object
+          properties:
+            contentType:
+              type: string
+            fileSize:
+              type: integer
+            thumbnailUrl:
+              type: string
+        visibility:
+          type: string
+          enum: [public, dao-only, private]
+          default: public
+        daoId:
+          type: string
+          description: Required if visibility is dao-only
+        mintNFT:
+          type: boolean
+          default: true
+        enableResale:
+          type: boolean
+          default: true
+        royaltyPercentage:
+          type: number
+          minimum: 0
+          maximum: 50
+          default: 5
+
+    UpdateListingRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 100
+        description:
+          type: string
+          minLength: 10
+          maxLength: 1000
+        price:
+          type: number
+          minimum: 0.01
+        tags:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+        status:
+          type: string
+          enum: [active, paused, expired]
+
+    PurchaseRequest:
+      type: object
+      properties:
+        paymentMethod:
+          type: string
+          enum: [QToken, PI]
+          default: QToken
+
+    ListingResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        listing:
+          $ref: '#/components/schemas/Listing'
+        processingTime:
+          type: number
+
+    SearchResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        listings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Listing'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    PurchaseResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        purchaseId:
+          type: string
+        listingId:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        accessUrl:
+          type: string
+        paymentResult:
+          type: object
+        purchasedAt:
+          type: string
+          format: date-time
+
+    PurchaseHistoryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        purchases:
+          type: array
+          items:
+            $ref: '#/components/schemas/Purchase'
+        total:
+          type: integer
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    SalesHistoryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        sales:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sale'
+        summary:
+          type: object
+          properties:
+            totalSales:
+              type: integer
+            totalRevenue:
+              type: number
+            salesByMonth:
+              type: object
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    MarketplaceStatsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        stats:
+          type: object
+          properties:
+            totalListings:
+              type: integer
+            activeListings:
+              type: integer
+            totalValue:
+              type: number
+            byCategory:
+              type: object
+            byCurrency:
+              type: object
+            topSellers:
+              type: object
+            recentActivity:
+              type: array
+              items:
+                type: object
+
+    Listing:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        category:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+        fileCid:
+          type: string
+        fileMetadata:
+          type: object
+        accessUrl:
+          type: string
+        nft:
+          type: object
+          properties:
+            tokenId:
+              type: string
+            contractAddress:
+              type: string
+        ecosystem:
+          type: object
+          properties:
+            qonsent:
+              type: object
+            qindex:
+              type: object
+            qnet:
+              type: object
+        stats:
+          type: object
+          properties:
+            viewCount:
+              type: integer
+            favoriteCount:
+              type: integer
+            purchaseCount:
+              type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Purchase:
+      type: object
+      properties:
+        purchaseId:
+          type: string
+        listingId:
+          type: string
+        title:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        sellerId:
+          type: string
+        status:
+          type: string
+        purchasedAt:
+          type: string
+          format: date-time
+        accessUrl:
+          type: string
+
+    Sale:
+      type: object
+      properties:
+        purchaseId:
+          type: string
+        listingId:
+          type: string
+        title:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        buyerId:
+          type: string
+        status:
+          type: string
+        soldAt:
+          type: string
+          format: date-time
+
+    Pagination:
+      type: object
+      properties:
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+        hasMore:
+          type: boolean
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          enum: [false]
+        error:
+          type: string
+        code:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string

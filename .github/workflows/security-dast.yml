@@ -1,0 +1,206 @@
+name: DAST Security Scanning
+
+on:
+  schedule:
+    - cron: '0 3 * * 2'  # Weekly on Tuesday at 3 AM
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Target environment for DAST scanning'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - development
+
+jobs:
+  setup-test-environment:
+    name: Setup Test Environment
+    runs-on: ubuntu-latest
+    outputs:
+      base_url: ${{ steps.deploy.outputs.base_url }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Deploy Test Environment
+        id: deploy
+        run: |
+          # Start the ecosystem in test mode
+          docker-compose -f docker-compose.test.yml up -d
+          
+          # Wait for services to be ready
+          sleep 60
+          
+          # Health check
+          for service in squid qwallet qlock qonsent qindex qerberos qmask qdrive qpic qmarket qmail qchat qnet dao; do
+            echo "Checking $service health..."
+            curl -f "http://localhost:3000/api/$service/health" || exit 1
+          done
+          
+          echo "base_url=http://localhost:3000" >> $GITHUB_OUTPUT
+
+  zap-baseline-scan:
+    name: OWASP ZAP Baseline Scan
+    runs-on: ubuntu-latest
+    needs: setup-test-environment
+    steps:
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.10.0
+        with:
+          target: ${{ needs.setup-test-environment.outputs.base_url }}
+          rules_file_name: '.zap/rules/baseline.conf'
+          cmd_options: '-a -j -m 10 -T 60'
+          allow_issue_writing: false
+          fail_action: true
+      
+      - name: Upload ZAP Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-baseline-results
+          path: report_html.html
+
+  zap-full-scan:
+    name: OWASP ZAP Full Scan
+    runs-on: ubuntu-latest
+    needs: setup-test-environment
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.8.0
+        with:
+          target: ${{ needs.setup-test-environment.outputs.base_url }}
+          rules_file_name: '.zap/rules/full-scan.conf'
+          cmd_options: '-a -j -m 10 -T 120'
+          allow_issue_writing: false
+          fail_action: true
+      
+      - name: Upload ZAP Full Scan Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-full-scan-results
+          path: report_html.html
+
+  nuclei-scan:
+    name: Nuclei Vulnerability Scan
+    runs-on: ubuntu-latest
+    needs: setup-test-environment
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Nuclei Scanner
+        uses: projectdiscovery/nuclei-action@main
+        with:
+          target: ${{ needs.setup-test-environment.outputs.base_url }}
+          templates: |
+            cves/
+            vulnerabilities/
+            security-misconfiguration/
+            default-logins/
+            exposed-panels/
+            exposures/
+            misconfiguration/
+            network/
+            ssl/
+          output: nuclei-results.json
+          json: true
+      
+      - name: Upload Nuclei Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuclei-results
+          path: nuclei-results.json
+
+  api-security-scan:
+    name: API Security Testing
+    runs-on: ubuntu-latest
+    needs: setup-test-environment
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install Newman
+        run: npm install -g newman newman-reporter-htmlextra
+      
+      - name: Run API Security Tests
+        run: |
+          # Run security-focused Postman collections
+          newman run .postman/security-tests.json \
+            --environment .postman/environments/test.json \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export api-security-report.html \
+            --bail \
+            --timeout-request 30000
+      
+      - name: Upload API Security Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-security-results
+          path: api-security-report.html
+
+  ssl-tls-scan:
+    name: SSL/TLS Security Scan
+    runs-on: ubuntu-latest
+    needs: setup-test-environment
+    steps:
+      - name: SSL/TLS Scan with testssl.sh
+        run: |
+          # Download and run testssl.sh
+          wget https://github.com/drwetter/testssl.sh/archive/3.2.tar.gz
+          tar -xzf 3.2.tar.gz
+          cd testssl.sh-3.2
+          
+          # Run SSL/TLS security scan
+          ./testssl.sh --jsonfile-pretty ssl-results.json ${{ needs.setup-test-environment.outputs.base_url }}
+      
+      - name: Upload SSL/TLS Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ssl-tls-results
+          path: testssl.sh-3.2/ssl-results.json
+
+  cleanup-test-environment:
+    name: Cleanup Test Environment
+    runs-on: ubuntu-latest
+    needs: [zap-baseline-scan, zap-full-scan, nuclei-scan, api-security-scan, ssl-tls-scan]
+    if: always()
+    steps:
+      - name: Cleanup
+        run: |
+          docker-compose -f docker-compose.test.yml down -v
+          docker system prune -f
+
+  security-report:
+    name: Generate Security Report
+    runs-on: ubuntu-latest
+    needs: [zap-baseline-scan, zap-full-scan, nuclei-scan, api-security-scan, ssl-tls-scan]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+      
+      - name: Generate Consolidated Security Report
+        run: |
+          python3 scripts/security/generate-dast-report.py \
+            --zap-baseline zap-baseline-results/ \
+            --zap-full zap-full-scan-results/ \
+            --nuclei nuclei-results/ \
+            --api-security api-security-results/ \
+            --ssl-tls ssl-tls-results/ \
+            --output consolidated-security-report.html
+      
+      - name: Upload Consolidated Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: consolidated-security-report
+          path: consolidated-security-report.html

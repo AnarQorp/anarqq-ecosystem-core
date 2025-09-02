@@ -1,0 +1,366 @@
+{
+  "templates": {
+    "n8n-nodes-base.httpRequest": {
+      "qflowAction": "qflow.action.http",
+      "parameterMapping": {
+        "url": "url",
+        "requestMethod": "method",
+        "headers": "headers",
+        "body": "body",
+        "authentication": "authentication",
+        "timeout": "timeout",
+        "ignoreSSLIssues": "validateSSL",
+        "followRedirect": "followRedirects"
+      },
+      "defaultParams": {
+        "method": "GET",
+        "timeout": 30000,
+        "validateSSL": true,
+        "followRedirects": true
+      },
+      "validation": {
+        "required": ["url"],
+        "optional": ["method", "headers", "body", "authentication"]
+      }
+    },
+    "n8n-nodes-base.function": {
+      "qflowAction": "qflow.action.function",
+      "parameterMapping": {
+        "functionCode": "code",
+        "jsCode": "code"
+      },
+      "defaultParams": {
+        "language": "javascript",
+        "sandboxed": true,
+        "memoryLimit": "128MB",
+        "timeoutMs": 30000,
+        "allowedModules": []
+      },
+      "validation": {
+        "required": ["code"],
+        "securityChecks": ["noEval", "noFileSystem", "noNetwork"]
+      }
+    },
+    "n8n-nodes-base.webhook": {
+      "qflowAction": "qflow.trigger.webhook",
+      "parameterMapping": {
+        "path": "path",
+        "httpMethod": "method",
+        "authentication": "authentication",
+        "responseMode": "responseMode",
+        "responseData": "responseData"
+      },
+      "defaultParams": {
+        "method": "POST",
+        "responseMode": "onReceived",
+        "authentication": "none"
+      },
+      "validation": {
+        "required": ["path"],
+        "optional": ["method", "authentication"]
+      }
+    },
+    "n8n-nodes-base.if": {
+      "qflowAction": "qflow.condition.if",
+      "parameterMapping": {
+        "conditions": "conditions",
+        "combineOperation": "combineConditions"
+      },
+      "defaultParams": {
+        "combineConditions": "AND"
+      },
+      "validation": {
+        "required": ["conditions"],
+        "conditionStructure": {
+          "leftValue": "required",
+          "operation": "required",
+          "rightValue": "required"
+        }
+      }
+    },
+    "n8n-nodes-base.set": {
+      "qflowAction": "qflow.action.transform",
+      "parameterMapping": {
+        "values": "transformations",
+        "keepOnlySet": "keepOnlySet"
+      },
+      "defaultParams": {
+        "keepOnlySet": false
+      },
+      "validation": {
+        "required": ["transformations"]
+      }
+    },
+    "n8n-nodes-base.code": {
+      "qflowAction": "qflow.action.wasm",
+      "parameterMapping": {
+        "jsCode": "code",
+        "mode": "language"
+      },
+      "defaultParams": {
+        "language": "javascript",
+        "sandboxed": true,
+        "memoryLimit": "256MB",
+        "timeoutMs": 60000,
+        "allowedModules": []
+      },
+      "validation": {
+        "required": ["code"],
+        "securityChecks": ["sandboxValidation", "resourceLimits"]
+      }
+    },
+    "n8n-nodes-base.wait": {
+      "qflowAction": "qflow.action.delay",
+      "parameterMapping": {
+        "amount": "duration",
+        "unit": "unit"
+      },
+      "defaultParams": {
+        "unit": "seconds"
+      },
+      "validation": {
+        "required": ["duration"],
+        "ranges": {
+          "duration": { "min": 1, "max": 3600 }
+        }
+      }
+    },
+    "n8n-nodes-base.merge": {
+      "qflowAction": "qflow.action.merge",
+      "parameterMapping": {
+        "mode": "mergeMode",
+        "mergeByFields": "mergeFields"
+      },
+      "defaultParams": {
+        "mergeMode": "append"
+      },
+      "validation": {
+        "required": ["mergeMode"]
+      }
+    },
+    "n8n-nodes-base.split": {
+      "qflowAction": "qflow.action.split",
+      "parameterMapping": {
+        "mode": "splitMode",
+        "fieldToSplitOut": "splitField"
+      },
+      "defaultParams": {
+        "splitMode": "splitIntoItems"
+      },
+      "validation": {
+        "required": ["splitMode"]
+      }
+    },
+    "n8n-nodes-base.gmail": {
+      "qflowAction": "qflow.module.qmail",
+      "parameterMapping": {
+        "operation": "operation",
+        "resource": "resource"
+      },
+      "defaultParams": {
+        "provider": "gmail"
+      },
+      "validation": {
+        "required": ["operation"],
+        "credentialRequired": true
+      }
+    },
+    "n8n-nodes-base.googleDrive": {
+      "qflowAction": "qflow.module.qdrive",
+      "parameterMapping": {
+        "operation": "operation",
+        "resource": "resource"
+      },
+      "defaultParams": {
+        "provider": "googledrive"
+      },
+      "validation": {
+        "required": ["operation"],
+        "credentialRequired": true
+      }
+    },
+    "n8n-nodes-base.slack": {
+      "qflowAction": "qflow.module.qchat",
+      "parameterMapping": {
+        "operation": "operation",
+        "resource": "resource"
+      },
+      "defaultParams": {
+        "provider": "slack"
+      },
+      "validation": {
+        "required": ["operation"],
+        "credentialRequired": true
+      }
+    },
+    "n8n-nodes-base.discord": {
+      "qflowAction": "qflow.module.qchat",
+      "parameterMapping": {
+        "operation": "operation",
+        "resource": "resource"
+      },
+      "defaultParams": {
+        "provider": "discord"
+      },
+      "validation": {
+        "required": ["operation"],
+        "credentialRequired": true
+      }
+    },
+    "n8n-nodes-base.postgres": {
+      "qflowAction": "qflow.action.database",
+      "parameterMapping": {
+        "operation": "operation",
+        "query": "query"
+      },
+      "defaultParams": {
+        "provider": "postgresql"
+      },
+      "validation": {
+        "required": ["operation"],
+        "credentialRequired": true,
+        "securityChecks": ["sqlInjection"]
+      }
+    },
+    "n8n-nodes-base.mysql": {
+      "qflowAction": "qflow.action.database",
+      "parameterMapping": {
+        "operation": "operation",
+        "query": "query"
+      },
+      "defaultParams": {
+        "provider": "mysql"
+      },
+      "validation": {
+        "required": ["operation"],
+        "credentialRequired": true,
+        "securityChecks": ["sqlInjection"]
+      }
+    },
+    "n8n-nodes-base.redis": {
+      "qflowAction": "qflow.action.cache",
+      "parameterMapping": {
+        "operation": "operation",
+        "key": "key",
+        "value": "value"
+      },
+      "defaultParams": {
+        "provider": "redis"
+      },
+      "validation": {
+        "required": ["operation", "key"],
+        "credentialRequired": true
+      }
+    },
+    "n8n-nodes-base.crypto": {
+      "qflowAction": "qflow.module.qlock",
+      "parameterMapping": {
+        "operation": "operation",
+        "algorithm": "algorithm"
+      },
+      "defaultParams": {
+        "algorithm": "AES-256-GCM"
+      },
+      "validation": {
+        "required": ["operation"],
+        "securityChecks": ["keyManagement"]
+      }
+    },
+    "n8n-nodes-base.ethereum": {
+      "qflowAction": "qflow.module.qwallet",
+      "parameterMapping": {
+        "operation": "operation",
+        "network": "network"
+      },
+      "defaultParams": {
+        "network": "mainnet"
+      },
+      "validation": {
+        "required": ["operation"],
+        "credentialRequired": true,
+        "securityChecks": ["privateKeyHandling"]
+      }
+    }
+  },
+  "migrationRules": {
+    "credentialMapping": {
+      "httpBasicAuth": "qflow.auth.basic",
+      "httpHeaderAuth": "qflow.auth.header",
+      "oAuth2Api": "qflow.auth.oauth2",
+      "googleOAuth2Api": "qflow.auth.google.oauth2",
+      "slackOAuth2Api": "qflow.auth.slack.oauth2"
+    },
+    "dataTransformation": {
+      "n8nExpressions": {
+        "pattern": "{{.*}}",
+        "replacement": "${.*}",
+        "functions": {
+          "$json": "$.data",
+          "$node": "$.context.node",
+          "$workflow": "$.context.workflow"
+        }
+      }
+    },
+    "errorHandling": {
+      "continueOnFail": "retryPolicy.continueOnError",
+      "retryOnFail": "retryPolicy.enabled",
+      "maxTries": "retryPolicy.maxAttempts",
+      "waitBetweenTries": "retryPolicy.backoffMs"
+    }
+  },
+  "validationRules": {
+    "securityChecks": {
+      "noEval": {
+        "pattern": "eval\\s*\\(",
+        "message": "eval() function is not allowed in sandboxed code"
+      },
+      "noFileSystem": {
+        "patterns": ["require\\s*\\(\\s*['\"]fs['\"]", "import.*from\\s*['\"]fs['\"]"],
+        "message": "File system access is not allowed"
+      },
+      "noNetwork": {
+        "patterns": ["require\\s*\\(\\s*['\"]http['\"]", "require\\s*\\(\\s*['\"]https['\"]", "fetch\\s*\\("],
+        "message": "Direct network access is not allowed, use HTTP Request node instead"
+      },
+      "sqlInjection": {
+        "patterns": ["';", "UNION", "DROP", "DELETE.*WHERE.*1=1"],
+        "message": "Potential SQL injection detected"
+      }
+    },
+    "resourceLimits": {
+      "maxCodeLength": 10000,
+      "maxMemoryMB": 512,
+      "maxTimeoutMs": 300000
+    }
+  },
+  "compatibilityNotes": {
+    "general": [
+      "n8n expressions ({{...}}) are converted to Qflow expressions (${...})",
+      "Credentials need to be reconfigured in Qflow",
+      "Some node behaviors may differ between n8n and Qflow execution environments",
+      "Error handling strategies are mapped to Qflow retry policies"
+    ],
+    "nodeSpecific": {
+      "n8n-nodes-base.function": [
+        "JavaScript code runs in a WebAssembly sandbox with restricted access",
+        "Node.js modules are not available, use allowed modules list",
+        "File system and network access is blocked for security"
+      ],
+      "n8n-nodes-base.code": [
+        "Code execution is sandboxed with memory and time limits",
+        "External module imports are restricted",
+        "Consider using WASM modules for better performance"
+      ],
+      "n8n-nodes-base.webhook": [
+        "Webhook URLs will change in Qflow",
+        "Authentication methods may need reconfiguration",
+        "Response handling might differ slightly"
+      ],
+      "n8n-nodes-base.httpRequest": [
+        "SSL validation is enabled by default in Qflow",
+        "Timeout handling is more strict",
+        "Authentication headers are handled differently"
+      ]
+    }
+  }
+}

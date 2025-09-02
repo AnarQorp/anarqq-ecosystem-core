@@ -1,0 +1,368 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Qmarket IPFS Pinning Policy Configuration",
+  "description": "Defines pinning policies for different types of marketplace content",
+  "version": "1.0.0",
+  "lastUpdated": "2024-01-15T00:00:00Z",
+  
+  "defaultPolicy": {
+    "strategy": "conditional",
+    "replicationFactor": 2,
+    "pinningDuration": "1y",
+    "costTier": "standard",
+    "geoDistribution": ["us-east", "eu-west"],
+    "accessPattern": "warm"
+  },
+  
+  "contentTypePolicies": {
+    "digital-art": {
+      "strategy": "permanent",
+      "replicationFactor": 3,
+      "pinningDuration": "permanent",
+      "costTier": "premium",
+      "geoDistribution": ["us-east", "us-west", "eu-west", "asia-pacific"],
+      "accessPattern": "hot",
+      "backupRequired": true,
+      "archivalService": "filecoin",
+      "integrityChecks": "daily",
+      "description": "High-value digital art requires permanent storage with maximum redundancy"
+    },
+    
+    "media": {
+      "strategy": "conditional",
+      "replicationFactor": 2,
+      "pinningDuration": "2y",
+      "costTier": "standard",
+      "geoDistribution": ["us-east", "eu-west"],
+      "accessPattern": "warm",
+      "backupRequired": false,
+      "archivalService": "storj",
+      "integrityChecks": "weekly",
+      "description": "Media files with moderate storage requirements"
+    },
+    
+    "documents": {
+      "strategy": "temporary",
+      "replicationFactor": 1,
+      "pinningDuration": "1y",
+      "costTier": "economy",
+      "geoDistribution": ["us-east"],
+      "accessPattern": "cold",
+      "backupRequired": false,
+      "archivalService": "ipfs",
+      "integrityChecks": "monthly",
+      "description": "Document files with minimal storage requirements"
+    },
+    
+    "software": {
+      "strategy": "permanent",
+      "replicationFactor": 3,
+      "pinningDuration": "permanent",
+      "costTier": "premium",
+      "geoDistribution": ["us-east", "us-west", "eu-west", "asia-pacific"],
+      "accessPattern": "hot",
+      "backupRequired": true,
+      "archivalService": "arweave",
+      "integrityChecks": "daily",
+      "description": "Software packages require permanent, highly available storage"
+    },
+    
+    "data": {
+      "strategy": "conditional",
+      "replicationFactor": 2,
+      "pinningDuration": "5y",
+      "costTier": "standard",
+      "geoDistribution": ["us-east", "eu-west"],
+      "accessPattern": "warm",
+      "backupRequired": true,
+      "archivalService": "filecoin",
+      "integrityChecks": "weekly",
+      "description": "Data sets with long-term retention requirements"
+    },
+    
+    "services": {
+      "strategy": "metadata_only",
+      "replicationFactor": 0,
+      "pinningDuration": "1y",
+      "costTier": "minimal",
+      "geoDistribution": [],
+      "accessPattern": "hot",
+      "backupRequired": false,
+      "archivalService": "none",
+      "integrityChecks": "none",
+      "description": "Service listings store only metadata, no file content"
+    }
+  },
+  
+  "valueTierPolicies": {
+    "high_value": {
+      "threshold": {
+        "price": 100,
+        "currency": "QToken"
+      },
+      "upgrades": {
+        "replicationFactor": "+1",
+        "geoDistribution": "global",
+        "accessPattern": "hot",
+        "integrityChecks": "daily",
+        "backupRequired": true
+      },
+      "description": "High-value items get enhanced storage guarantees"
+    },
+    
+    "medium_value": {
+      "threshold": {
+        "price": 10,
+        "currency": "QToken"
+      },
+      "upgrades": {
+        "replicationFactor": "default",
+        "geoDistribution": "regional",
+        "accessPattern": "warm",
+        "integrityChecks": "weekly"
+      },
+      "description": "Medium-value items get standard storage"
+    },
+    
+    "low_value": {
+      "threshold": {
+        "price": 0.01,
+        "currency": "QToken"
+      },
+      "upgrades": {
+        "replicationFactor": "1",
+        "geoDistribution": "single",
+        "accessPattern": "cold",
+        "integrityChecks": "monthly"
+      },
+      "description": "Low-value items get minimal storage"
+    }
+  },
+  
+  "popularityPolicies": {
+    "viral": {
+      "threshold": {
+        "viewCount": 1000,
+        "timeWindow": "24h"
+      },
+      "upgrades": {
+        "strategy": "permanent",
+        "replicationFactor": "+2",
+        "accessPattern": "hot",
+        "geoDistribution": "global",
+        "cdnEnabled": true
+      },
+      "description": "Viral content gets maximum availability"
+    },
+    
+    "popular": {
+      "threshold": {
+        "viewCount": 100,
+        "timeWindow": "7d"
+      },
+      "upgrades": {
+        "replicationFactor": "+1",
+        "accessPattern": "hot",
+        "geoDistribution": "regional",
+        "cdnEnabled": true
+      },
+      "description": "Popular content gets enhanced availability"
+    },
+    
+    "trending": {
+      "threshold": {
+        "viewCount": 50,
+        "timeWindow": "24h"
+      },
+      "upgrades": {
+        "accessPattern": "warm",
+        "preloadEnabled": true
+      },
+      "description": "Trending content gets preloading"
+    }
+  },
+  
+  "daoTierPolicies": {
+    "enterprise": {
+      "upgrades": {
+        "strategy": "permanent",
+        "replicationFactor": "+1",
+        "geoDistribution": "global",
+        "accessPattern": "hot",
+        "backupRequired": true,
+        "slaGuarantee": "99.99%"
+      },
+      "description": "Enterprise DAOs get premium storage guarantees"
+    },
+    
+    "premium": {
+      "upgrades": {
+        "replicationFactor": "+1",
+        "geoDistribution": "regional",
+        "accessPattern": "warm",
+        "slaGuarantee": "99.9%"
+      },
+      "description": "Premium DAOs get enhanced storage"
+    },
+    
+    "standard": {
+      "upgrades": {
+        "slaGuarantee": "99.5%"
+      },
+      "description": "Standard DAOs get basic SLA guarantees"
+    }
+  },
+  
+  "lifecyclePolicies": {
+    "active": {
+      "condition": "lastAccessed < 30d",
+      "actions": {
+        "maintainPinning": true,
+        "integrityCheck": "scheduled",
+        "accessOptimization": true
+      }
+    },
+    
+    "inactive": {
+      "condition": "lastAccessed >= 30d && lastAccessed < 90d",
+      "actions": {
+        "downgradeTier": "cold",
+        "reduceReplication": true,
+        "integrityCheck": "reduced"
+      }
+    },
+    
+    "dormant": {
+      "condition": "lastAccessed >= 90d && lastAccessed < 365d",
+      "actions": {
+        "archiveToSecondary": true,
+        "unpinFromPrimary": true,
+        "integrityCheck": "minimal"
+      }
+    },
+    
+    "expired": {
+      "condition": "lastAccessed >= 365d",
+      "actions": {
+        "scheduleForDeletion": true,
+        "notifyOwner": true,
+        "gracePeriod": "30d"
+      }
+    }
+  },
+  
+  "costOptimization": {
+    "budgetLimits": {
+      "monthly": {
+        "pinning": 1000,
+        "bandwidth": 500,
+        "storage": 2000,
+        "currency": "USD"
+      },
+      "alerts": {
+        "warning": 80,
+        "critical": 95,
+        "unit": "percent"
+      }
+    },
+    
+    "costTiers": {
+      "premium": {
+        "pinningCostMultiplier": 3.0,
+        "features": ["global_replication", "instant_access", "premium_support"]
+      },
+      "standard": {
+        "pinningCostMultiplier": 1.0,
+        "features": ["regional_replication", "standard_access"]
+      },
+      "economy": {
+        "pinningCostMultiplier": 0.5,
+        "features": ["single_region", "delayed_access"]
+      },
+      "minimal": {
+        "pinningCostMultiplier": 0.1,
+        "features": ["metadata_only"]
+      }
+    }
+  },
+  
+  "pinningServices": {
+    "primary": {
+      "name": "Pinata",
+      "endpoint": "https://api.pinata.cloud",
+      "priority": 1,
+      "costPerGB": 0.15,
+      "regions": ["us-east", "us-west", "eu-west"],
+      "features": ["high_availability", "fast_retrieval"]
+    },
+    
+    "secondary": {
+      "name": "Web3.Storage",
+      "endpoint": "https://api.web3.storage",
+      "priority": 2,
+      "costPerGB": 0.10,
+      "regions": ["us-east", "eu-west"],
+      "features": ["filecoin_backup", "free_tier"]
+    },
+    
+    "tertiary": {
+      "name": "NFT.Storage",
+      "endpoint": "https://api.nft.storage",
+      "priority": 3,
+      "costPerGB": 0.05,
+      "regions": ["us-east"],
+      "features": ["nft_optimized", "free_for_nfts"]
+    }
+  },
+  
+  "monitoring": {
+    "healthChecks": {
+      "interval": "5m",
+      "timeout": "30s",
+      "retries": 3
+    },
+    
+    "metrics": {
+      "storageUsage": "daily",
+      "accessPatterns": "hourly",
+      "costTracking": "daily",
+      "performanceMetrics": "real_time"
+    },
+    
+    "alerts": {
+      "pinningFailure": {
+        "severity": "critical",
+        "notification": ["email", "slack"]
+      },
+      "costThreshold": {
+        "severity": "warning",
+        "notification": ["email"]
+      },
+      "performanceDegradation": {
+        "severity": "warning",
+        "notification": ["slack"]
+      }
+    }
+  },
+  
+  "compliance": {
+    "dataRetention": {
+      "auditLogs": "7y",
+      "accessLogs": "2y",
+      "pinningHistory": "5y"
+    },
+    
+    "gdprCompliance": {
+      "rightToErasure": true,
+      "dataPortability": true,
+      "consentTracking": true
+    },
+    
+    "backupRequirements": {
+      "frequency": "daily",
+      "retention": "30d",
+      "verification": "weekly",
+      "offsite": true
+    }
+  }
+}

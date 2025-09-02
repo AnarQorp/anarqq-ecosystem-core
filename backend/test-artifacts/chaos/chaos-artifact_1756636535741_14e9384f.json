@@ -1,0 +1,103 @@
+{
+  "artifactId": "artifact_1756636535741_14e9384f",
+  "timestamp": "2025-08-31T10:35:35.741Z",
+  "testResults": {
+    "testId": "chaos-test-1",
+    "duration": 5000,
+    "failures": 2,
+    "successes": 0
+  },
+  "errorSummary": {
+    "totalOperations": 2,
+    "totalErrors": 2,
+    "errorsByOperation": {
+      "chaos.test.0": 1,
+      "chaos.test.1": 1
+    },
+    "errorsByType": {
+      "unknown": 2
+    },
+    "mostCommonError": [
+      "unknown",
+      2
+    ]
+  },
+  "retryAnalysis": {
+    "totalRetrySequences": 2,
+    "averageAttempts": 4,
+    "successRate": 0,
+    "retrySequences": [
+      {
+        "executionId": "exec_1756636534287_4dd9c4df",
+        "totalAttempts": 4,
+        "retryDelays": [
+          109,
+          204,
+          424
+        ],
+        "totalDuration": 737,
+        "success": false
+      },
+      {
+        "executionId": "exec_1756636535025_1b0b9dd9",
+        "totalAttempts": 4,
+        "retryDelays": [
+          107,
+          203,
+          406
+        ],
+        "totalDuration": 716,
+        "success": false
+      }
+    ]
+  },
+  "failureBudgetAccounting": {
+    "chaos.test.0": {
+      "totalRequests": 1,
+      "totalFailures": 1,
+      "errorRate": 1,
+      "budgetExceeded": true,
+      "threshold": 0.5
+    },
+    "chaos.test.1": {
+      "totalRequests": 1,
+      "totalFailures": 1,
+      "errorRate": 1,
+      "budgetExceeded": true,
+      "threshold": 0.5
+    }
+  },
+  "circuitBreakerStates": {
+    "chaos.test.0": {
+      "state": "closed",
+      "failures": 1,
+      "lastFailure": "2025-08-31T10:35:35.024Z"
+    },
+    "chaos.test.1": {
+      "state": "closed",
+      "failures": 1,
+      "lastFailure": "2025-08-31T10:35:35.741Z"
+    }
+  },
+  "degradationStates": {
+    "chaos": "degraded"
+  },
+  "moduleHealth": {
+    "chaos": {
+      "status": "degraded",
+      "failures": 2,
+      "lastFailure": "2025-08-31T10:35:35.741Z",
+      "lastError": "Test failure",
+      "degradationActions": [
+        {
+          "action": "increase_timeout",
+          "factor": 2
+        },
+        {
+          "action": "reduce_concurrency",
+          "factor": 0.5
+        }
+      ]
+    }
+  }
+}

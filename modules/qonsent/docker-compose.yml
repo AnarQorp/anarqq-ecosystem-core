@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  qonsent:
+    build: .
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - PORT=3003
+      - MONGODB_URI=mongodb://mongo:27017/qonsent
+      - SQUID_API_URL=http://squid-mock:3001
+      - QERBEROS_API_URL=http://qerberos-mock:3006
+      - EVENT_BUS_URL=redis://redis:6379
+    depends_on:
+      - mongo
+      - redis
+      - squid-mock
+      - qerberos-mock
+    volumes:
+      - ./src:/app/src
+    command: npm run dev
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - qonsent_mongo_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - qonsent_redis_data:/data
+
+  # Mock services for standalone development
+  squid-mock:
+    image: node:18-alpine
+    ports:
+      - "3001:3001"
+    working_dir: /app
+    volumes:
+      - ./src/mocks:/app
+    command: node squid-mock.js
+
+  qerberos-mock:
+    image: node:18-alpine
+    ports:
+      - "3006:3006"
+    working_dir: /app
+    volumes:
+      - ./src/mocks:/app
+    command: node qerberos-mock.js
+
+volumes:
+  qonsent_mongo_data:
+  qonsent_redis_data:

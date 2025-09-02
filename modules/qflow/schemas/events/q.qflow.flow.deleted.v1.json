@@ -1,0 +1,59 @@
+{
+  "$id": "q.qflow.flow.deleted.v1",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Qflow Flow Deleted Event",
+  "description": "Event emitted when a flow definition is deleted",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity that performed the action"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "flowId": {
+          "type": "string",
+          "description": "Unique identifier of the deleted flow"
+        },
+        "flowName": {
+          "type": "string",
+          "description": "Name of the deleted flow"
+        },
+        "flowVersion": {
+          "type": "string",
+          "description": "Version of the deleted flow"
+        },
+        "owner": {
+          "type": "string",
+          "description": "sQuid identity of the flow owner"
+        },
+        "daoSubnet": {
+          "type": "string",
+          "description": "DAO subnet the flow belonged to"
+        }
+      },
+      "required": ["flowId", "flowName", "flowVersion", "owner"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

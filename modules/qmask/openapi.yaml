@@ -1,0 +1,669 @@
+openapi: 3.0.0
+info:
+  title: Qmask API
+  description: Privacy & Anonymization module for Q ecosystem
+  version: 2.0.0
+  contact:
+    name: Q Ecosystem
+    url: https://q-ecosystem.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3007/api/v1
+    description: Development server
+  - url: https://qmask.q-ecosystem.com/api/v1
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: sQuid identity token
+
+  schemas:
+    MaskRule:
+      type: object
+      required:
+        - field
+        - strategy
+      properties:
+        field:
+          type: string
+          description: Field path to apply the rule to
+          example: "email"
+        strategy:
+          type: string
+          enum: [REDACT, HASH, ENCRYPT, ANONYMIZE, REMOVE]
+          description: Masking strategy to apply
+          example: "HASH"
+        params:
+          type: object
+          additionalProperties: true
+          description: Additional parameters for the strategy
+          example:
+            algorithm: "sha256"
+            salt: "random"
+
+    MaskProfile:
+      type: object
+      required:
+        - name
+        - rules
+        - version
+      properties:
+        name:
+          type: string
+          description: Profile name
+          example: "gdpr-basic"
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/MaskRule'
+          description: List of masking rules
+        defaults:
+          type: object
+          additionalProperties: true
+          description: Default values for masked fields
+          example:
+            redactedValue: "[REDACTED]"
+        version:
+          type: string
+          description: Profile version
+          example: "1.0.0"
+        description:
+          type: string
+          description: Profile description
+          example: "Basic GDPR compliance profile"
+        tags:
+          type: array
+          items:
+            type: string
+          description: Profile tags
+          example: ["gdpr", "basic"]
+        complianceFlags:
+          type: array
+          items:
+            type: string
+            enum: [GDPR, CCPA, HIPAA, SOX, PCI_DSS]
+          description: Compliance requirements met
+          example: ["GDPR"]
+
+    MaskingResult:
+      type: object
+      properties:
+        maskedData:
+          type: object
+          additionalProperties: true
+          description: Data with privacy masking applied
+        appliedRules:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              strategy:
+                type: string
+              applied:
+                type: boolean
+              reason:
+                type: string
+          description: List of rules that were applied
+        riskScore:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Re-identification risk score (0-1)
+          example: 0.3
+        complianceFlags:
+          type: array
+          items:
+            type: string
+          description: Compliance requirements met
+          example: ["GDPR"]
+        warnings:
+          type: array
+          items:
+            type: string
+          description: Warnings generated during masking
+
+    PrivacyOperation:
+      type: object
+      required:
+        - type
+        - dataTypes
+        - purpose
+        - retention
+        - jurisdiction
+      properties:
+        type:
+          type: string
+          enum: [COLLECTION, PROCESSING, STORAGE, SHARING, DELETION, ANALYSIS]
+          description: Type of data processing operation
+          example: "PROCESSING"
+        dataTypes:
+          type: array
+          items:
+            type: string
+          description: Types of personal data involved
+          example: ["email", "name", "address"]
+        purpose:
+          type: string
+          description: Purpose of processing
+          example: "Customer service"
+        recipients:
+          type: array
+          items:
+            type: string
+          description: Data recipients
+          example: ["internal-team", "third-party-processor"]
+        retention:
+          type: string
+          description: Data retention period
+          example: "2 years"
+        jurisdiction:
+          type: string
+          description: Legal jurisdiction
+          example: "EU"
+
+    PrivacyRisk:
+      type: object
+      properties:
+        category:
+          type: string
+          enum: [DATA_BREACH, RE_IDENTIFICATION, UNAUTHORIZED_ACCESS, DATA_MISUSE, COMPLIANCE_VIOLATION]
+          description: Risk category
+        description:
+          type: string
+          description: Risk description
+        severity:
+          type: string
+          enum: [LOW, MEDIUM, HIGH, CRITICAL]
+          description: Risk severity
+        mitigation:
+          type: string
+          description: Recommended mitigation
+
+    PrivacyAssessment:
+      type: object
+      properties:
+        riskLevel:
+          type: string
+          enum: [LOW, MEDIUM, HIGH, CRITICAL]
+          description: Overall privacy risk level
+        riskScore:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Numerical risk score (0-1)
+        risks:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrivacyRisk'
+          description: Identified privacy risks
+        recommendations:
+          type: array
+          items:
+            type: string
+          description: Privacy protection recommendations
+        complianceRequirements:
+          type: array
+          items:
+            type: string
+          description: Applicable compliance requirements
+
+    DataSubjectRequest:
+      type: object
+      required:
+        - type
+        - dataSubject
+        - description
+      properties:
+        type:
+          type: string
+          enum: [ACCESS, RECTIFICATION, ERASURE, PORTABILITY, RESTRICTION, OBJECTION]
+          description: Type of data subject request
+        dataSubject:
+          type: string
+          description: Data subject identifier
+          example: "user@example.com"
+        description:
+          type: string
+          description: Request description
+          example: "Request access to all personal data"
+
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+          description: Response status
+        code:
+          type: string
+          description: Response code
+        message:
+          type: string
+          description: Human readable message
+        data:
+          type: object
+          description: Response data
+        timestamp:
+          type: string
+          format: date-time
+          description: Response timestamp
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+          description: Response status
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Error details
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Check service health status
+      tags:
+        - Health
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /mask/apply:
+    post:
+      summary: Apply privacy masking
+      description: Apply privacy masking to data using a specified profile
+      tags:
+        - Masking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - data
+                - profileName
+              properties:
+                data:
+                  type: object
+                  additionalProperties: true
+                  description: Data object to apply masking to
+                profileName:
+                  type: string
+                  description: Name of the privacy profile to apply
+                context:
+                  type: object
+                  properties:
+                    purpose:
+                      type: string
+                    jurisdiction:
+                      type: string
+                    dataSubject:
+                      type: string
+                  description: Additional context for masking decisions
+      responses:
+        '200':
+          description: Masking applied successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/MaskingResult'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /profiles:
+    get:
+      summary: List privacy profiles
+      description: List privacy profiles with optional filtering
+      tags:
+        - Profiles
+      parameters:
+        - name: tags
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of tags to filter by
+        - name: complianceFlags
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of compliance flags to filter by
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Items per page
+      responses:
+        '200':
+          description: Profiles retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+    post:
+      summary: Create privacy profile
+      description: Create a new privacy profile
+      tags:
+        - Profiles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaskProfile'
+      responses:
+        '201':
+          description: Profile created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '409':
+          description: Profile already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /profiles/{name}:
+    get:
+      summary: Get privacy profile
+      description: Get a privacy profile by name
+      tags:
+        - Profiles
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Profile name
+      responses:
+        '200':
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/MaskProfile'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update privacy profile
+      description: Update an existing privacy profile
+      tags:
+        - Profiles
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Profile name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rules:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/MaskRule'
+                defaults:
+                  type: object
+                  additionalProperties: true
+                version:
+                  type: string
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete privacy profile
+      description: Delete a privacy profile
+      tags:
+        - Profiles
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Profile name
+      responses:
+        '200':
+          description: Profile deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /assessments:
+    get:
+      summary: List privacy assessments
+      description: List privacy assessments with optional filtering
+      tags:
+        - Assessments
+      parameters:
+        - name: riskLevel
+          in: query
+          schema:
+            type: string
+            enum: [LOW, MEDIUM, HIGH, CRITICAL]
+          description: Filter by risk level
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [DRAFT, APPROVED, REJECTED, EXPIRED]
+          description: Filter by status
+        - name: operationType
+          in: query
+          schema:
+            type: string
+            enum: [COLLECTION, PROCESSING, STORAGE, SHARING, DELETION, ANALYSIS]
+          description: Filter by operation type
+      responses:
+        '200':
+          description: Assessments retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+    post:
+      summary: Perform privacy assessment
+      description: Perform a privacy impact assessment
+      tags:
+        - Assessments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - operation
+              properties:
+                operation:
+                  $ref: '#/components/schemas/PrivacyOperation'
+      responses:
+        '201':
+          description: Assessment completed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/PrivacyAssessment'
+
+  /compliance/dsr:
+    get:
+      summary: List data subject requests
+      description: List data subject requests with optional filtering
+      tags:
+        - Compliance
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [PENDING, IN_PROGRESS, COMPLETED, REJECTED]
+          description: Filter by status
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [ACCESS, RECTIFICATION, ERASURE, PORTABILITY, RESTRICTION, OBJECTION]
+          description: Filter by request type
+      responses:
+        '200':
+          description: DSRs retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+    post:
+      summary: Create data subject request
+      description: Create a new data subject request (GDPR Article 15-22)
+      tags:
+        - Compliance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DataSubjectRequest'
+      responses:
+        '201':
+          description: DSR created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /compliance/report/{type}:
+    get:
+      summary: Generate compliance report
+      description: Generate compliance report for specified regulation
+      tags:
+        - Compliance
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [GDPR, CCPA, HIPAA, SOX, PCI_DSS]
+          description: Compliance regulation type
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Report start date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Report end date
+      responses:
+        '200':
+          description: Report generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+tags:
+  - name: Health
+    description: Health check endpoints
+  - name: Masking
+    description: Privacy masking operations
+  - name: Profiles
+    description: Privacy profile management
+  - name: Assessments
+    description: Privacy impact assessments
+  - name: Compliance
+    description: Compliance and data subject rights

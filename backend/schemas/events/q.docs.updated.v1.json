@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.docs.updated.v1",
+  "title": "Documentation Updated Event",
+  "description": "Event emitted when documentation is updated",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "description": "sQuid identity that performed the update"
+        },
+        "subId": {
+          "type": "string",
+          "description": "Sub-identity if applicable"
+        }
+      },
+      "required": ["squidId"]
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "updateType": {
+          "type": "string",
+          "enum": ["manual", "automated", "module-release", "scheduled"],
+          "description": "Type of documentation update"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "Relative path to the updated file"
+              },
+              "action": {
+                "type": "string",
+                "enum": ["created", "updated", "deleted", "moved"],
+                "description": "Action performed on the file"
+              },
+              "size": {
+                "type": "number",
+                "description": "File size in bytes"
+              },
+              "checksum": {
+                "type": "string",
+                "description": "File checksum for integrity verification"
+              }
+            },
+            "required": ["path", "action"]
+          },
+          "description": "List of files that were updated"
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of modules affected by the update"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["global", "module", "api", "mcp", "deployment", "troubleshooting", "examples", "video-scripts"]
+          },
+          "description": "Categories of documentation updated"
+        },
+        "triggerPipeline": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether this update should trigger the automation pipeline"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "default": "medium",
+          "description": "Priority level of the update"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "branch": {
+              "type": "string",
+              "description": "Git branch where the update occurred"
+            },
+            "commit": {
+              "type": "string",
+              "description": "Git commit hash"
+            },
+            "pullRequest": {
+              "type": "string",
+              "description": "Pull request number if applicable"
+            },
+            "reviewer": {
+              "type": "string",
+              "description": "sQuid ID of the reviewer"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "required": ["updateType", "files"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

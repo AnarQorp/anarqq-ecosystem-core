@@ -1,0 +1,353 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Qchat IPFS Pinning Policy",
+  "description": "Defines pinning policies for different types of Qchat content",
+  "version": "1.0.0",
+  "policies": {
+    "messages": {
+      "description": "Chat message content and metadata",
+      "pinningStrategy": "CONDITIONAL",
+      "conditions": [
+        {
+          "condition": "messageType === 'SYSTEM'",
+          "strategy": "PERMANENT",
+          "priority": "HIGH",
+          "replicationFactor": 3
+        },
+        {
+          "condition": "roomType === 'DAO'",
+          "strategy": "EXTENDED",
+          "retentionDays": 2555,
+          "priority": "HIGH",
+          "replicationFactor": 3
+        },
+        {
+          "condition": "roomType === 'PUBLIC'",
+          "strategy": "STANDARD",
+          "retentionDays": 730,
+          "priority": "MEDIUM",
+          "replicationFactor": 2
+        },
+        {
+          "condition": "roomType === 'PRIVATE'",
+          "strategy": "STANDARD",
+          "retentionDays": 365,
+          "priority": "MEDIUM",
+          "replicationFactor": 2
+        },
+        {
+          "condition": "ephemeral === true",
+          "strategy": "TEMPORARY",
+          "retentionHours": 24,
+          "priority": "LOW",
+          "replicationFactor": 1
+        }
+      ],
+      "defaultStrategy": "STANDARD",
+      "defaultRetentionDays": 365,
+      "defaultPriority": "MEDIUM",
+      "defaultReplicationFactor": 2,
+      "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+      "costOptimization": true
+    },
+    "rooms": {
+      "description": "Room configuration and metadata",
+      "pinningStrategy": "PERMANENT",
+      "priority": "HIGH",
+      "replicationFactor": 3,
+      "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+      "backupFrequency": "DAILY",
+      "versionHistory": true,
+      "maxVersions": 10
+    },
+    "members": {
+      "description": "Room membership data",
+      "pinningStrategy": "PERMANENT",
+      "priority": "HIGH",
+      "replicationFactor": 3,
+      "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+      "backupFrequency": "HOURLY",
+      "versionHistory": true,
+      "maxVersions": 50
+    },
+    "moderation": {
+      "description": "Moderation actions and audit records",
+      "pinningStrategy": "PERMANENT",
+      "priority": "CRITICAL",
+      "replicationFactor": 5,
+      "geoDistribution": ["us-east", "us-west", "eu-west", "eu-central", "asia-pacific"],
+      "backupFrequency": "REAL_TIME",
+      "versionHistory": true,
+      "maxVersions": 100,
+      "immutable": true,
+      "complianceRetention": {
+        "gdpr": 2555,
+        "sox": 3650,
+        "custom": 3650
+      }
+    },
+    "attachments": {
+      "description": "File attachments and media content",
+      "pinningStrategy": "CONDITIONAL",
+      "conditions": [
+        {
+          "condition": "size > 100MB",
+          "strategy": "COLD_STORAGE",
+          "retentionDays": 365,
+          "priority": "LOW",
+          "replicationFactor": 1,
+          "compressionEnabled": true
+        },
+        {
+          "condition": "mimeType.startsWith('image/')",
+          "strategy": "STANDARD",
+          "retentionDays": 730,
+          "priority": "MEDIUM",
+          "replicationFactor": 2,
+          "thumbnailGeneration": true
+        },
+        {
+          "condition": "mimeType.startsWith('video/')",
+          "strategy": "COLD_STORAGE",
+          "retentionDays": 365,
+          "priority": "LOW",
+          "replicationFactor": 1,
+          "transcoding": true,
+          "compressionEnabled": true
+        },
+        {
+          "condition": "mimeType === 'application/pdf'",
+          "strategy": "STANDARD",
+          "retentionDays": 1095,
+          "priority": "MEDIUM",
+          "replicationFactor": 2
+        }
+      ],
+      "defaultStrategy": "STANDARD",
+      "defaultRetentionDays": 365,
+      "defaultPriority": "MEDIUM",
+      "defaultReplicationFactor": 2,
+      "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+      "costOptimization": true,
+      "deduplication": true
+    },
+    "presence": {
+      "description": "User presence and activity data",
+      "pinningStrategy": "TEMPORARY",
+      "retentionDays": 30,
+      "priority": "LOW",
+      "replicationFactor": 1,
+      "geoDistribution": ["local"],
+      "aggregationEnabled": true,
+      "privacyMode": "ANONYMIZED"
+    },
+    "history": {
+      "description": "Message history indices",
+      "pinningStrategy": "CONDITIONAL",
+      "conditions": [
+        {
+          "condition": "age < 30 days",
+          "strategy": "HOT_STORAGE",
+          "priority": "HIGH",
+          "replicationFactor": 3
+        },
+        {
+          "condition": "age < 365 days",
+          "strategy": "WARM_STORAGE",
+          "priority": "MEDIUM",
+          "replicationFactor": 2
+        },
+        {
+          "condition": "age >= 365 days",
+          "strategy": "COLD_STORAGE",
+          "priority": "LOW",
+          "replicationFactor": 1
+        }
+      ],
+      "defaultStrategy": "WARM_STORAGE",
+      "defaultPriority": "MEDIUM",
+      "defaultReplicationFactor": 2,
+      "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+      "compressionEnabled": true
+    },
+    "search": {
+      "description": "Search indices and metadata",
+      "pinningStrategy": "CONDITIONAL",
+      "conditions": [
+        {
+          "condition": "indexType === 'primary'",
+          "strategy": "PERMANENT",
+          "priority": "HIGH",
+          "replicationFactor": 3
+        },
+        {
+          "condition": "indexType === 'secondary'",
+          "strategy": "STANDARD",
+          "retentionDays": 365,
+          "priority": "MEDIUM",
+          "replicationFactor": 2
+        }
+      ],
+      "defaultStrategy": "STANDARD",
+      "defaultRetentionDays": 365,
+      "defaultPriority": "MEDIUM",
+      "defaultReplicationFactor": 2,
+      "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+      "encryptionRequired": true
+    }
+  },
+  "globalSettings": {
+    "maxPinSize": "10GB",
+    "maxTotalPins": 1000000,
+    "garbageCollectionInterval": "24h",
+    "replicationCheckInterval": "1h",
+    "costBudget": {
+      "monthly": "$1000",
+      "alertThreshold": 0.8,
+      "hardLimit": 1.2
+    },
+    "performance": {
+      "maxRetrievalLatency": "500ms",
+      "targetAvailability": 0.999,
+      "bandwidthLimit": "1Gbps"
+    },
+    "compliance": {
+      "gdprCompliant": true,
+      "dataResidency": ["US", "EU"],
+      "encryptionAtRest": true,
+      "auditLogging": true
+    }
+  },
+  "strategies": {
+    "PERMANENT": {
+      "description": "Content pinned permanently with high availability",
+      "unpinPolicy": "NEVER",
+      "monitoring": "CONTINUOUS",
+      "alerting": "IMMEDIATE"
+    },
+    "EXTENDED": {
+      "description": "Content pinned for extended periods with regular monitoring",
+      "unpinPolicy": "AFTER_RETENTION",
+      "monitoring": "DAILY",
+      "alerting": "DELAYED"
+    },
+    "STANDARD": {
+      "description": "Content pinned for standard retention periods",
+      "unpinPolicy": "AFTER_RETENTION",
+      "monitoring": "WEEKLY",
+      "alerting": "BATCH"
+    },
+    "TEMPORARY": {
+      "description": "Content pinned for short periods with minimal monitoring",
+      "unpinPolicy": "AFTER_RETENTION",
+      "monitoring": "MONTHLY",
+      "alerting": "NONE"
+    },
+    "CONDITIONAL": {
+      "description": "Content pinning based on dynamic conditions",
+      "unpinPolicy": "CONDITION_BASED",
+      "monitoring": "CONDITION_BASED",
+      "alerting": "CONDITION_BASED"
+    },
+    "HOT_STORAGE": {
+      "description": "Frequently accessed content with low latency requirements",
+      "accessPattern": "FREQUENT",
+      "latencyTarget": "50ms",
+      "availabilityTarget": 0.9999
+    },
+    "WARM_STORAGE": {
+      "description": "Occasionally accessed content with moderate latency requirements",
+      "accessPattern": "OCCASIONAL",
+      "latencyTarget": "200ms",
+      "availabilityTarget": 0.999
+    },
+    "COLD_STORAGE": {
+      "description": "Rarely accessed content with relaxed latency requirements",
+      "accessPattern": "RARE",
+      "latencyTarget": "1000ms",
+      "availabilityTarget": 0.99
+    }
+  },
+  "priorities": {
+    "CRITICAL": {
+      "weight": 100,
+      "description": "Mission-critical content requiring immediate attention"
+    },
+    "HIGH": {
+      "weight": 80,
+      "description": "High-priority content requiring prompt attention"
+    },
+    "MEDIUM": {
+      "weight": 50,
+      "description": "Standard priority content"
+    },
+    "LOW": {
+      "weight": 20,
+      "description": "Low priority content that can be delayed"
+    }
+  },
+  "regions": {
+    "us-east": {
+      "provider": "ipfs-cluster",
+      "endpoint": "https://ipfs-us-east.q.network",
+      "capacity": "100TB",
+      "costPerGB": 0.023
+    },
+    "us-west": {
+      "provider": "ipfs-cluster",
+      "endpoint": "https://ipfs-us-west.q.network",
+      "capacity": "100TB",
+      "costPerGB": 0.025
+    },
+    "eu-west": {
+      "provider": "ipfs-cluster",
+      "endpoint": "https://ipfs-eu-west.q.network",
+      "capacity": "50TB",
+      "costPerGB": 0.028
+    },
+    "eu-central": {
+      "provider": "ipfs-cluster",
+      "endpoint": "https://ipfs-eu-central.q.network",
+      "capacity": "50TB",
+      "costPerGB": 0.030
+    },
+    "asia-pacific": {
+      "provider": "ipfs-cluster",
+      "endpoint": "https://ipfs-apac.q.network",
+      "capacity": "75TB",
+      "costPerGB": 0.032
+    },
+    "local": {
+      "provider": "local-node",
+      "endpoint": "http://localhost:5001",
+      "capacity": "1TB",
+      "costPerGB": 0.0
+    }
+  },
+  "automation": {
+    "garbageCollection": {
+      "enabled": true,
+      "schedule": "0 2 * * *",
+      "gracePeriod": "30d",
+      "dryRun": false
+    },
+    "replication": {
+      "enabled": true,
+      "schedule": "0 */6 * * *",
+      "healthCheck": true,
+      "autoRepair": true
+    },
+    "costOptimization": {
+      "enabled": true,
+      "schedule": "0 1 * * 0",
+      "moveToLowerTier": true,
+      "compressionThreshold": "1MB"
+    },
+    "compliance": {
+      "enabled": true,
+      "schedule": "0 0 1 * *",
+      "gdprCleanup": true,
+      "auditReporting": true
+    }
+  }
+}

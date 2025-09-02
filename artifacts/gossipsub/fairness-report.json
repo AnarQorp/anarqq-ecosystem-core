@@ -1,0 +1,42 @@
+{
+  "validationId": "validation_1756597400000_abc123",
+  "fairnessMetrics": {
+    "fairnessIndex": 1.0,
+    "starvationDetected": false,
+    "backoffCompliance": true
+  },
+  "jobDistribution": {
+    "totalJobs": 1000,
+    "lostJobs": 5,
+    "lostJobsPercent": "0.50",
+    "reannounceSuccess": 4
+  },
+  "nodeAnalysis": [
+    {
+      "nodeId": "node_0",
+      "processedJobs": 199,
+      "backoffLevel": 0
+    },
+    {
+      "nodeId": "node_1",
+      "processedJobs": 200,
+      "backoffLevel": 0
+    },
+    {
+      "nodeId": "node_2",
+      "processedJobs": 201,
+      "backoffLevel": 1
+    },
+    {
+      "nodeId": "node_3",
+      "processedJobs": 198,
+      "backoffLevel": 0
+    },
+    {
+      "nodeId": "node_4",
+      "processedJobs": 197,
+      "backoffLevel": 0
+    }
+  ],
+  "validationResult": "PASSED"
+}

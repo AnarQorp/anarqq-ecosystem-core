@@ -1,0 +1,64 @@
+{
+  "$id": "q.qflow.flow.ownership.transferred.v1",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Qflow Flow Ownership Transferred Event",
+  "description": "Event emitted when flow ownership is transferred",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity that performed the action"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "flowId": {
+          "type": "string",
+          "description": "Unique identifier of the flow"
+        },
+        "previousOwner": {
+          "type": "string",
+          "description": "Previous owner sQuid identity"
+        },
+        "newOwner": {
+          "type": "string",
+          "description": "New owner sQuid identity"
+        },
+        "transferredBy": {
+          "type": "string",
+          "description": "sQuid identity that initiated the transfer"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Reason for the ownership transfer"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the transfer occurred"
+        }
+      },
+      "required": ["flowId", "previousOwner", "newOwner", "transferredBy", "timestamp"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

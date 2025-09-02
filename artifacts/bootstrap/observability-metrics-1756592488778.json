@@ -1,0 +1,99 @@
+{
+  "timestamp": "2025-08-30T22:21:28.776Z",
+  "validationService": {
+    "uptime": 3321,
+    "totalValidations": 3,
+    "successRate": 1,
+    "averageResponseTime": 689.3333333333334
+  },
+  "eventBus": {
+    "connected": true,
+    "stats": {
+      "totalEvents": 0,
+      "activeSubscriptions": 5,
+      "registeredSchemas": 0,
+      "topicCounts": {}
+    }
+  },
+  "observability": {
+    "healthStatus": {
+      "status": "healthy",
+      "timestamp": "2025-08-30T22:21:28.777Z",
+      "version": "1.0.0",
+      "dependencies": {},
+      "metrics": {
+        "uptime": 0,
+        "requestCount": 7,
+        "errorRate": 0,
+        "avgResponseTime": 295.42857142857144
+      },
+      "slo": {
+        "latency": {
+          "p50": 0,
+          "p95": 2020,
+          "p99": 2020,
+          "targets": {
+            "p50": 50,
+            "p95": 150,
+            "p99": 200
+          }
+        },
+        "availability": {
+          "uptime": null,
+          "errorRate": 0,
+          "targets": {
+            "uptime": 99.9,
+            "errorBudget": 0.1
+          }
+        }
+      }
+    },
+    "metrics": {
+      "timestamp": "2025-08-30T22:21:28.777Z",
+      "metrics": {
+        "uptime": 0,
+        "requestCount": 7,
+        "errorCount": 0,
+        "errorRate": 0,
+        "avgResponseTime": 295.42857142857144,
+        "p50Latency": 0,
+        "p95Latency": 2020,
+        "p99Latency": 2020,
+        "currentRPS": 0,
+        "concurrentRequests": 0,
+        "memoryUsage": 0,
+        "cpuUsage": 0
+      },
+      "sloTargets": {
+        "latency": {
+          "p50": 50,
+          "p95": 150,
+          "p99": 200
+        },
+        "availability": {
+          "uptime": 99.9,
+          "errorBudget": 0.1
+        },
+        "throughput": {
+          "rps": 1000,
+          "concurrent": 100
+        }
+      }
+    }
+  },
+  "system": {
+    "memoryUsage": {
+      "rss": 55504896,
+      "heapTotal": 12713984,
+      "heapUsed": 8975856,
+      "external": 3193427,
+      "arrayBuffers": 74898
+    },
+    "cpuUsage": {
+      "user": 229003,
+      "system": 56520
+    },
+    "nodeVersion": "v20.19.4",
+    "platform": "linux"
+  }
+}

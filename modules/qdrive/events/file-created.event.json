@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/events/qdrive/file-created.v1.json",
+  "title": "File Created Event",
+  "description": "Event published when a file is uploaded to Qdrive",
+  "type": "object",
+  "properties": {
+    "topic": {
+      "type": "string",
+      "const": "q.qdrive.file.created.v1"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp in ISO 8601 format"
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "pattern": "^squid_[a-zA-Z0-9]{32}$",
+          "description": "sQuid ID of the user who uploaded the file"
+        },
+        "subId": {
+          "type": "string",
+          "pattern": "^sub_[a-zA-Z0-9]{32}$",
+          "description": "Optional subidentity ID"
+        },
+        "daoId": {
+          "type": "string",
+          "pattern": "^dao_[a-zA-Z0-9]{32}$",
+          "description": "Optional DAO context"
+        }
+      },
+      "required": ["squidId"],
+      "additionalProperties": false
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "cid": {
+          "type": "string",
+          "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^baf[a-z0-9]{56}$",
+          "description": "IPFS Content ID of the uploaded file"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "File name"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "File size in bytes"
+        },
+        "mimeType": {
+          "type": "string",
+          "description": "MIME type of the file"
+        },
+        "encrypted": {
+          "type": "boolean",
+          "description": "Whether the file is encrypted"
+        },
+        "privacy": {
+          "type": "string",
+          "enum": ["public", "private", "dao-only"],
+          "description": "Privacy level of the file"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "maxItems": 20,
+          "uniqueItems": true,
+          "description": "File tags"
+        },
+        "retentionDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3650,
+          "description": "Retention period in days"
+        },
+        "uploadSource": {
+          "type": "string",
+          "enum": ["web", "api", "mcp", "mobile"],
+          "description": "Source of the upload"
+        }
+      },
+      "required": [
+        "cid",
+        "name",
+        "size",
+        "mimeType",
+        "encrypted",
+        "privacy"
+      ],
+      "additionalProperties": false
+    },
+    "signature": {
+      "type": "string",
+      "description": "Cryptographic signature of the event"
+    },
+    "cid": {
+      "type": "string",
+      "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^baf[a-z0-9]{56}$",
+      "description": "Content ID of the event itself"
+    }
+  },
+  "required": [
+    "topic",
+    "timestamp",
+    "actor",
+    "data"
+  ],
+  "additionalProperties": false
+}

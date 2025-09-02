@@ -1,0 +1,74 @@
+{
+  "consensusId": "cons_demo-exec-001_payment-step-001_bc69f147",
+  "execId": "demo-exec-001",
+  "stepId": "payment-step-001",
+  "operation": "payment",
+  "timestamp": "2025-08-30T23:11:59.371Z",
+  "quorum": {
+    "required": 3,
+    "achieved": 5,
+    "threshold": 4
+  },
+  "consensus": {
+    "reached": true,
+    "decision": "approve",
+    "confidence": 0.6296000724625159,
+    "analysis": {
+      "totalVotes": 5,
+      "approvals": 4,
+      "rejections": 1,
+      "majorityThreshold": 3,
+      "avgConfidence": 0.7870000905781448,
+      "consensusStrength": 0.8
+    }
+  },
+  "votes": [
+    {
+      "nodeId": "node-1",
+      "vote": "approve",
+      "confidence": 0.7088983310529237,
+      "timestamp": "2025-08-30T23:11:59.572Z"
+    },
+    {
+      "nodeId": "node-2",
+      "vote": "approve",
+      "confidence": 0.7295648957250181,
+      "timestamp": "2025-08-30T23:11:59.572Z"
+    },
+    {
+      "nodeId": "node-3",
+      "vote": "reject",
+      "confidence": 0.7941309903335348,
+      "timestamp": "2025-08-30T23:11:59.573Z"
+    },
+    {
+      "nodeId": "node-4",
+      "vote": "approve",
+      "confidence": 0.9043115503855181,
+      "timestamp": "2025-08-30T23:11:59.573Z"
+    },
+    {
+      "nodeId": "node-5",
+      "vote": "approve",
+      "confidence": 0.7980946853937297,
+      "timestamp": "2025-08-30T23:11:59.573Z"
+    }
+  ],
+  "recovery": {
+    "required": true,
+    "startTime": "2025-08-30T23:11:59.574Z",
+    "duration": 1101.2317559999992,
+    "successful": true,
+    "actions": [
+      {
+        "type": "retry_vote_collection",
+        "description": "Retry collecting votes from unresponsive nodes",
+        "timestamp": "2025-08-30T23:11:59.574Z"
+      }
+    ],
+    "retryAttempts": 1,
+    "maxRetries": 3,
+    "endTime": "2025-08-30T23:12:00.675Z"
+  },
+  "executionTime": 1304.5433030000004
+}

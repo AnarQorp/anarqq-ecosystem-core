@@ -1,0 +1,137 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.io/qnet/events/node-alert.json",
+  "title": "Node Alert Event",
+  "description": "Event published when a node health alert is triggered",
+  "type": "object",
+  "properties": {
+    "eventType": {
+      "type": "string",
+      "const": "q.qnet.node.alert.v1"
+    },
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event identifier"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp"
+    },
+    "nodeId": {
+      "type": "string",
+      "pattern": "^qnet-[a-z0-9-]+$",
+      "description": "Node identifier with alert"
+    },
+    "nodeName": {
+      "type": "string",
+      "description": "Human-readable node name"
+    },
+    "region": {
+      "type": "string",
+      "enum": [
+        "us-east-1", "us-west-1", "us-west-2",
+        "eu-west-1", "eu-central-1",
+        "ap-southeast-1", "ap-northeast-1",
+        "global", "dev"
+      ],
+      "description": "Node region"
+    },
+    "alertType": {
+      "type": "string",
+      "enum": [
+        "high_latency", "low_uptime", "high_error_rate",
+        "connection_failure", "resource_exhaustion",
+        "security_incident", "performance_degradation"
+      ],
+      "description": "Type of alert"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["info", "warning", "error", "critical"],
+      "description": "Alert severity level"
+    },
+    "message": {
+      "type": "string",
+      "description": "Human-readable alert message"
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "latency": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Current latency in ms"
+        },
+        "uptime": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Current uptime percentage"
+        },
+        "errorRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Current error rate"
+        },
+        "threshold": {
+          "type": "number",
+          "description": "Threshold that was exceeded"
+        }
+      },
+      "description": "Current metrics that triggered alert"
+    },
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "latency": {
+          "type": "number",
+          "minimum": 0
+        },
+        "uptime": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "errorRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "description": "Configured thresholds"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "notify_admin", "auto_restart", "failover",
+          "scale_up", "throttle_traffic", "investigate"
+        ]
+      },
+      "description": "Recommended or taken actions"
+    },
+    "resolved": {
+      "type": "boolean",
+      "description": "Whether alert has been resolved"
+    },
+    "resolvedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When alert was resolved"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Additional alert metadata"
+    }
+  },
+  "required": [
+    "eventType", "eventId", "timestamp", "nodeId", 
+    "region", "alertType", "severity", "message"
+  ],
+  "additionalProperties": false
+}

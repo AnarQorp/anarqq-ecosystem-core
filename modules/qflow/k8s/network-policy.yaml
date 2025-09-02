@@ -1,0 +1,162 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: qflow-network-policy
+  namespace: qflow
+  labels:
+    app.kubernetes.io/name: qflow
+    app.kubernetes.io/component: security
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: qflow
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow ingress from ingress controller
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8080
+    - protocol: TCP
+      port: 9090
+  # Allow ingress from monitoring
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 9090
+  # Allow ingress from other qflow pods (for libp2p)
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: qflow
+    ports:
+    - protocol: TCP
+      port: 4001
+  egress:
+  # Allow egress to IPFS
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: qflow-ipfs
+    ports:
+    - protocol: TCP
+      port: 5001
+  # Allow egress to Redis
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: qflow-redis
+    ports:
+    - protocol: TCP
+      port: 6379
+  # Allow egress to other qflow pods (for libp2p)
+  - to:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: qflow
+    ports:
+    - protocol: TCP
+      port: 4001
+  # Allow egress to DNS
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow egress to external services (ecosystem modules)
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: qflow-ipfs-network-policy
+  namespace: qflow
+  labels:
+    app.kubernetes.io/name: qflow-ipfs
+    app.kubernetes.io/component: security
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: qflow-ipfs
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow ingress from qflow pods
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: qflow
+    ports:
+    - protocol: TCP
+      port: 5001
+  # Allow ingress from monitoring
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 5001
+  egress:
+  # Allow egress to DNS
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53
+  # Allow egress to IPFS network
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 4001
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: qflow-redis-network-policy
+  namespace: qflow
+  labels:
+    app.kubernetes.io/name: qflow-redis
+    app.kubernetes.io/component: security
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: qflow-redis
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow ingress from qflow pods
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: qflow
+    ports:
+    - protocol: TCP
+      port: 6379
+  # Allow ingress from monitoring
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: monitoring
+    ports:
+    - protocol: TCP
+      port: 6379
+  egress:
+  # Allow egress to DNS
+  - to: []
+    ports:
+    - protocol: UDP
+      port: 53

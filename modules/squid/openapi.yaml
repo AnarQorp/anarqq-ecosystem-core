@@ -1,0 +1,368 @@
+openapi: 3.0.3
+info:
+  title: sQuid Identity API
+  description: Identity & Subidentities management for Q ecosystem
+  version: 1.0.0
+  contact:
+    name: Q Ecosystem Team
+    url: https://github.com/anarq/ecosystem
+
+servers:
+  - url: http://localhost:3001
+    description: Development server
+  - url: https://squid.q-ecosystem.com
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /identity:
+    post:
+      summary: Create new root identity
+      operationId: createIdentity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateIdentityRequest'
+      responses:
+        '201':
+          description: Identity created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /identity/{identityId}:
+    get:
+      summary: Get identity information
+      operationId: getIdentity
+      parameters:
+        - name: identityId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Identity information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityResponse'
+        '404':
+          description: Identity not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /identity/{identityId}/subidentity:
+    post:
+      summary: Create subidentity
+      operationId: createSubidentity
+      parameters:
+        - name: identityId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubidentityRequest'
+      responses:
+        '201':
+          description: Subidentity created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /identity/{identityId}/verify:
+    put:
+      summary: Submit identity verification
+      operationId: submitVerification
+      parameters:
+        - name: identityId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationRequest'
+      responses:
+        '200':
+          description: Verification submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityResponse'
+        '400':
+          description: Invalid verification data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /identity/{identityId}/reputation:
+    get:
+      summary: Get identity reputation
+      operationId: getReputation
+      parameters:
+        - name: identityId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Reputation information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReputationResponse'
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+        - version
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        dependencies:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [up, down, degraded]
+              latency:
+                type: number
+              lastCheck:
+                type: string
+                format: date-time
+
+    CreateIdentityRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        metadata:
+          type: object
+          additionalProperties: true
+
+    CreateSubidentityRequest:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        type:
+          type: string
+          enum: [DAO, ENTERPRISE, CONSENTIDA, AID]
+        description:
+          type: string
+          maxLength: 500
+        metadata:
+          type: object
+          additionalProperties: true
+
+    VerificationRequest:
+      type: object
+      required:
+        - fullName
+        - dateOfBirth
+        - documentType
+        - documentNumber
+      properties:
+        fullName:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        documentType:
+          type: string
+          enum: [passport, drivers_license, national_id]
+        documentNumber:
+          type: string
+
+    IdentityResponse:
+      type: object
+      required:
+        - status
+        - data
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Identity'
+        cid:
+          type: string
+
+    ReputationResponse:
+      type: object
+      required:
+        - status
+        - data
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        data:
+          type: object
+          properties:
+            identityId:
+              type: string
+              format: uuid
+            score:
+              type: number
+              minimum: 0
+              maximum: 1000
+            level:
+              type: string
+              enum: [NOVICE, TRUSTED, EXPERT, AUTHORITY]
+            lastUpdated:
+              type: string
+              format: date-time
+
+    Identity:
+      type: object
+      required:
+        - did
+        - name
+        - type
+        - status
+        - createdAt
+      properties:
+        did:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+          enum: [ROOT, DAO, ENTERPRISE, CONSENTIDA, AID]
+        parentId:
+          type: string
+          format: uuid
+        rootId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE, SUSPENDED, DELETED, PENDING_VERIFICATION]
+        verificationLevel:
+          type: string
+          enum: [UNVERIFIED, BASIC, ENHANCED, INSTITUTIONAL]
+        reputation:
+          type: number
+          minimum: 0
+          maximum: 1000
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+          additionalProperties: true
+
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - code
+        - message
+      properties:
+        status:
+          type: string
+          enum: [error]
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string
+        retryable:
+          type: boolean
+
+  securitySchemes:
+    SquidAuth:
+      type: apiKey
+      in: header
+      name: x-squid-id
+      description: sQuid identity authentication
+
+security:
+  - SquidAuth: []

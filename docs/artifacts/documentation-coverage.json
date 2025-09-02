@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-08-30T18:16:03.785Z",
+  "coverage": {
+    "documentation": {
+      "completeness": 100,
+      "modules": {
+        "total": 14,
+        "complete": 14,
+        "percentage": 100
+      }
+    },
+    "apis": {
+      "openapi": 100,
+      "mcp": 100
+    },
+    "languages": {
+      "bilingual": 0,
+      "english": 0,
+      "spanish": 0
+    }
+  }
+}

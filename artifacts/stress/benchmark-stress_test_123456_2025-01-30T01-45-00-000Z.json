@@ -1,0 +1,34 @@
+{
+  "stressTestId": "stress_test_123456",
+  "testConfiguration": {
+    "eventCount": 1000,
+    "parallelism": 100,
+    "maxErrorRate": 0.05
+  },
+  "results": {
+    "completedEvents": 985,
+    "failedEvents": 15,
+    "errorRate": 0.015,
+    "throughput": 125.5,
+    "latencies": [45, 52, 38, 67, 41, 59, 48, 55, 62, 44],
+    "errors": [
+      {
+        "eventId": "stress_event_123",
+        "error": "Simulated stress test failure"
+      }
+    ]
+  },
+  "benchmarks": {
+    "p50Latency": 48.5,
+    "p95Latency": 65.2,
+    "p99Latency": 72.8,
+    "maxLatency": 89.3,
+    "minLatency": 32.1
+  },
+  "performance": {
+    "throughput": 125.5,
+    "errorRate": 0.015,
+    "errorRatePercent": "1.50"
+  },
+  "testResult": "PASSED"
+}

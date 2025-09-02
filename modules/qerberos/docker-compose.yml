@@ -1,0 +1,126 @@
+version: '3.8'
+
+services:
+  qerberos:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - LOG_LEVEL=info
+      - IPFS_API_URL=http://ipfs:5001
+      - IPFS_GATEWAY_URL=http://ipfs:8080
+      # Mock all external services in standalone mode
+      - MOCK_SQUID=true
+      - MOCK_QONSENT=true
+      - MOCK_QLOCK=true
+      - MOCK_QINDEX=true
+      # ML Configuration
+      - ML_ANOMALY_THRESHOLD=0.8
+      - RISK_SCORE_CACHE_TTL=300
+      - ALERT_RETENTION_DAYS=90
+      # Compliance Configuration
+      - GDPR_ENABLED=true
+      - SOC2_ENABLED=true
+      - AUDIT_RETENTION_YEARS=7
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - qerberos_data:/app/data
+    depends_on:
+      - ipfs
+      - redis
+    networks:
+      - qerberos_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - "4001:4001"
+      - "5001:5001"
+      - "8080:8080"
+    volumes:
+      - ipfs_data:/data/ipfs
+    environment:
+      - IPFS_PROFILE=server
+    networks:
+      - qerberos_network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - qerberos_network
+    command: redis-server --appendonly yes
+
+  # Mock services for standalone mode
+  mock-squid:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3001:1080"
+    environment:
+      - MOCKSERVER_PROPERTY_FILE=/config/mockserver.properties
+    volumes:
+      - ./mocks/squid:/config
+    networks:
+      - qerberos_network
+    profiles:
+      - mock
+
+  mock-qonsent:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3002:1080"
+    environment:
+      - MOCKSERVER_PROPERTY_FILE=/config/mockserver.properties
+    volumes:
+      - ./mocks/qonsent:/config
+    networks:
+      - qerberos_network
+    profiles:
+      - mock
+
+  mock-qlock:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3003:1080"
+    environment:
+      - MOCKSERVER_PROPERTY_FILE=/config/mockserver.properties
+    volumes:
+      - ./mocks/qlock:/config
+    networks:
+      - qerberos_network
+    profiles:
+      - mock
+
+  mock-qindex:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3004:1080"
+    environment:
+      - MOCKSERVER_PROPERTY_FILE=/config/mockserver.properties
+    volumes:
+      - ./mocks/qindex:/config
+    networks:
+      - qerberos_network
+    profiles:
+      - mock
+
+volumes:
+  qerberos_data:
+  ipfs_data:
+  redis_data:
+
+networks:
+  qerberos_network:
+    driver: bridge

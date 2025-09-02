@@ -1,0 +1,141 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.qflow.exec.step.dispatched.v1",
+  "title": "Qflow Execution Step Dispatched Event",
+  "description": "Event emitted when a flow step is dispatched to a QNET node for execution",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity executing the flow"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "executionId": {
+          "type": "string",
+          "description": "Unique identifier for the execution instance"
+        },
+        "stepId": {
+          "type": "string",
+          "description": "Unique identifier for the step being dispatched"
+        },
+        "stepType": {
+          "type": "string",
+          "enum": ["task", "condition", "parallel", "event-trigger", "module-call"],
+          "description": "Type of step being executed"
+        },
+        "targetNodeId": {
+          "type": "string",
+          "description": "QNET node ID where the step will be executed"
+        },
+        "nodeCapabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Capabilities of the target node"
+        },
+        "stepPayload": {
+          "type": "object",
+          "properties": {
+            "action": {
+              "type": "string"
+            },
+            "params": {
+              "type": "object"
+            },
+            "resourceLimits": {
+              "type": "object",
+              "properties": {
+                "maxMemoryMB": {
+                  "type": "number"
+                },
+                "maxExecutionTimeMs": {
+                  "type": "number"
+                },
+                "maxCpuPercent": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "required": ["action"]
+        },
+        "validationPipelineResult": {
+          "type": "object",
+          "properties": {
+            "qlock": {
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "type": "boolean"
+                },
+                "encryptionCid": {
+                  "type": "string"
+                }
+              }
+            },
+            "qonsent": {
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "type": "boolean"
+                },
+                "permissions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "qindex": {
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "type": "boolean"
+                },
+                "indexed": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "qerberos": {
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "type": "boolean"
+                },
+                "riskScore": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "required": ["executionId", "stepId", "stepType", "targetNodeId", "stepPayload"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

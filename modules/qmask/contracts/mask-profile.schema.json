@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://q-ecosystem.com/schemas/qmask/mask-profile.json",
+  "title": "Mask Profile",
+  "description": "Privacy profile for data anonymization",
+  "type": "object",
+  "required": ["name", "rules", "version"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Profile name"
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/MaskRule"
+      },
+      "description": "List of masking rules"
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Default values for masked fields"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Profile version (semantic versioning)"
+    }
+  },
+  "definitions": {
+    "MaskRule": {
+      "type": "object",
+      "required": ["field", "strategy"],
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Field path to apply the rule to"
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["REDACT", "HASH", "ENCRYPT", "ANONYMIZE", "REMOVE"],
+          "description": "Masking strategy to apply"
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Additional parameters for the strategy"
+        }
+      }
+    }
+  }
+}

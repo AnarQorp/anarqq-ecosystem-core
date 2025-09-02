@@ -1,0 +1,149 @@
+{
+  "name": "qindex",
+  "version": "1.0.0",
+  "description": "Qindex MCP Tools for indexing and pointer management",
+  "tools": [
+    {
+      "name": "qindex.put",
+      "description": "Store an indexed record with optional metadata and encryption",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Unique identifier for the record"
+          },
+          "value": {
+            "type": "object",
+            "description": "Record data to store"
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "contentType": {
+                "type": "string",
+                "description": "MIME type of the content"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Tags for categorization and search"
+              },
+              "ttl": {
+                "type": "integer",
+                "description": "Time to live in seconds"
+              }
+            }
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "encrypt": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether to encrypt the record"
+              },
+              "pin": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether to pin in IPFS"
+              }
+            }
+          }
+        },
+        "required": ["key", "value"]
+      }
+    },
+    {
+      "name": "qindex.get",
+      "description": "Retrieve a record by key with optional version specification",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Record key to retrieve"
+          },
+          "version": {
+            "type": "string",
+            "description": "Specific version to retrieve (optional)"
+          }
+        },
+        "required": ["key"]
+      }
+    },
+    {
+      "name": "qindex.list",
+      "description": "List records with filtering and pagination",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prefix": {
+            "type": "string",
+            "description": "Key prefix filter"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by tags"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 1000,
+            "description": "Maximum number of records to return"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "description": "Number of records to skip"
+          },
+          "sort": {
+            "type": "string",
+            "enum": ["created_asc", "created_desc", "updated_asc", "updated_desc"],
+            "default": "created_desc",
+            "description": "Sort order"
+          }
+        }
+      }
+    },
+    {
+      "name": "qindex.history",
+      "description": "Get the version history of a record",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Record key to get history for"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 50,
+            "maximum": 1000,
+            "description": "Maximum number of history entries to return"
+          }
+        },
+        "required": ["key"]
+      }
+    },
+    {
+      "name": "qindex.delete",
+      "description": "Remove a record from the index",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Record key to delete"
+          }
+        },
+        "required": ["key"]
+      }
+    }
+  ]
+}

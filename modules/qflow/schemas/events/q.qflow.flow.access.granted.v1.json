@@ -1,0 +1,72 @@
+{
+  "$id": "q.qflow.flow.access.granted.v1",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Qflow Flow Access Granted Event",
+  "description": "Event emitted when access permissions are granted to a flow",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity that performed the action"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "flowId": {
+          "type": "string",
+          "description": "Unique identifier of the flow"
+        },
+        "grantedTo": {
+          "type": "string",
+          "description": "sQuid identity that received access"
+        },
+        "grantedBy": {
+          "type": "string",
+          "description": "sQuid identity that granted access"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of permissions granted"
+        },
+        "grantedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When access was granted"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When access expires (optional)"
+        },
+        "conditions": {
+          "type": "object",
+          "description": "Additional conditions for access"
+        }
+      },
+      "required": ["flowId", "grantedTo", "grantedBy", "permissions", "grantedAt"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

@@ -1,0 +1,228 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/mask.schema.json",
+  "title": "Mask Schemas",
+  "definitions": {
+    "MaskProfile": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Profile name identifier"
+        },
+        "rules": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/MaskRule" },
+          "minItems": 1,
+          "description": "Masking rules to apply"
+        },
+        "defaults": {
+          "type": "object",
+          "description": "Default values for masked fields"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Profile version"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 512,
+          "description": "Profile description"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Profile creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Profile last update timestamp"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ACTIVE", "DEPRECATED", "DISABLED"],
+          "description": "Profile status"
+        }
+      },
+      "required": ["name", "rules", "defaults", "version", "createdAt", "updatedAt", "status"],
+      "additionalProperties": false
+    },
+    "MaskRule": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_.\\[\\]]+$",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Field path to mask (supports dot notation)"
+        },
+        "strategy": {
+          "$ref": "#/definitions/MaskStrategy",
+          "description": "Masking strategy"
+        },
+        "conditions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/MaskCondition" },
+          "description": "Rule conditions (when to apply)"
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Rule priority (higher numbers take precedence)"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Optional rule metadata"
+        }
+      },
+      "required": ["field", "strategy", "priority"],
+      "additionalProperties": false
+    },
+    "MaskStrategy": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["REDACT", "HASH", "TOKENIZE", "GENERALIZE", "SUPPRESS", "SUBSTITUTE"],
+          "description": "Strategy type"
+        },
+        "params": {
+          "type": "object",
+          "description": "Strategy parameters"
+        },
+        "reversible": {
+          "type": "boolean",
+          "description": "Reversibility flag"
+        },
+        "preserveUtility": {
+          "type": "boolean",
+          "description": "Preservation of data utility"
+        }
+      },
+      "required": ["type", "reversible", "preserveUtility"],
+      "additionalProperties": false
+    },
+    "MaskCondition": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["FIELD_VALUE", "USER_ROLE", "DATA_CLASSIFICATION", "CONTEXT"],
+          "description": "Condition type"
+        },
+        "operator": {
+          "type": "string",
+          "enum": ["EQUALS", "NOT_EQUALS", "CONTAINS", "MATCHES", "IN", "NOT_IN"],
+          "description": "Condition operator"
+        },
+        "value": {
+          "description": "Condition value"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Optional condition metadata"
+        }
+      },
+      "required": ["type", "operator", "value"],
+      "additionalProperties": false
+    },
+    "PrivacyAssessment": {
+      "type": "object",
+      "properties": {
+        "assessmentId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Assessment identifier"
+        },
+        "dataRef": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "Data being assessed"
+        },
+        "privacyScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Privacy risk score (0-100)"
+        },
+        "riskLevel": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+          "description": "Risk level classification"
+        },
+        "risks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PrivacyRisk" },
+          "description": "Identified privacy risks"
+        },
+        "recommendedProfile": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "maxLength": 64,
+          "description": "Recommended mask profile"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Assessment timestamp"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Assessment validity period"
+        }
+      },
+      "required": ["assessmentId", "dataRef", "privacyScore", "riskLevel", "risks", "timestamp", "validUntil"],
+      "additionalProperties": false
+    },
+    "PrivacyRisk": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Risk type"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "Risk description"
+        },
+        "likelihood": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Risk likelihood (0-1)"
+        },
+        "impact": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Risk impact (0-1)"
+        },
+        "mitigations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "description": "Risk mitigation strategies"
+        }
+      },
+      "required": ["type", "description", "likelihood", "impact", "mitigations"],
+      "additionalProperties": false
+    }
+  }
+}

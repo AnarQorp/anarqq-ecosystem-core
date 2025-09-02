@@ -1,0 +1,575 @@
+openapi: 3.0.3
+info:
+  title: Qdrive API
+  description: Decentralized file storage with IPFS integration and encryption
+  version: 1.0.0
+  contact:
+    name: AnarQ Team
+    url: https://github.com/anarq/ecosystem
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3008
+    description: Development server
+  - url: https://qdrive.anarq.org
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /files:
+    post:
+      summary: Upload file
+      operationId: uploadFile
+      security:
+        - squidAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: File to upload
+                metadata:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: File name
+                    description:
+                      type: string
+                      description: File description
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                      description: File tags
+                    privacy:
+                      type: string
+                      enum: [public, private, dao-only]
+                      default: private
+                    retention:
+                      type: integer
+                      description: Retention period in days
+                encrypt:
+                  type: boolean
+                  default: true
+                  description: Whether to encrypt the file
+      responses:
+        '201':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUploadResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: File too large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      summary: List user files
+      operationId: listFiles
+      security:
+        - squidAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: tags
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: privacy
+          in: query
+          schema:
+            type: string
+            enum: [public, private, dao-only]
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [created_at, name, size]
+            default: created_at
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Files retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileListResponse'
+
+  /files/{cid}:
+    get:
+      summary: Download file
+      operationId: downloadFile
+      security:
+        - squidAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: IPFS Content ID
+        - name: download
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Force download instead of inline display
+      responses:
+        '200':
+          description: File content
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete file
+      operationId: deleteFile
+      security:
+        - squidAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: IPFS Content ID
+      responses:
+        '200':
+          description: File deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /files/{cid}/metadata:
+    get:
+      summary: Get file metadata
+      operationId: getFileMetadata
+      security:
+        - squidAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: IPFS Content ID
+      responses:
+        '200':
+          description: File metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileMetadata'
+
+    put:
+      summary: Update file metadata
+      operationId: updateFileMetadata
+      security:
+        - squidAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: IPFS Content ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+                privacy:
+                  type: string
+                  enum: [public, private, dao-only]
+      responses:
+        '200':
+          description: Metadata updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileMetadata'
+
+  /files/{cid}/share:
+    post:
+      summary: Create sharing link
+      operationId: shareFile
+      security:
+        - squidAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: IPFS Content ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipients:
+                  type: array
+                  items:
+                    type: string
+                  description: sQuid IDs of recipients
+                permissions:
+                  type: array
+                  items:
+                    type: string
+                    enum: [read, download, share]
+                  default: [read]
+                expiresAt:
+                  type: string
+                  format: date-time
+                  description: Share expiration time
+                password:
+                  type: string
+                  description: Optional password protection
+      responses:
+        '201':
+          description: Share link created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareResponse'
+
+  /storage/summary:
+    get:
+      summary: Get storage summary
+      operationId: getStorageSummary
+      security:
+        - squidAuth: []
+      responses:
+        '200':
+          description: Storage summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageSummary'
+
+components:
+  securitySchemes:
+    squidAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: sQuid identity token
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        dependencies:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [up, down, degraded]
+              latency:
+                type: number
+              lastCheck:
+                type: string
+                format: date-time
+
+    FileUploadResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        code:
+          type: string
+          example: FILE_UPLOADED
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            cid:
+              type: string
+              description: IPFS Content ID
+            name:
+              type: string
+            size:
+              type: integer
+            mimeType:
+              type: string
+            encrypted:
+              type: boolean
+            createdAt:
+              type: string
+              format: date-time
+        cid:
+          type: string
+          description: IPFS Content ID
+
+    FileListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        code:
+          type: string
+          example: FILES_RETRIEVED
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            files:
+              type: array
+              items:
+                $ref: '#/components/schemas/FileMetadata'
+            pagination:
+              type: object
+              properties:
+                total:
+                  type: integer
+                limit:
+                  type: integer
+                offset:
+                  type: integer
+                hasMore:
+                  type: boolean
+
+    FileMetadata:
+      type: object
+      properties:
+        cid:
+          type: string
+          description: IPFS Content ID
+        name:
+          type: string
+        description:
+          type: string
+        size:
+          type: integer
+        mimeType:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        privacy:
+          type: string
+          enum: [public, private, dao-only]
+        encrypted:
+          type: boolean
+        owner:
+          type: string
+          description: sQuid ID of owner
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        accessCount:
+          type: integer
+        lastAccessed:
+          type: string
+          format: date-time
+        retentionPolicy:
+          type: object
+          properties:
+            days:
+              type: integer
+            deleteAt:
+              type: string
+              format: date-time
+
+    ShareResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        code:
+          type: string
+          example: SHARE_CREATED
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            shareId:
+              type: string
+            shareUrl:
+              type: string
+            recipients:
+              type: array
+              items:
+                type: string
+            permissions:
+              type: array
+              items:
+                type: string
+            expiresAt:
+              type: string
+              format: date-time
+            createdAt:
+              type: string
+              format: date-time
+
+    StorageSummary:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        code:
+          type: string
+          example: STORAGE_SUMMARY
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            totalFiles:
+              type: integer
+            totalSize:
+              type: integer
+              description: Total size in bytes
+            storageUsed:
+              type: number
+              description: Storage used in GB
+            storageLimit:
+              type: number
+              description: Storage limit in GB
+            storageAvailable:
+              type: number
+              description: Available storage in GB
+            bandwidthUsed:
+              type: number
+              description: Bandwidth used this month in GB
+            bandwidthLimit:
+              type: number
+              description: Bandwidth limit in GB
+            subscriptionPlan:
+              type: string
+            filesByType:
+              type: object
+              additionalProperties:
+                type: integer
+
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        code:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string
+        retryable:
+          type: boolean
+        suggestedActions:
+          type: array
+          items:
+            type: string

@@ -1,0 +1,180 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qchat/events/message-sent.v1.json",
+  "title": "Message Sent Event",
+  "description": "Event published when a message is sent to a chat room",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "pattern": "^qchat_event_[a-zA-Z0-9_-]+$",
+      "description": "Unique event identifier"
+    },
+    "topic": {
+      "type": "string",
+      "const": "q.qchat.message.sent.v1",
+      "description": "Event topic"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp"
+    },
+    "source": {
+      "type": "string",
+      "const": "qchat",
+      "description": "Event source module"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Event schema version"
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "pattern": "^squid_[a-zA-Z0-9_-]+$",
+          "description": "Actor sQuid identity ID"
+        },
+        "subId": {
+          "type": "string",
+          "pattern": "^sub_[a-zA-Z0-9_-]+$",
+          "description": "Actor subidentity ID"
+        },
+        "daoId": {
+          "type": "string",
+          "pattern": "^dao_[a-zA-Z0-9_-]+$",
+          "description": "Actor DAO ID"
+        }
+      },
+      "required": ["squidId"],
+      "additionalProperties": false
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "messageId": {
+          "type": "string",
+          "pattern": "^qchat_msg_[a-zA-Z0-9_-]+$",
+          "description": "Message identifier"
+        },
+        "roomId": {
+          "type": "string",
+          "pattern": "^qchat_room_[a-zA-Z0-9_-]+$",
+          "description": "Room identifier"
+        },
+        "messageType": {
+          "type": "string",
+          "enum": ["TEXT", "IMAGE", "FILE", "SYSTEM", "REACTION"],
+          "description": "Type of message"
+        },
+        "contentLength": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Length of message content"
+        },
+        "hasAttachments": {
+          "type": "boolean",
+          "description": "Whether message has attachments"
+        },
+        "attachmentCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of attachments"
+        },
+        "mentionCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of user mentions"
+        },
+        "replyTo": {
+          "type": "string",
+          "pattern": "^qchat_msg_[a-zA-Z0-9_-]+$",
+          "description": "Message ID being replied to"
+        },
+        "encryptionLevel": {
+          "type": "string",
+          "enum": ["STANDARD", "HIGH", "QUANTUM"],
+          "description": "Message encryption level"
+        },
+        "ephemeral": {
+          "type": "boolean",
+          "description": "Whether message is ephemeral"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Message expiration timestamp"
+        },
+        "deliveryStatus": {
+          "type": "string",
+          "enum": ["SENT", "DELIVERED", "READ", "FAILED"],
+          "description": "Message delivery status"
+        },
+        "recipientCount": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of recipients"
+        }
+      },
+      "required": [
+        "messageId",
+        "roomId",
+        "messageType",
+        "contentLength",
+        "hasAttachments",
+        "encryptionLevel",
+        "deliveryStatus",
+        "recipientCount"
+      ],
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "correlationId": {
+          "type": "string",
+          "description": "Correlation ID for request tracing"
+        },
+        "causationId": {
+          "type": "string",
+          "description": "ID of the event that caused this event"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Cryptographic signature of event data"
+        },
+        "cid": {
+          "type": "string",
+          "pattern": "^Qm[a-zA-Z0-9]{44}$",
+          "description": "IPFS CID of event data"
+        },
+        "qerberosRisk": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Risk score from Qerberos analysis"
+        },
+        "reputationImpact": {
+          "type": "number",
+          "description": "Impact on sender reputation"
+        }
+      },
+      "required": ["correlationId", "signature", "cid"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "eventId",
+    "topic",
+    "timestamp",
+    "source",
+    "version",
+    "actor",
+    "data",
+    "metadata"
+  ],
+  "additionalProperties": false
+}

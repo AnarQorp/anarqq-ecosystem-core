@@ -1,0 +1,235 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q-ecosystem.com/common.json",
+  "title": "Common Q Ecosystem Schemas",
+  "description": "Shared schemas used across Q ecosystem modules",
+  "definitions": {
+    "IdentityRef": {
+      "type": "object",
+      "description": "Reference to a sQuid identity",
+      "required": ["squidId"],
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "sQuid identity identifier"
+        },
+        "subId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Subidentity identifier"
+        },
+        "daoId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "DAO identifier"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ConsentRef": {
+      "type": "object",
+      "description": "Reference to a Qonsent permission",
+      "required": ["policyCid", "scope", "grant", "exp"],
+      "properties": {
+        "policyCid": {
+          "type": "string",
+          "description": "IPFS CID of the policy document"
+        },
+        "scope": {
+          "type": "string",
+          "description": "Permission scope"
+        },
+        "grant": {
+          "type": "string",
+          "description": "Granted permission token"
+        },
+        "exp": {
+          "type": "integer",
+          "description": "Expiration timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "LockSig": {
+      "type": "object",
+      "description": "Qlock cryptographic signature",
+      "required": ["alg", "pub", "sig", "ts", "nonce"],
+      "properties": {
+        "alg": {
+          "type": "string",
+          "description": "Signature algorithm"
+        },
+        "pub": {
+          "type": "string",
+          "description": "Public key"
+        },
+        "sig": {
+          "type": "string",
+          "description": "Signature value"
+        },
+        "ts": {
+          "type": "integer",
+          "description": "Timestamp"
+        },
+        "nonce": {
+          "type": "string",
+          "description": "Cryptographic nonce"
+        }
+      },
+      "additionalProperties": false
+    },
+    "IndexRecord": {
+      "type": "object",
+      "description": "Qindex record structure",
+      "required": ["type", "key", "cid", "version", "tags", "createdAt"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Record type"
+        },
+        "key": {
+          "type": "string",
+          "description": "Record key"
+        },
+        "cid": {
+          "type": "string",
+          "description": "IPFS Content ID"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version"
+        },
+        "prevCid": {
+          "type": "string",
+          "description": "Previous version CID"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Record tags"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AuditEvent": {
+      "type": "object",
+      "description": "Qerberos audit event",
+      "required": ["type", "ref", "actor", "layer", "verdict", "details"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Event type"
+        },
+        "ref": {
+          "type": "string",
+          "description": "Reference identifier"
+        },
+        "actor": {
+          "$ref": "#/definitions/IdentityRef"
+        },
+        "layer": {
+          "type": "string",
+          "description": "System layer"
+        },
+        "verdict": {
+          "type": "string",
+          "enum": ["ALLOW", "DENY", "WARN"],
+          "description": "Security verdict"
+        },
+        "details": {
+          "type": "object",
+          "description": "Event details"
+        },
+        "cid": {
+          "type": "string",
+          "description": "IPFS Content ID"
+        }
+      },
+      "additionalProperties": false
+    },
+    "StandardResponse": {
+      "type": "object",
+      "description": "Standard API response format",
+      "required": ["status", "code", "message"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["ok", "error"],
+          "description": "Response status"
+        },
+        "code": {
+          "type": "string",
+          "description": "Response code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable message"
+        },
+        "data": {
+          "type": "object",
+          "description": "Response data"
+        },
+        "cid": {
+          "type": "string",
+          "description": "IPFS Content ID"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "description": "Standard error response format",
+      "required": ["status", "code", "message"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["error"],
+          "description": "Error status"
+        },
+        "code": {
+          "type": "string",
+          "description": "Error code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "details": {
+          "type": "object",
+          "description": "Error details"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Error timestamp"
+        },
+        "requestId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Request identifier"
+        },
+        "retryable": {
+          "type": "boolean",
+          "description": "Whether the request can be retried"
+        },
+        "suggestedActions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Suggested actions to resolve the error"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qerberos/events/alert-created.json",
+  "title": "Alert Created Event",
+  "description": "Event published when a security alert is created",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "description": "Unique event identifier",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp in ISO 8601 format"
+    },
+    "alertId": {
+      "type": "string",
+      "description": "ID of the created alert"
+    },
+    "type": {
+      "type": "string",
+      "description": "Type of security alert",
+      "examples": ["anomaly", "intrusion", "policy_violation", "authentication_failure"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"],
+      "description": "Alert severity level"
+    },
+    "title": {
+      "type": "string",
+      "description": "Alert title",
+      "maxLength": 200
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the alert",
+      "maxLength": 500
+    },
+    "affectedIdentities": {
+      "type": "array",
+      "description": "Identities affected by this alert",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 100
+    },
+    "affectedResources": {
+      "type": "array",
+      "description": "Resources affected by this alert",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 100
+    },
+    "source": {
+      "$ref": "#/definitions/AlertSource",
+      "description": "Source of the alert"
+    },
+    "tags": {
+      "type": "array",
+      "description": "Tags for categorizing the alert",
+      "items": {
+        "type": "string",
+        "maxLength": 50
+      },
+      "maxItems": 20,
+      "uniqueItems": true
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["low", "normal", "high", "urgent"],
+      "description": "Alert priority for handling"
+    }
+  },
+  "required": ["eventId", "timestamp", "alertId", "type", "severity", "title", "source"],
+  "additionalProperties": false,
+  "definitions": {
+    "AlertSource": {
+      "type": "object",
+      "properties": {
+        "module": {
+          "type": "string",
+          "description": "Module that generated the alert",
+          "examples": ["qerberos", "qwallet", "qmail", "qdrive"]
+        },
+        "component": {
+          "type": "string",
+          "description": "Specific component within the module",
+          "examples": ["anomaly_detector", "risk_scorer", "audit_logger"]
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the source component",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        }
+      },
+      "required": ["module"],
+      "additionalProperties": false
+    }
+  }
+}

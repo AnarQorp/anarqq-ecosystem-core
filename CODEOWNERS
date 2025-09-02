@@ -1,0 +1,223 @@
+# Q∞ Ecosystem Documentation Ownership Matrix
+# 
+# This file defines ownership and review requirements for different parts
+# of the documentation. Code owners are automatically requested for review
+# when pull requests modify files in their areas of responsibility.
+#
+# Format: path/pattern @owner1 @owner2
+# 
+# Documentation: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# =============================================================================
+# GLOBAL DOCUMENTATION OWNERSHIP
+# =============================================================================
+
+# Default owners for all documentation
+/docs/ @q-ecosystem-team @documentation-team
+
+# Global documentation standards and governance
+/docs/STYLEGUIDE.md @documentation-team @technical-writers
+/docs/GLOSSARY.md @documentation-team @technical-writers @product-team
+/docs/CONTRIBUTING.md @documentation-team @community-team
+/docs/README.md @documentation-team @product-team
+/docs/INDEX.md @documentation-team
+
+# Global ecosystem documentation
+/docs/global/ @product-team @architecture-team @documentation-team
+/docs/global/vision/ @product-team @executive-team
+/docs/global/architecture/ @architecture-team @technical-leads
+/docs/global/strategy/ @product-team @executive-team
+/docs/global/whitepapers/ @executive-team @product-team
+/docs/global/technical-analysis/ @architecture-team @technical-leads
+
+# Integration and deployment documentation
+/docs/integration/ @integration-team @architecture-team
+/docs/deployment/ @devops-team @infrastructure-team
+
+# Video scripts
+/docs/video-scripts/ @content-team @marketing-team @documentation-team
+/docs/video-scripts/global/ @content-team @marketing-team @product-team
+/docs/video-scripts/modules/ @content-team @module-owners
+
+# =============================================================================
+# MODULE-SPECIFIC DOCUMENTATION OWNERSHIP
+# =============================================================================
+
+# Identity and Security Modules
+/docs/modules/squid/ @squid-team @security-team
+/docs/modules/qerberos/ @qerberos-team @security-team
+/docs/modules/qmask/ @qmask-team @privacy-team
+
+# Financial and Transaction Modules
+/docs/modules/qwallet/ @qwallet-team @payments-team
+/docs/modules/qmarket/ @qmarket-team @marketplace-team
+
+# Communication and Collaboration Modules
+/docs/modules/qmail/ @qmail-team @communication-team
+/docs/modules/qchat/ @qchat-team @communication-team
+
+# Storage and Data Modules
+/docs/modules/qdrive/ @qdrive-team @storage-team
+/docs/modules/qpic/ @qpic-team @media-team
+
+# Infrastructure and Utility Modules
+/docs/modules/qindex/ @qindex-team @search-team
+/docs/modules/qlock/ @qlock-team @infrastructure-team
+/docs/modules/qonsent/ @qonsent-team @privacy-team
+/docs/modules/qnet/ @qnet-team @networking-team
+
+# Governance Module
+/docs/modules/dao/ @dao-team @governance-team
+
+# =============================================================================
+# TECHNICAL DOCUMENTATION OWNERSHIP
+# =============================================================================
+
+# API Documentation
+/docs/modules/*/api-reference.md @api-team @module-owners
+/docs/modules/*/mcp-tools.md @mcp-team @integration-team
+
+# Integration Guides
+/docs/modules/*/integration-guide.md @integration-team @module-owners
+/docs/integration/ @integration-team @architecture-team
+
+# Deployment and Operations
+/docs/modules/*/deployment-guide.md @devops-team @module-owners
+/docs/deployment/ @devops-team @infrastructure-team
+
+# Troubleshooting and Support
+/docs/modules/*/troubleshooting.md @support-team @module-owners
+
+# =============================================================================
+# AUTOMATION AND TOOLING OWNERSHIP
+# =============================================================================
+
+# Documentation automation scripts
+/scripts/docs-*.mjs @automation-team @documentation-team
+/scripts/generate-*.mjs @automation-team @documentation-team
+/scripts/validate-*.mjs @automation-team @documentation-team
+
+# Documentation validation and quality
+/scripts/docs-validator.mjs @quality-team @documentation-team
+/scripts/front-matter-linter.mjs @quality-team @documentation-team
+/scripts/master-index-builder.mjs @automation-team @documentation-team
+
+# Video script generation
+/scripts/ScriptGenerator.mjs @content-team @automation-team
+/scripts/ContentExtractionEngine.mjs @content-team @automation-team
+
+# =============================================================================
+# CONFIGURATION AND METADATA OWNERSHIP
+# =============================================================================
+
+# Documentation configuration
+/docs/config/ @configuration-team @documentation-team
+/vitest.docs-*.config.ts @testing-team @documentation-team
+
+# Metadata schemas and validation
+/schemas/docs-*.json @schema-team @documentation-team
+/backend/schemas/ @backend-team @api-team
+
+# =============================================================================
+# SPECIAL OWNERSHIP RULES
+# =============================================================================
+
+# Security-sensitive documentation
+/docs/modules/*/security.md @security-team @module-owners
+/docs/global/security/ @security-team @architecture-team
+
+# Compliance and legal documentation
+/docs/modules/*/compliance.md @compliance-team @legal-team
+/docs/global/compliance/ @compliance-team @legal-team
+
+# Performance and monitoring documentation
+/docs/modules/*/performance.md @performance-team @module-owners
+/docs/global/monitoring/ @monitoring-team @devops-team
+
+# Migration and upgrade guides
+/docs/migration/ @migration-team @architecture-team
+/docs/modules/*/migration-guide.md @migration-team @module-owners
+
+# =============================================================================
+# TEAM DEFINITIONS AND RESPONSIBILITIES
+# =============================================================================
+
+# Core Teams (GitHub teams should be created to match these)
+# @q-ecosystem-team - Overall ecosystem oversight
+# @documentation-team - Documentation standards and quality
+# @technical-writers - Writing quality and style
+# @product-team - Product strategy and vision
+# @architecture-team - Technical architecture decisions
+# @security-team - Security and privacy oversight
+# @devops-team - Deployment and operations
+# @integration-team - Cross-module integration
+# @automation-team - Tooling and automation
+# @quality-team - Quality assurance and validation
+
+# Module Teams
+# @squid-team - sQuid identity module
+# @qwallet-team - Qwallet payment module
+# @qmarket-team - Qmarket marketplace module
+# @qmail-team - Qmail messaging module
+# @qchat-team - Qchat communication module
+# @qdrive-team - Qdrive storage module
+# @qpic-team - QpiC media module
+# @qindex-team - Qindex search module
+# @qlock-team - Qlock scheduling module
+# @qonsent-team - Qonsent consent module
+# @qnet-team - QNET networking module
+# @qerberos-team - Qerberos security module
+# @qmask-team - Qmask privacy module
+# @dao-team - DAO governance module
+
+# Specialized Teams
+# @content-team - Video and marketing content
+# @marketing-team - Marketing and communications
+# @community-team - Community management
+# @support-team - User support and troubleshooting
+# @testing-team - Testing and QA
+# @compliance-team - Legal and compliance
+# @legal-team - Legal review
+# @executive-team - Executive oversight
+
+# =============================================================================
+# REVIEW REQUIREMENTS
+# =============================================================================
+
+# Critical documentation requires multiple approvals
+/docs/STYLEGUIDE.md @documentation-team @technical-writers @product-team
+/docs/GLOSSARY.md @documentation-team @product-team @architecture-team
+/docs/CONTRIBUTING.md @documentation-team @community-team @product-team
+
+# Global architecture documentation requires architecture team approval
+/docs/global/architecture/ @architecture-team @technical-leads @product-team
+
+# Security documentation requires security team approval
+/docs/modules/*/security.md @security-team @module-owners @compliance-team
+/docs/global/security/ @security-team @architecture-team @compliance-team
+
+# API documentation requires API team and module owner approval
+/docs/modules/*/api-reference.md @api-team @module-owners @integration-team
+
+# =============================================================================
+# EMERGENCY CONTACTS
+# =============================================================================
+
+# For urgent documentation issues that require immediate attention:
+# - Critical security documentation: @security-team @emergency-response
+# - Production deployment docs: @devops-team @infrastructure-team @emergency-response
+# - Legal/compliance issues: @legal-team @compliance-team @executive-team
+
+# =============================================================================
+# NOTES
+# =============================================================================
+
+# 1. All teams referenced in this file should exist as GitHub teams
+# 2. Individual usernames can be used if teams are not available
+# 3. At least one code owner must approve changes to owned files
+# 4. Code owners are automatically requested for review
+# 5. This file itself requires documentation team approval for changes
+
+# Last updated: 2025-08-30
+# Maintained by: @documentation-team
+# Review cycle: Monthly

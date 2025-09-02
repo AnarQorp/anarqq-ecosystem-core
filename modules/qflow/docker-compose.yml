@@ -1,0 +1,171 @@
+version: '3.8'
+
+services:
+  qflow:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: qflow-server
+    ports:
+      - "8080:8080"   # REST API
+      - "4001:4001"   # Libp2p
+      - "9090:9090"   # WebSocket Dashboard
+    environment:
+      - NODE_ENV=production
+      - QFLOW_PORT=8080
+      - QFLOW_WEBSOCKET_PORT=9090
+      - QFLOW_LIBP2P_PORT=4001
+      - IPFS_API_URL=http://ipfs:5001
+      - REDIS_URL=redis://redis:6379
+      - LOG_LEVEL=info
+      - QFLOW_DATA_DIR=/app/data
+      - QFLOW_ENABLE_METRICS=true
+      - QFLOW_ENABLE_TRACING=true
+      - QFLOW_MAX_CONCURRENT_FLOWS=100
+      - QFLOW_VALIDATION_TIMEOUT=5000
+      - QFLOW_SANDBOX_MEMORY_LIMIT=128
+      - QFLOW_SANDBOX_TIMEOUT=30000
+    volumes:
+      - qflow-data:/app/data
+      - qflow-logs:/app/logs
+    depends_on:
+      ipfs:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - qflow-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  ipfs:
+    image: ipfs/go-ipfs:v0.20.0
+    container_name: qflow-ipfs
+    ports:
+      - "5001:5001"   # API
+      - "8081:8080"   # Gateway
+      - "4002:4001"   # Swarm
+    environment:
+      - IPFS_PROFILE=server
+      - IPFS_PATH=/data/ipfs
+    volumes:
+      - ipfs-data:/data/ipfs
+      - ipfs-staging:/export
+    networks:
+      - qflow-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5001/api/v0/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+
+  redis:
+    image: redis:7-alpine
+    container_name: qflow-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - qflow-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: qflow-prometheus
+    ports:
+      - "9091:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    networks:
+      - qflow-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: qflow-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - qflow-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+volumes:
+  qflow-data:
+    driver: local
+  qflow-logs:
+    driver: local
+  ipfs-data:
+    driver: local
+  ipfs-staging:
+    driver: local
+  redis-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  qflow-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

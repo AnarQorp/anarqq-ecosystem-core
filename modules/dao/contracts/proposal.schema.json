@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/dao/proposal.schema.json",
+  "title": "Proposal Schema",
+  "description": "Schema for DAO governance proposals",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^prop_[a-zA-Z0-9-_]+$",
+      "description": "Unique proposal identifier"
+    },
+    "daoId": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "DAO identifier this proposal belongs to"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 200,
+      "description": "Proposal title"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 5000,
+      "description": "Detailed proposal description"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "minItems": 2,
+      "maxItems": 10,
+      "uniqueItems": true,
+      "description": "Available voting options"
+    },
+    "createdBy": {
+      "type": "string",
+      "pattern": "^did:squid:[a-zA-Z0-9-_]+$",
+      "description": "sQuid ID of proposal creator"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Proposal creation timestamp"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Proposal expiration timestamp"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "closed", "executed", "cancelled"],
+      "description": "Current proposal status"
+    },
+    "quorum": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Required votes for this proposal"
+    },
+    "voteCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Current number of votes cast"
+    },
+    "results": {
+      "type": "object",
+      "patternProperties": {
+        "^.+$": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of votes for this option"
+            },
+            "weight": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Total weight of votes for this option"
+            }
+          },
+          "required": ["count", "weight"],
+          "additionalProperties": false
+        }
+      },
+      "description": "Voting results by option"
+    },
+    "executionData": {
+      "type": "object",
+      "properties": {
+        "executed": {
+          "type": "boolean",
+          "description": "Whether the proposal has been executed"
+        },
+        "executedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Execution timestamp"
+        },
+        "executedBy": {
+          "type": "string",
+          "pattern": "^did:squid:[a-zA-Z0-9-_]+$",
+          "description": "sQuid ID of executor"
+        },
+        "transactionHash": {
+          "type": "string",
+          "description": "Blockchain transaction hash (if applicable)"
+        },
+        "result": {
+          "type": "object",
+          "description": "Execution result data"
+        }
+      },
+      "description": "Proposal execution data"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Attachment name"
+          },
+          "cid": {
+            "type": "string",
+            "pattern": "^Qm[a-zA-Z0-9]{44}$|^bafy[a-zA-Z0-9]+$",
+            "description": "IPFS CID of attachment"
+          },
+          "type": {
+            "type": "string",
+            "description": "MIME type of attachment"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "File size in bytes"
+          }
+        },
+        "required": ["name", "cid", "type"],
+        "additionalProperties": false
+      },
+      "description": "Proposal attachments"
+    }
+  },
+  "required": [
+    "id",
+    "daoId",
+    "title",
+    "description",
+    "options",
+    "createdBy",
+    "createdAt",
+    "expiresAt",
+    "status",
+    "quorum",
+    "voteCount",
+    "results"
+  ],
+  "additionalProperties": false
+}

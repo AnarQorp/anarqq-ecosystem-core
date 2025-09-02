@@ -1,0 +1,60 @@
+{
+  "moduleId": "example-module",
+  "moduleName": "Example Module",
+  "version": "1.0.0",
+  "tools": [
+    {
+      "name": "example.hello",
+      "description": "Say hello to a user",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the user"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Greeting message"
+          }
+        }
+      },
+      "examples": [
+        "example.hello({ name: \"Alice\" })"
+      ]
+    }
+  ],
+  "capabilities": {
+    "example-capability": {
+      "supported": true,
+      "version": "1.0.0",
+      "features": [
+        "basic-greeting",
+        "personalization"
+      ]
+    }
+  },
+  "compatibility": {
+    "minVersion": "1.0.0",
+    "maxVersion": "2.0.0",
+    "supportedVersions": [
+      "1.0.0",
+      "1.1.0"
+    ],
+    "breakingChanges": [],
+    "deprecatedFeatures": []
+  },
+  "metadata": {
+    "author": "Example Developer",
+    "license": "MIT",
+    "repository": "https://github.com/example/example-module"
+  }
+}

@@ -1,0 +1,178 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.docs.quality.failed.v1",
+  "title": "Documentation Quality Failed Event",
+  "description": "Event emitted when documentation quality checks fail",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that detected the quality failure"
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "description": "sQuid identity associated with the quality check"
+        },
+        "system": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether this was a system-generated event"
+        }
+      },
+      "required": ["squidId"]
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "severity": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Severity level of the quality failure"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["structure", "completeness", "links", "accessibility", "code-snippets", "metadata", "scripts", "security"],
+          "description": "Category of quality failure"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Specific type of quality issue"
+              },
+              "file": {
+                "type": "string",
+                "description": "File path where the issue was found"
+              },
+              "line": {
+                "type": "number",
+                "description": "Line number if applicable"
+              },
+              "message": {
+                "type": "string",
+                "description": "Human-readable description of the issue"
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["error", "warning", "info"],
+                "description": "Severity level of this specific issue"
+              },
+              "autoFixable": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether this issue can be automatically fixed"
+              },
+              "suggestion": {
+                "type": "string",
+                "description": "Suggested fix for the issue"
+              }
+            },
+            "required": ["type", "message", "severity"]
+          },
+          "description": "List of specific quality issues found"
+        },
+        "affectedFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of files affected by quality issues"
+        },
+        "affectedModules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of modules affected by quality issues"
+        },
+        "validationRun": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier for the validation run"
+            },
+            "startTime": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When the validation started"
+            },
+            "endTime": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When the validation completed"
+            },
+            "totalFiles": {
+              "type": "number",
+              "description": "Total number of files validated"
+            },
+            "failedFiles": {
+              "type": "number",
+              "description": "Number of files that failed validation"
+            },
+            "totalIssues": {
+              "type": "number",
+              "description": "Total number of issues found"
+            }
+          },
+          "required": ["id", "startTime", "endTime"]
+        },
+        "remediationSuggested": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether automatic remediation is suggested"
+        },
+        "blocksPipeline": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether these issues should block the pipeline"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "validator": {
+              "type": "string",
+              "description": "Name of the validator that detected the issues"
+            },
+            "validatorVersion": {
+              "type": "string",
+              "description": "Version of the validator"
+            },
+            "configUsed": {
+              "type": "string",
+              "description": "Configuration profile used for validation"
+            },
+            "environment": {
+              "type": "string",
+              "description": "Environment where validation was run"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "required": ["severity", "category", "issues", "validationRun"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

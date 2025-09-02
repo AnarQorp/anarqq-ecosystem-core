@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qerberos/events/audit-logged.json",
+  "title": "Audit Logged Event",
+  "description": "Event published when an audit event is successfully logged",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "description": "Unique event identifier",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp in ISO 8601 format"
+    },
+    "auditEventId": {
+      "type": "string",
+      "description": "ID of the audit event that was logged"
+    },
+    "type": {
+      "type": "string",
+      "description": "Type of audit event that was logged",
+      "examples": ["access", "modification", "deletion", "authentication"]
+    },
+    "actor": {
+      "$ref": "#/definitions/IdentityRef",
+      "description": "Identity that performed the audited action"
+    },
+    "layer": {
+      "type": "string",
+      "description": "Layer or service that generated the audit event",
+      "examples": ["qwallet", "qmail", "qdrive", "qmarket"]
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["ALLOW", "DENY", "WARN"],
+      "description": "Verdict of the audited operation"
+    },
+    "ipfsCid": {
+      "type": "string",
+      "description": "IPFS CID where the audit event is stored",
+      "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$"
+    },
+    "signature": {
+      "type": "string",
+      "description": "Cryptographic signature of the audit event"
+    }
+  },
+  "required": ["eventId", "timestamp", "auditEventId", "type", "actor", "layer", "verdict"],
+  "additionalProperties": false,
+  "definitions": {
+    "IdentityRef": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "description": "sQuid identity identifier"
+        },
+        "subId": {
+          "type": "string",
+          "description": "Subidentity identifier"
+        },
+        "daoId": {
+          "type": "string",
+          "description": "DAO identifier"
+        }
+      },
+      "required": ["squidId"],
+      "additionalProperties": false
+    }
+  }
+}

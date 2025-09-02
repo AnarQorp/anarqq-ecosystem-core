@@ -1,0 +1,186 @@
+{
+  "name": "qnet",
+  "version": "1.0.0",
+  "description": "QNET Network Infrastructure MCP Tools",
+  "tools": [
+    {
+      "name": "qnet.ping",
+      "description": "Ping network nodes to test connectivity and measure latency",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "Target node identifier (optional, pings all nodes if not specified)"
+          },
+          "timeout": {
+            "type": "integer",
+            "description": "Ping timeout in milliseconds",
+            "default": 5000
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of ping attempts",
+            "default": 1
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "nodeId": { "type": "string" },
+                "latency": { "type": "number" },
+                "success": { "type": "boolean" },
+                "error": { "type": "string" }
+              }
+            }
+          },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "totalNodes": { "type": "integer" },
+              "successfulPings": { "type": "integer" },
+              "averageLatency": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "qnet.capabilities",
+      "description": "Get network capabilities and available services",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "Specific node to query (optional, returns network-wide capabilities if not specified)"
+          },
+          "service": {
+            "type": "string",
+            "description": "Filter by specific service type"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "services": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "protocols": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "regions": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "features": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "nodeCapabilities": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "qnet.status",
+      "description": "Get comprehensive network status and health information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "includeMetrics": {
+            "type": "boolean",
+            "description": "Include detailed performance metrics",
+            "default": false
+          },
+          "includeTopology": {
+            "type": "boolean",
+            "description": "Include network topology information",
+            "default": false
+          },
+          "region": {
+            "type": "string",
+            "description": "Filter by specific region"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "network": {
+            "type": "object",
+            "properties": {
+              "totalNodes": { "type": "integer" },
+              "activeNodes": { "type": "integer" },
+              "degradedNodes": { "type": "integer" },
+              "inactiveNodes": { "type": "integer" },
+              "averageLatency": { "type": "number" },
+              "averageUptime": { "type": "number" }
+            }
+          },
+          "regions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "nodes": { "type": "integer" },
+                "status": { "type": "string" },
+                "latency": { "type": "number" }
+              }
+            }
+          },
+          "services": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "available": { "type": "boolean" },
+                "nodes": { "type": "integer" },
+                "latency": { "type": "number" }
+              }
+            }
+          },
+          "metrics": {
+            "type": "object",
+            "description": "Included if includeMetrics is true"
+          },
+          "topology": {
+            "type": "object",
+            "description": "Included if includeTopology is true"
+          }
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "qnet://nodes",
+      "name": "Network Nodes",
+      "description": "List of all network nodes and their status"
+    },
+    {
+      "uri": "qnet://topology",
+      "name": "Network Topology",
+      "description": "Current network topology and connections"
+    },
+    {
+      "uri": "qnet://metrics",
+      "name": "Network Metrics",
+      "description": "Real-time network performance metrics"
+    }
+  ]
+}

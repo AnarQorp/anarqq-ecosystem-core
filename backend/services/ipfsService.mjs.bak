@@ -1,0 +1,668 @@
+import { IPFS } from '@storacha/ipfs';
+import { Client } from '@storacha/client';
+import dotenv from 'dotenv';
+import { v4 as uuidv4 } from 'uuid';
+import mime from 'mime-types';
+import { createHash } from 'crypto';
+
+dotenv.config();
+
+// Cache for storing active spaces and their authorizations
+const spaceCache = new Map();
+
+// Default upload/download options
+const DEFAULT_UPLOAD_OPTIONS = {
+  chunkSize: 1024 * 1024, // 1MB chunks
+  maxChunkSize: 5 * 1024 * 1024, // 5MB max chunk size
+  maxConcurrentUploads: 5,
+  maxRetries: 3,
+  retryDelay: 1000, // 1 second
+  timeout: 30000 // 30 seconds
+};
+
+class IPFSService {
+  constructor() {
+    this.ipfs = null;
+    this.storachaClient = null;
+    this.space = null;
+    this.initialize();
+  }
+
+  async initialize() {
+    try {
+      // Verify required environment variables
+      if (!process.env.STORACHA_API_KEY) {
+        throw new Error('STORACHA_API_KEY is required in environment variables');
+      }
+
+      if (!process.env.IPFS_API_URL) {
+        console.warn('IPFS_API_URL not set, using default Storacha gateway');
+      }
+
+      // Initialize Storacha client with API key and configuration
+      this.storachaClient = new Client({
+        apiKey: process.env.STORACHA_API_KEY,
+        apiUrl: process.env.STORACHA_API_URL || 'https://api.storacha.com/v1',
+        gatewayUrl: process.env.IPFS_GATEWAY_URL || 'https://ipfs.io/ipfs',
+        timeout: 30000, // 30 seconds
+        maxRetries: 3,
+        retryDelay: 1000, // 1 second
+        // Enable debug logging in development
+        debug: process.env.NODE_ENV === 'development'
+      });
+      
+      // Initialize IPFS with Storacha provider
+      this.ipfs = new IPFS({
+        client: this.storachaClient,
+        ipfsOptions: {
+          repo: process.env.IPFS_REPO_PATH || './.ipfs',
+          config: {
+            Addresses: {
+              Swarm: [
+                '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star',
+                '/dns4/ipfs-staging.storacha.com/tcp/443/wss/p2p-websocket-star'
+              ]
+            },
+            Discovery: {
+              webRTCStar: { Enabled: true }
+            },
+            Bootstrap: [
+              '/dns4/ipfs-staging.storacha.com/tcp/4001/ipfs/QmUjNmr8TgJCn1Ao24D2UpwFRwKBLqyWkrzqYQCbWYkjr3'
+            ]
+          }
+        }
+      });
+      
+      // Start the IPFS node
+      await this.ipfs.start();
+      
+      // Log connection info
+      const id = await this.ipfs.id();
+      console.log(`[IPFSService] IPFS node started with ID: ${id.id}`);
+      console.log(`[IPFSService] Connected to ${id.addresses.length} peers`);
+      
+      // Set up error handling
+      this.ipfs.libp2p.addEventListener('error', (error) => {
+        console.error('[IPFSService] IPFS node error:', error);
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('[IPFSService] Error initializing Storacha client:', error);
+      throw new Error(`Failed to initialize IPFS service: ${error.message}`);
+    }
+  }
+
+  /**
+   * Authorize a space for a user with automatic delegation
+   * @param {string} spaceDID - The space DID to authorize
+   * @param {string} agentDID - The agent DID to authorize
+   * @param {object} options - Authorization options
+   * @returns {Promise<object>} Authorization result with delegation info
+   */
+  async authorizeSpace(spaceDID, agentDID, options = {}) {
+    const {
+      permissions = { read: true, write: true, admin: false },
+      expiration = '1h',
+      allow = ['*'],
+      autoCreate = true
+    } = options;
+
+    try {
+      if (!this.storachaClient) {
+        throw new Error('Storacha client not initialized');
+      }
+
+      // Check if we already have a valid delegation
+      const cacheKey = `${spaceDID}:${agentDID}`;
+      const cached = spaceCache.get(cacheKey);
+      
+      if (cached && cached.expiresAt > Date.now()) {
+        console.log(`[IPFSService] Using cached authorization for ${cacheKey}`);
+        return cached;
+      }
+
+      // Get or create the space
+      let space;
+      try {
+        space = await this.storachaClient.getSpace(spaceDID);
+      } catch (error) {
+        if (error.status === 404 && autoCreate) {
+          console.log(`[IPFSService] Space ${spaceDID} not found, creating new space`);
+          space = await this.createSpaceForUser(agentDID);
+        } else {
+          throw error;
+        }
+      }
+
+      // Create a delegation for the agent
+      const delegation = await this.storachaClient.createDelegation({
+        spaceId: spaceDID,
+        agentId: agentDID,
+        permissions,
+        expiration,
+        allow
+      });
+
+      // Cache the delegation
+      const result = {
+        spaceId: spaceDID,
+        agentId: agentDID,
+        delegation,
+        permissions,
+        expiresAt: Date.now() + (parseInt(expiration) * 1000 || 3600000), // Default 1 hour
+        createdAt: new Date().toISOString()
+      };
+
+      spaceCache.set(cacheKey, result);
+      console.log(`[IPFSService] Authorized agent ${agentDID} for space ${spaceDID}`);
+      
+      return result;
+      
+    } catch (error) {
+      console.error(`[IPFSService] Error authorizing space ${spaceDID}:`, error);
+      throw new Error(`Failed to authorize space: ${error.message}`);
+    }
+  }
+
+  /**
+   * Create a new space for a user with automatic configuration
+   * @param {string} userId - The user ID to create the space for
+   * @param {object} options - Space creation options
+   * @returns {Promise<object>} The created space with metadata
+   */
+  async createSpaceForUser(userId, options = {}) {
+    const {
+      name = `anarq-${userId}-${Date.now()}`,
+      description = `Personal space for ${userId}`,
+      isPrivate = true,
+      metadata = {},
+      replication = 3,
+      autoAuthorize = true
+    } = options;
+
+    try {
+      if (!this.storachaClient) {
+        await this.initialize();
+      }
+
+      // Generate a deterministic space ID based on user ID
+      const spaceId = createHash('sha256')
+        .update(`${userId}:${name}`)
+        .digest('hex')
+        .substring(0, 32);
+
+      // Create the space with Storacha
+      const space = await this.storachaClient.createSpace({
+        id: spaceId,
+        name,
+        description,
+        isPrivate,
+        metadata: {
+          ...metadata,
+          createdBy: userId,
+          createdAt: new Date().toISOString(),
+          replication
+        },
+        // Configure storage replication
+        storage: {
+          replication: {
+            min: replication,
+            max: replication * 2
+          },
+          pinning: true
+        }
+      });
+
+      console.log(`[IPFSService] Created space ${space.id} for user ${userId}`);
+      
+      // Auto-authorize the creating user
+      if (autoAuthorize) {
+        await this.authorizeSpace(space.id, userId, {
+          permissions: { read: true, write: true, admin: true },
+          expiration: '8760h', // 1 year
+          allow: ['*']
+        });
+      }
+      
+      // Cache the space
+      spaceCache.set(space.id, { ...space, userId });
+      
+      return {
+        id: space.id,
+        name: space.name,
+        description: space.description,
+        isPrivate: space.isPrivate,
+        metadata: space.metadata,
+        createdAt: space.createdAt,
+        updatedAt: space.updatedAt
+      };
+      
+    } catch (error) {
+      console.error('[IPFSService] Error creating space:', error);
+      throw new Error(`Failed to create space: ${error.message}`);
+    }
+  }
+
+  /**
+   * Upload a file to IPFS with automatic retry and chunking
+   * @param {File|Buffer|string} file - The file to upload (File, Buffer, or file path)
+   * @param {object} options - Upload options
+   * @returns {Promise<object>} Upload result with file details
+   */
+  async uploadFile(file, options = {}) {
+    const startTime = Date.now();
+    let attempt = 0;
+    const maxAttempts = options.maxRetries || DEFAULT_UPLOAD_OPTIONS.maxRetries;
+    
+    // Normalize file input
+    let fileData = file;
+    let filename = options.filename || 'unnamed';
+    let mimeType = options.mimeType || 'application/octet-stream';
+    
+    // Handle different input types
+    if (typeof file === 'string') {
+      // File path
+      const fs = await import('fs').then(m => m.promises);
+      const path = await import('path');
+      fileData = await fs.readFile(file);
+      filename = options.filename || path.basename(file);
+      mimeType = mime.lookup(filename) || 'application/octet-stream';
+    } else if (file instanceof File || file instanceof Blob) {
+      // Web File or Blob
+      fileData = file;
+      filename = file.name || filename;
+      mimeType = file.type || mimeType;
+    }
+    
+    const { 
+      spaceDID, 
+      metadata = {},
+      onProgress,
+      chunkSize = DEFAULT_UPLOAD_OPTIONS.chunkSize,
+      maxChunkSize = DEFAULT_UPLOAD_OPTIONS.maxChunkSize,
+      maxConcurrentUploads = DEFAULT_UPLOAD_OPTIONS.maxConcurrentUploads
+    } = options;
+    
+    // Ensure we have a valid space
+    if (!spaceDID) {
+      throw new Error('spaceDID is required for upload');
+    }
+    
+    // Generate a unique upload ID for tracking
+    const uploadId = options.uploadId || `upload-${uuidv4()}`;
+    
+    // Prepare the upload
+    const uploadOptions = {
+      spaceId: spaceDID,
+      metadata: {
+        ...metadata,
+        originalName: filename,
+        mimeType,
+        uploadId,
+        uploadedAt: new Date().toISOString(),
+        uploadedBy: options.userId || 'anonymous'
+      },
+      chunkSize: Math.min(chunkSize, maxChunkSize),
+      maxConcurrentUploads,
+      timeout: options.timeout || DEFAULT_UPLOAD_OPTIONS.timeout
+    };
+    
+    // Add progress handler if provided
+    if (onProgress && typeof onProgress === 'function') {
+      uploadOptions.onProgress = (progress) => {
+        const percent = Math.round((progress.loaded / progress.total) * 100);
+        onProgress({
+          percent,
+          loaded: progress.loaded,
+          total: progress.total,
+          uploadId,
+          filename,
+          spaceDID
+        });
+      };
+    }
+    
+    // Retry logic
+    while (attempt < maxAttempts) {
+      attempt++;
+      
+      try {
+        // Authorize the space if needed
+        if (options.autoAuthorize !== false && options.userId) {
+          await this.authorizeSpace(spaceDID, options.userId, {
+            permissions: { read: true, write: true },
+            expiration: '24h'
+          });
+        }
+        
+        // Upload the file
+        const result = await this.storachaClient.uploadFile(fileData, uploadOptions);
+        
+        // Calculate upload stats
+        const duration = (Date.now() - startTime) / 1000; // in seconds
+        const size = result.size || (fileData.size || fileData.length || 0);
+        const speed = size / duration; // bytes per second
+        
+        // Return the result with additional metadata
+        return {
+          cid: result.cid,
+          url: `${this.storachaClient.gatewayUrl}/${result.cid}`,
+          filename,
+          mimeType,
+          size,
+          duration,
+          speed,
+          uploadId,
+          spaceDID,
+          metadata: result.metadata || uploadOptions.metadata,
+          createdAt: new Date().toISOString(),
+          _raw: result // Include raw response for debugging
+        };
+        
+      } catch (error) {
+        console.error(`[IPFSService] Upload attempt ${attempt} failed:`, error);
+        
+        // If we've reached max attempts, re-throw the error
+        if (attempt >= maxAttempts) {
+          throw new Error(`Upload failed after ${maxAttempts} attempts: ${error.message}`);
+        }
+        
+        // Wait before retrying
+        const delay = (options.retryDelay || DEFAULT_UPLOAD_OPTIONS.retryDelay) * attempt;
+        console.log(`Retrying upload in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    
+    // This should never be reached due to the throw in the catch block
+    throw new Error('Upload failed: Unknown error');
+  }
+
+  /**
+   * Download a file from IPFS with automatic retry and progress tracking
+   * @param {string} cid - The CID of the file to download
+   * @param {object} options - Download options
+   * @returns {Promise<object>} File data and metadata
+   */
+  async downloadFile(cid, options = {}) {
+    const startTime = Date.now();
+    let attempt = 0;
+    const maxAttempts = options.maxRetries || DEFAULT_UPLOAD_OPTIONS.maxRetries;
+    const {
+      spaceDID,
+      filename: customFilename,
+      onProgress,
+      timeout = 30000,
+      range
+    } = options;
+    
+    // Generate a unique download ID for tracking
+    const downloadId = options.downloadId || `download-${uuidv4()}`;
+    
+    // Prepare download options
+    const downloadOptions = {
+      spaceId: spaceDID,
+      timeout,
+      ...(range && { range }), // Support for range requests
+      ...(onProgress && {
+        onProgress: (progress) => {
+          onProgress({
+            percent: progress.percentage,
+            loaded: progress.loaded,
+            total: progress.total || 0,
+            downloadId,
+            cid,
+            spaceDID
+          });
+        }
+      })
+    };
+    
+    // Retry logic
+    while (attempt < maxAttempts) {
+      attempt++;
+      
+      try {
+        // Authorize the space if needed
+        if (options.autoAuthorize !== false && options.userId) {
+          await this.authorizeSpace(spaceDID, options.userId, {
+            permissions: { read: true },
+            expiration: '1h'
+          });
+        }
+        
+        // Download the file
+        const { data, metadata } = await this.storachaClient.downloadFile(cid, downloadOptions);
+        
+        // Convert data to ArrayBuffer if it's a string
+        const buffer = typeof data === 'string' ? 
+          new TextEncoder().encode(data).buffer : 
+          data;
+        
+        // Calculate download stats
+        const duration = (Date.now() - startTime) / 1000; // in seconds
+        const size = buffer.byteLength;
+        const speed = size / duration; // bytes per second
+        
+        // Determine filename
+        const filename = customFilename || 
+                         metadata?.originalName || 
+                         metadata?.name || 
+                         `file-${cid.substring(0, 8)}${mime.extension(metadata?.mimeType) ? '.' + mime.extension(metadata.mimeType) : ''}`;
+        
+        // Return the result with additional metadata
+        return {
+          data: buffer,
+          cid,
+          filename,
+          contentType: metadata?.mimeType || mime.lookup(filename) || 'application/octet-stream',
+          size,
+          duration,
+          speed,
+          downloadId,
+          spaceDID,
+          metadata: metadata || {},
+          createdAt: metadata?.createdAt || new Date().toISOString(),
+          _raw: { metadata } // Include raw response for debugging
+        };
+        
+      } catch (error) {
+        console.error(`[IPFSService] Download attempt ${attempt} failed:`, error);
+        
+        // If we've reached max attempts, re-throw the error
+        if (attempt >= maxAttempts) {
+          throw new Error(`Download failed after ${maxAttempts} attempts: ${error.message}`);
+        }
+        
+        // Wait before retrying
+        const delay = (options.retryDelay || DEFAULT_UPLOAD_OPTIONS.retryDelay) * attempt;
+        console.log(`Retrying download in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    
+    // This should never be reached due to the throw in the catch block
+    throw new Error('Download failed: Unknown error');
+  }
+
+  /**
+   * Get detailed information about a file or directory
+   * @param {string} cid - The CID of the file or directory
+   * @param {object} options - Options for getting file info
+   * @returns {Promise<object>} File or directory information
+   */
+  async getFileInfo(cid, options = {}) {
+    const { 
+      spaceDID, 
+      includeChildren = false, 
+      includePins = true,
+      includeDeals = true,
+      includeMetadata = true,
+      timeout = 10000
+    } = options;
+    
+    try {
+      if (!this.storachaClient) {
+        await this.initialize();
+      }
+      
+      // Get basic file info
+      const fileInfo = await this.storachaClient.getFileInfo(cid, { 
+        spaceId: spaceDID,
+        timeout
+      });
+      
+      // Prepare the result
+      const result = {
+        cid: fileInfo.cid,
+        name: fileInfo.name || `file-${cid}`,
+        type: fileInfo.type || 'file',
+        size: fileInfo.size || 0,
+        isPinned: fileInfo.isPinned || false,
+        isDirectory: fileInfo.type === 'directory',
+        createdAt: fileInfo.createdAt || new Date().toISOString(),
+        updatedAt: fileInfo.updatedAt || new Date().toISOString(),
+        _raw: { ...fileInfo } // Include raw response for debugging
+      };
+      
+      // Include pins if requested
+      if (includePins && fileInfo.pins) {
+        result.pins = fileInfo.pins.map(pin => ({
+          status: pin.status,
+          peerId: pin.peerId,
+          peerName: pin.peerName,
+          region: pin.region,
+          pinnedAt: pin.createdAt,
+          updatedAt: pin.updatedAt
+        }));
+      }
+      
+      // Include storage deals if requested
+      if (includeDeals && fileInfo.deals) {
+        result.deals = fileInfo.deals.map(deal => ({
+          dealId: deal.dealId,
+          status: deal.status,
+          provider: deal.provider,
+          pieceCid: deal.pieceCid,
+          size: deal.size,
+          price: deal.price,
+          duration: deal.duration,
+          startEpoch: deal.startEpoch,
+          endEpoch: deal.endEpoch,
+          dealExpiration: deal.dealExpiration,
+          miner: deal.miner,
+          dealActivation: deal.dealActivation,
+          updatedAt: deal.updatedAt
+        }));
+      }
+      
+      // Include metadata if requested and available
+      if (includeMetadata && fileInfo.metadata) {
+        result.metadata = {
+          ...fileInfo.metadata,
+          // Ensure we don't expose sensitive information
+          ...(fileInfo.metadata.originalName && { originalName: fileInfo.metadata.originalName }),
+          ...(fileInfo.metadata.mimeType && { mimeType: fileInfo.metadata.mimeType }),
+          ...(fileInfo.metadata.uploadedBy && { uploadedBy: fileInfo.metadata.uploadedBy }),
+          ...(fileInfo.metadata.uploadedAt && { uploadedAt: fileInfo.metadata.uploadedAt })
+        };
+      }
+      
+      // If it's a directory and includeChildren is true, get the directory listing
+      if (result.isDirectory && includeChildren) {
+        try {
+          const lsOptions = { 
+            spaceId: spaceDID,
+            timeout,
+            ...(options.includeMetadata && { withMetadata: true })
+          };
+          
+          const dirContents = await this.storachaClient.ls(cid, lsOptions);
+          
+          result.contents = (dirContents.entries || []).map(entry => ({
+            cid: entry.cid,
+            name: entry.name,
+            type: entry.type,
+            size: entry.size,
+            ...(options.includeMetadata && entry.metadata && { metadata: entry.metadata })
+          }));
+          
+          result.contentCount = result.contents.length;
+          result.size = result.contents.reduce((sum, item) => sum + (item.size || 0), 0);
+          
+        } catch (lsError) {
+          console.warn(`[IPFSService] Error listing directory ${cid}:`, lsError);
+          result.contents = [];
+          result.contentCount = 0;
+          result.error = `Failed to list directory contents: ${lsError.message}`;
+        }
+      }
+      
+      return result;
+      
+    } catch (error) {
+      console.error(`[IPFSService] Error getting info for ${cid}:`, error);
+      
+      // If it's a 404, try to get basic info from the IPFS node
+      if (error.status === 404) {
+        try {
+          const stat = await this.ipfs.files.stat(`/ipfs/${cid}`, { timeout });
+          
+          return {
+            cid: stat.cid.toString(),
+            name: `file-${cid}`,
+            type: stat.type || 'file',
+            size: stat.size || 0,
+            isDirectory: stat.type === 'directory',
+            isPinned: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            _warning: 'File not found in Storacha, showing basic IPFS info',
+            _raw: stat
+          };
+          
+        } catch (ipfsError) {
+          console.warn(`[IPFSService] Could not get basic IPFS info for ${cid}:`, ipfsError);
+          // Continue to throw the original error
+        }
+      }
+      
+      throw new Error(`Failed to get file info: ${error.message}`);
+    }
+  }
+}
+
+// Create a singleton instance
+const ipfsService = new IPFSService();
+
+// Export the main service instance as default
+export default ipfsService;
+
+// Export individual methods for backward compatibility
+export const createSpaceForUser = async (userId, options = {}) => {
+  return ipfsService.createSpaceForUser(userId, options);
+};
+
+export const uploadToStoracha = async (data, filename, spaceDID, options = {}) => {
+  return ipfsService.uploadFile(data, {
+    ...options,
+    filename,
+    spaceDID
+  });
+};
+
+export const downloadFromStoracha = async (cid, options = {}) => {
+  return ipfsService.downloadFile(cid, options);
+};
+
+export const getFileInfo = async (cid, options = {}) => {
+  return ipfsService.getFileInfo(cid, options);
+};
+
+export const authorizeSpace = async (spaceDID, agentDID, options = {}) => {
+  return ipfsService.authorizeSpace(spaceDID, agentDID, options);
+};
+
+// Export the IPFS service class for advanced usage
+export { IPFSService };

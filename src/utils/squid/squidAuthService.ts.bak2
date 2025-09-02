@@ -1,0 +1,455 @@
+
+import { encryptData, decryptData, generateKeyPair } from '@/lib/quantumSim';
+import { uploadToIPFS, getFromIPFS, uploadUserToIPFS, findUserInIPFS } from '@/utils/ipfs';
+import { logFileOperation } from '@/lib/qindex';
+import { SquidIdentity, useIdentityStore } from '@/state/identity';
+import { initClient } from '@/lib/ipfs-browser';
+import { provisionAndRegisterSpace } from '@/utils/ipfs';
+
+/**
+ * API Base URL - configuración del backend
+ */
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+/**
+ * Derives a DID using Qlock with alias+password
+ */
+function deriveDID(alias: string, password: string): string {
+  const input = `${alias.toLowerCase()}_${password}`;
+  let hash = 0;
+  for (let i = 0; i < input.length; ++i) {
+    hash = ((hash << 5) - hash) + input.charCodeAt(i);
+    hash = hash & hash;
+  }
+  const didKey = Math.abs(hash).toString(16).padStart(16, '0');
+  return `did:qlock:z${didKey}`;
+}
+
+/**
+ * Generates agent DID for Web3.Storage
+ */
+async function generateAgentDID(): Promise<{ agentDID: string; client: any }> {
+  try {
+    const client = await initClient();
+    
+    // Get agent DID
+    let agentDID: string;
+    if (client.agent.principal) {
+      agentDID = client.agent.principal.did();
+    } else if (client.agent.issuer) {
+      agentDID = client.agent.issuer.did();
+    } else {
+      throw new Error('Could not get agent DID');
+    }
+    
+    console.log(`[sQuid] Agent DID generated: ${agentDID}`);
+    return { agentDID, client };
+    
+  } catch (error) {
+    console.error('[sQuid] Error generating Agent DID:', error);
+    throw new Error(`Error generating Agent DID: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+/**
+ * Function to get Qlock KeyPair simulation (pub and priv)
+ */
+async function getQlockKeyPair(alias: string, password: string) {
+  const { publicKey, privateKey } = await generateKeyPair('QUANTUM');
+  return { publicKey, privateKey };
+}
+
+/**
+ * Checks alias availability in the system
+ */
+export async function checkAliasAvailability(alias: string): Promise<boolean> {
+  try {
+    console.log(`[sQuid] Checking alias availability: ${alias}`);
+    
+    // Check with backend first
+    const response = await fetch(`${API_BASE_URL}/auth/check-alias`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ alias })
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log(`[sQuid] Alias ${alias} availability: ${data.available}`);
+      return data.available;
+    }
+    
+    // If we get here, the endpoint might not exist or there was an error
+    console.warn(`[sQuid] Alias check endpoint not available (${response.status}), falling back to local check`);
+    
+    // Fallback to local check if backend check fails
+    const did = deriveDID(alias, 'dummy');
+    const logs = (await import('@/lib/qindex')).findLogsByIdentity(did);
+    const exists = logs.some((l: any) => l.fileName === 'profile.json');
+    console.log(`[sQuid] Local check - Alias ${alias} availability: ${!exists}`);
+    
+    return !exists;
+  } catch (error) {
+    console.error('[sQuid] Error checking alias availability:', error);
+    // En caso de error, asumimos que el alias está disponible para no bloquear el registro
+    return true;
+  }
+}
+
+/**
+ * USER REGISTRATION: real integration with backend
+ */
+export async function registerUser({ alias, email, password }: { alias: string; email: string; password: string; }) {
+  try {
+    console.log(`[sQuid] Starting registration for alias: ${alias}`);
+    
+    // Limpiar cualquier sesión previa
+    localStorage.removeItem('active_user_did');
+    localStorage.removeItem('active_space_did');
+    
+    // Validar datos de entrada
+    if (!alias || !email || !password) {
+      throw new Error('Alias, email y contraseña son obligatorios');
+    }
+    
+    // Verificar disponibilidad del alias
+    const isAliasAvailable = await checkAliasAvailability(alias);
+    if (!isAliasAvailable) {
+      throw new Error('El alias ya está en uso. Por favor, elige otro.');
+    }
+
+    console.log(`[sQuid] Making request to: ${API_BASE_URL}/auth/register`);
+    
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ 
+        alias: alias.trim(), 
+        email: email.trim().toLowerCase(), 
+        password: password // La contraseña ya debería estar hasheada en el frontend
+      })
+    });
+
+    console.log(`[sQuid] Response status: ${response.status}`);
+    
+    // Manejar la respuesta
+    const responseData = await response.json().catch(() => ({}));
+    
+    if (!response.ok) {
+      const errorMessage = responseData.message || 'Error en el registro';
+      console.error(`[sQuid] Error response (${response.status}):`, errorMessage);
+      throw new Error(`Error en el registro: ${errorMessage}`);
+    }
+
+    console.log(`[sQuid] Registration successful:`, responseData);
+    
+    // Guardar datos de sesión
+    if (responseData.user?.userDID) {
+      localStorage.setItem('active_user_did', responseData.user.userDID);
+    }
+    
+    if (responseData.spaceDID) {
+      localStorage.setItem('active_space_did', responseData.spaceDID);
+    }
+    
+    // Crear identidad del usuario
+    const identity: SquidIdentity = { 
+      did: responseData.user?.agentDID || `did:qlock:${Date.now()}`, 
+      name: alias, 
+      type: 'ROOT', 
+      kyc: true, 
+      reputation: 100, 
+      space: responseData.spaceDID || 'default-space'
+    };
+    
+    return { 
+      success: true, 
+      identity, 
+      spaceDID: responseData.spaceDID, 
+      agentDID: responseData.user?.agentDID,
+      message: 'Registro exitoso. ¡Bienvenido a AnarQ!'
+    };
+    
+  } catch (error) {
+    console.error('[sQuid] registerUser error:', error);
+    
+    // Proporcionar mensajes de error más amigables
+    let errorMessage = 'Error en el registro';
+    
+    if (error instanceof Error) {
+      if (error.message.includes('network')) {
+        errorMessage = 'Error de conexión. Por favor, verifica tu conexión a internet.';
+      } else if (error.message.includes('400')) {
+        errorMessage = 'Datos inválidos. Por favor, verifica la información proporcionada.';
+      } else if (error.message.includes('409')) {
+        errorMessage = 'El usuario ya existe. Por favor, inicia sesión o utiliza otro correo/alias.';
+      } else {
+        errorMessage = error.message;
+      }
+    }
+    
+    throw new Error(errorMessage);
+  }
+}
+
+/**
+ * USER LOGIN: Autenticación de usuario con alias y contraseña
+ * Maneja tanto la autenticación local como la remota
+ */
+export async function loginUser(alias: string, password: string) {
+  try {
+    console.log(`[sQuid] Starting login for alias: ${alias}`);
+    
+    // Validar datos de entrada
+    if (!alias || !password) {
+      throw new Error('Alias y contraseña son obligatorios');
+    }
+    
+    // 1. Intentar autenticación con el backend primero
+    try {
+      console.log(`[sQuid] Attempting backend login at: ${API_BASE_URL}/auth/login`);
+      
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ 
+          alias: alias.trim(),
+          password: password
+        })
+      });
+      
+      const responseData = await response.json().catch(() => ({}));
+      
+      if (response.ok) {
+        console.log(`[sQuid] Backend login successful for: ${alias}`);
+        
+        // Guardar tokens de autenticación
+        if (responseData.token) {
+          localStorage.setItem('auth_token', responseData.token);
+        }
+        
+        // Guardar datos de sesión
+        if (responseData.user?.did) {
+          localStorage.setItem('active_user_did', responseData.user.did);
+        }
+        
+        if (responseData.spaceDID) {
+          localStorage.setItem('active_space_did', responseData.spaceDID);
+        }
+        
+        // Crear identidad del usuario
+        const identity: SquidIdentity = { 
+          did: responseData.user?.did || `did:qlock:${Date.now()}`,
+          name: alias,
+          type: 'ROOT',
+          kyc: true,
+          reputation: responseData.user?.reputation || 100,
+          space: responseData.spaceDID || 'default-space',
+          email: responseData.user?.email,
+          avatar: responseData.user?.avatar
+        };
+        
+        return { 
+          success: true, 
+          identity,
+          spaceDID: responseData.spaceDID,
+          message: 'Inicio de sesión exitoso. ¡Bienvenido de nuevo!'
+        };
+      }
+      
+      // Si el error es 404, intentar con autenticación local
+      if (response.status !== 404) {
+        const errorMessage = responseData.message || 'Error en la autenticación';
+        console.error(`[sQuid] Backend login error (${response.status}):`, errorMessage);
+        throw new Error(`Error en la autenticación: ${errorMessage}`);
+      }
+      
+      console.log('[sQuid] Backend login not available, falling back to local auth');
+      
+    } catch (error) {
+      console.warn('[sQuid] Error with backend login, trying local auth:', error);
+    }
+    
+    // 2. Fallback a autenticación local si el backend falla o no está disponible
+    console.log(`[sQuid] Attempting local login for alias: ${alias}`);
+    
+    const did = deriveDID(alias, password);
+    console.log(`[sQuid] Local DID derived: ${did}`);
+    
+    // Obtener el par de claves para el usuario
+    const keyPair = await getQlockKeyPair(alias, password);
+    if (!keyPair) {
+      throw new Error('No se pudo generar el par de claves. Verifica tus credenciales.');
+    }
+    
+    const { publicKey, privateKey } = keyPair;
+    
+    // Buscar en el índice local
+    const logs = (await import('@/lib/qindex')).findLogsByIdentity(did);
+    const profileLog = logs.find((l: any) => l.fileName === 'profile.json');
+    
+    if (!profileLog) {
+      throw new Error('Usuario no encontrado. Verifica tus credenciales o regístrate.');
+    }
+    
+    const profileCID = profileLog.ipfsHash;
+    console.log(`[sQuid] Downloading profile from IPFS: ${profileCID}`);
+    
+    // Descargar y desencriptar perfil
+    const encryptedObj = await getFromIPFS(profileCID);
+    if (!encryptedObj?.data) {
+      throw new Error('No se pudo cargar el perfil. Intenta nuevamente más tarde.');
+    }
+    
+    console.log(`[sQuid] Decrypting profile...`);
+    
+    try {
+      // Asegurarnos de que tenemos los datos en el formato correcto
+      let encryptedData: string | Uint8Array;
+      
+      if (encryptedObj.data instanceof Uint8Array) {
+        // Si ya es Uint8Array, lo usamos directamente
+        encryptedData = encryptedObj.data;
+      } else if (encryptedObj.data instanceof ArrayBuffer) {
+        // Si es ArrayBuffer, lo convertimos a Uint8Array
+        encryptedData = new Uint8Array(encryptedObj.data);
+      } else if (typeof encryptedObj.data === 'string') {
+        // Si es string, asumimos que es base64 y lo convertimos a Uint8Array
+        try {
+          const binaryString = atob(encryptedObj.data);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          encryptedData = bytes;
+        } catch (error) {
+          console.error('Error al decodificar datos en base64:', error);
+          throw new Error('Formato de datos encriptados no válido');
+        }
+      } else {
+        throw new Error('Formato de datos encriptados no soportado');
+      }
+      
+      // Verificar que tengamos una clave privada válida
+      if (!privateKey) {
+        throw new Error('Clave privada no disponible para el desencriptado');
+        if (decryptedData === null) {
+          throw new Error('Error al desencriptar los datos');
+        }
+      } catch (error) {
+        console.error('Error durante el desencriptado:', error);
+        throw new Error('No se pudo desencriptar el perfil. Verifica tus credenciales.');
+      }
+      
+      // Asegurarnos de que tenemos datos para procesar
+      if (decryptedData === null) {
+        throw new Error('No se pudieron desencriptar los datos del perfil');
+      }
+      
+      // Convertir los datos desencriptados a string si es necesario
+      let profileStr: string;
+      
+      if (typeof decryptedData === 'string') {
+        profileStr = decryptedData;
+      } else if (decryptedData instanceof ArrayBuffer) {
+        profileStr = new TextDecoder().decode(new Uint8Array(decryptedData));
+      } else if (typeof decryptedData === 'object') {
+        // Si ya es un objeto, lo convertimos a string
+        profileStr = JSON.stringify(decryptedData);
+      } else {
+        throw new Error('Formato de datos desencriptados no soportado');
+      }
+      
+      const profile = JSON.parse(profileStr);
+      console.log(`[sQuid] Profile decrypted successfully`);
+      
+      // Guardar datos de sesión
+      localStorage.setItem('active_user_did', did);
+      
+      if (profile.spaceDID) {
+        localStorage.setItem('active_space_did', profile.spaceDID);
+      }
+      
+      // Crear identidad del usuario
+      const identity: SquidIdentity = { 
+        did: did,
+        name: profile.name || alias,
+        type: 'ROOT',
+        kyc: profile.kyc || false,
+        reputation: profile.reputation || 100,
+        space: profile.spaceDID || 'default-space',
+        email: profile.email,
+        avatar: profile.avatar,
+        createdAt: profile.createdAt,
+        lastLogin: new Date().toISOString()
+      };
+      
+      // Establecer la identidad activa
+      useIdentityStore.getState().setActiveIdentity(identity);
+      
+      // Devolver la respuesta de éxito con la identidad y los datos del perfil
+      return { 
+        success: true, 
+        identity,
+        spaceDID: profile.spaceDID,
+        message: 'Inicio de sesión local exitoso. ¡Bienvenido de nuevo!',
+        userData: {
+          email: profile.email,
+          avatar: profile.avatar,
+          createdAt: profile.createdAt,
+          lastLogin: new Date().toISOString()
+        }
+      };
+    } catch (error) {
+      console.error(`[sQuid] ❌ Login error:`, error);
+      
+      // Proporcionar mensajes de error más descriptivos
+      let errorMessage = 'Error en el inicio de sesión';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('network')) {
+          errorMessage = 'Error de conexión. Por favor, verifica tu conexión a internet.';
+        } else if (error.message.includes('401') || error.message.includes('credenciales')) {
+          errorMessage = 'Credenciales incorrectas. Verifica tu alias y contraseña.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      throw new Error(errorMessage);
+    }
+  }
+}
+
+/**
+ * Helper function for password hash
+ */
+async function hashPassword(password: string): Promise<string> {
+  // Simple implementation for demo - in production use bcrypt or similar
+  let hash = 0;
+  for (let i = 0; i < password.length; i++) {
+    const char = password.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(16);
+}
+
+/**
+ * Logout: clears localStorage and context
+ */
+export function logoutUser(): void {
+  localStorage.removeItem('active_user_did');
+  localStorage.removeItem('active_space_did');
+  localStorage.removeItem('space_delegation_ucan');
+  useIdentityStore.getState().clearIdentity();
+  console.log('[sQuid] Session cleared');
+}

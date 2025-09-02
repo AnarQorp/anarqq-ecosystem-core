@@ -1,0 +1,1870 @@
+[
+  {
+    "timestamp": "2025-08-30T18:15:52.071Z",
+    "kpis": {
+      "documentationHealth": {
+        "completeness": 100,
+        "quality": 0,
+        "overallScore": 67
+      },
+      "versionFreshness": {
+        "currentVersionPercentage": 100,
+        "outdatedDocs": 0,
+        "averageDocumentAge": 13,
+        "documentsNeedingUpdate": []
+      },
+      "reviewBacklog": {
+        "pendingReviews": 30,
+        "overdueReviews": 0,
+        "averageReviewTime": 0,
+        "reviewVelocity": 0,
+        "burnDownRate": 0
+      },
+      "linkHealth": {
+        "totalLinks": 472,
+        "brokenLinks": 106,
+        "healthScore": 78,
+        "externalLinks": 10,
+        "internalLinks": 462,
+        "brokenLinkDetails": [
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Multi-chain Guide",
+            "linkUrl": "MULTI_CHAIN_TOKEN_MANAGEMENT_SUMMARY.md",
+            "targetPath": "MULTI_CHAIN_TOKEN_MANAGEMENT_SUMMARY.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Q∞ Architecture",
+            "linkUrl": "global/q-infinity-architecture.md",
+            "targetPath": "global/q-infinity-architecture.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "System Design Patterns",
+            "linkUrl": "modules/*/integration-guide.md",
+            "targetPath": "modules/*/integration-guide.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Standard Headers",
+            "linkUrl": "integration/integration-matrix.md#standard-headers",
+            "targetPath": "integration/integration-matrix.md#standard-headers",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Response Formats",
+            "linkUrl": "integration/integration-matrix.md#response-format",
+            "targetPath": "integration/integration-matrix.md#response-format",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Environment Validation",
+            "linkUrl": "scripts/validate-deployment-readiness.sh",
+            "targetPath": "scripts/validate-deployment-readiness.sh",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Monitoring System",
+            "linkUrl": "docs/performance-monitoring-system.md",
+            "targetPath": "docs/performance-monitoring-system.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Alert Procedures",
+            "linkUrl": "docs/runbooks/",
+            "targetPath": "docs/runbooks",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "DEPLOYMENT.md",
+            "linkText": "Integration Guide",
+            "linkUrl": "./src/components/dao/DAO-INTEGRATION-GUIDE.md",
+            "targetPath": "src/components/dao/DAO-INTEGRATION-GUIDE.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "INDEX.md",
+            "linkText": "Quick Start",
+            "linkUrl": "#quick-start",
+            "targetPath": "#quick-start",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "INDEX.md",
+            "linkText": "Module Documentation",
+            "linkUrl": "#module-documentation",
+            "targetPath": "#module-documentation",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "English Scripts",
+            "linkUrl": "video-scripts/*/en/",
+            "targetPath": "video-scripts/*/en",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Spanish Scripts",
+            "linkUrl": "video-scripts/*/es/",
+            "targetPath": "video-scripts/*/es",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Code Examples",
+            "linkUrl": "modules/*/examples.md",
+            "targetPath": "modules/*/examples.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "MCP Tools",
+            "linkUrl": "modules/*/mcp-tools.md",
+            "targetPath": "modules/*/mcp-tools.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Troubleshooting",
+            "linkUrl": "modules/*/troubleshooting.md",
+            "targetPath": "modules/*/troubleshooting.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Monitoring",
+            "linkUrl": "docs/performance-monitoring-system.md",
+            "targetPath": "docs/performance-monitoring-system.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Module Overviews",
+            "linkUrl": "modules/*/README.md",
+            "targetPath": "modules/*/README.md",
+            "severity": "high"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Technical Analysis",
+            "linkUrl": "docs/global/technical-analysis/",
+            "targetPath": "docs/global/technical-analysis",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Design Decisions",
+            "linkUrl": "modules/*/integration-guide.md",
+            "targetPath": "modules/*/integration-guide.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Performance Monitoring",
+            "linkUrl": "docs/performance-monitoring-system.md",
+            "targetPath": "docs/performance-monitoring-system.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Verification API**",
+            "linkUrl": "./verification-api.md",
+            "targetPath": "api/module-registry/verification-api.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Management API**",
+            "linkUrl": "./management-api.md",
+            "targetPath": "api/module-registry/management-api.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Authentication**",
+            "linkUrl": "./authentication.md",
+            "targetPath": "api/module-registry/authentication.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**SDK Integration**",
+            "linkUrl": "./sdk-integration.md",
+            "targetPath": "api/module-registry/sdk-integration.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**CLI Tools**",
+            "linkUrl": "./cli-tools.md",
+            "targetPath": "api/module-registry/cli-tools.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Batch Operations**",
+            "linkUrl": "./batch-operations.md",
+            "targetPath": "api/module-registry/batch-operations.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Sandbox Mode**",
+            "linkUrl": "./sandbox-mode.md",
+            "targetPath": "api/module-registry/sandbox-mode.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Error Handling**",
+            "linkUrl": "./error-handling.md",
+            "targetPath": "api/module-registry/error-handling.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Performance**",
+            "linkUrl": "./performance.md",
+            "targetPath": "api/module-registry/performance.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Type Definitions**",
+            "linkUrl": "./types.md",
+            "targetPath": "api/module-registry/types.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "MIT License",
+            "linkUrl": "./LICENSE",
+            "targetPath": "api/module-registry/LICENSE",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`module-discovery.js`",
+            "linkUrl": "./module-discovery.js",
+            "targetPath": "api/module-registry/examples/module-discovery.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`module-verification.js`",
+            "linkUrl": "./module-verification.js",
+            "targetPath": "api/module-registry/examples/module-verification.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`batch-operations.js`",
+            "linkUrl": "./batch-operations.js",
+            "targetPath": "api/module-registry/examples/batch-operations.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`error-handling.js`",
+            "linkUrl": "./error-handling.js",
+            "targetPath": "api/module-registry/examples/error-handling.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`dependency-management.js`",
+            "linkUrl": "./dependency-management.js",
+            "targetPath": "api/module-registry/examples/dependency-management.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`react-module-browser.tsx`",
+            "linkUrl": "./react-module-browser.tsx",
+            "targetPath": "api/module-registry/examples/react-module-browser.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`react-hooks-examples.tsx`",
+            "linkUrl": "./react-hooks-examples.tsx",
+            "targetPath": "api/module-registry/examples/react-hooks-examples.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`cli-scripts/`",
+            "linkUrl": "./cli-scripts/",
+            "targetPath": "api/module-registry/examples/cli-scripts",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`ci-cd-examples/`",
+            "linkUrl": "./ci-cd-examples/",
+            "targetPath": "api/module-registry/examples/ci-cd-examples",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`express-middleware.js`",
+            "linkUrl": "./express-middleware.js",
+            "targetPath": "api/module-registry/examples/express-middleware.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`nextjs-api-routes.js`",
+            "linkUrl": "./nextjs-api-routes.js",
+            "targetPath": "api/module-registry/examples/nextjs-api-routes.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`webhook-handlers.js`",
+            "linkUrl": "./webhook-handlers.js",
+            "targetPath": "api/module-registry/examples/webhook-handlers.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`module-discovery.js`",
+            "linkUrl": "./module-discovery.js",
+            "targetPath": "api/module-registry/examples/module-discovery.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`error-handling.js`",
+            "linkUrl": "./error-handling.js",
+            "targetPath": "api/module-registry/examples/error-handling.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`batch-operations.js`",
+            "linkUrl": "./batch-operations.js",
+            "targetPath": "api/module-registry/examples/batch-operations.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`dependency-management.js`",
+            "linkUrl": "./dependency-management.js",
+            "targetPath": "api/module-registry/examples/dependency-management.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/faq.md",
+            "linkText": "support team",
+            "linkUrl": "mailto:support@qwallet.example.com",
+            "targetPath": "api/module-registry/mailto:support@qwallet.example.com",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/getting-started.md",
+            "linkText": "Authentication",
+            "linkUrl": "./authentication.md",
+            "targetPath": "api/module-registry/authentication.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/getting-started.md",
+            "linkText": "Batch Operations",
+            "linkUrl": "./batch-operations.md",
+            "targetPath": "api/module-registry/batch-operations.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/getting-started.md",
+            "linkText": "Sandbox Mode",
+            "linkUrl": "./sandbox-mode.md",
+            "targetPath": "api/module-registry/sandbox-mode.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/getting-started.md",
+            "linkText": "Error Handling",
+            "linkUrl": "./error-handling.md",
+            "targetPath": "api/module-registry/error-handling.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/getting-started.md",
+            "linkText": "Performance",
+            "linkUrl": "./performance.md",
+            "targetPath": "api/module-registry/performance.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "migration/legacy-to-modular-migration-guide.md",
+            "linkText": "API Compatibility Matrix",
+            "linkUrl": "./compatibility-matrix.md",
+            "targetPath": "migration/compatibility-matrix.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "migration/legacy-to-modular-migration-guide.md",
+            "linkText": "Troubleshooting Guide",
+            "linkUrl": "./troubleshooting.md",
+            "targetPath": "migration/troubleshooting.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "migration/legacy-to-modular-migration-guide.md",
+            "linkText": "Performance Optimization Guide",
+            "linkUrl": "./performance-optimization.md",
+            "targetPath": "migration/performance-optimization.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "modules/qwallet/README.md",
+            "linkText": "Documentation",
+            "linkUrl": "#documentation",
+            "targetPath": "modules/qwallet/#documentation",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "modules/qwallet/README.md",
+            "linkText": "Quick Start",
+            "linkUrl": "#quick-start",
+            "targetPath": "modules/qwallet/#quick-start",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "modules/qwallet/README.md",
+            "linkText": "Key Features",
+            "linkUrl": "#key-features",
+            "targetPath": "modules/qwallet/#key-features",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/README.md",
+            "linkText": "Troubleshooting",
+            "linkUrl": "./troubleshooting/",
+            "targetPath": "qwallet-identity-expansion/troubleshooting",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "TokenTransferForm",
+            "linkUrl": "./TokenTransferForm.md",
+            "targetPath": "qwallet-identity-expansion/components/TokenTransferForm.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "TransactionHistory",
+            "linkUrl": "./TransactionHistory.md",
+            "targetPath": "qwallet-identity-expansion/components/TransactionHistory.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "PiWalletInterface",
+            "linkUrl": "./PiWalletInterface.md",
+            "targetPath": "qwallet-identity-expansion/components/PiWalletInterface.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "AuditStatusDisplay",
+            "linkUrl": "./AuditStatusDisplay.md",
+            "targetPath": "qwallet-identity-expansion/components/AuditStatusDisplay.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "WalletLimitIndicator",
+            "linkUrl": "./WalletLimitIndicator.md",
+            "targetPath": "qwallet-identity-expansion/components/WalletLimitIndicator.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "IdentityWalletSelector",
+            "linkUrl": "./IdentityWalletSelector.md",
+            "targetPath": "qwallet-identity-expansion/components/IdentityWalletSelector.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "SecurityStatusBadge",
+            "linkUrl": "./SecurityStatusBadge.md",
+            "targetPath": "qwallet-identity-expansion/components/SecurityStatusBadge.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "ComplianceReportViewer",
+            "linkUrl": "./ComplianceReportViewer.md",
+            "targetPath": "qwallet-identity-expansion/components/ComplianceReportViewer.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "useIdentityQwallet",
+            "linkUrl": "./hooks/useIdentityQwallet.md",
+            "targetPath": "qwallet-identity-expansion/components/hooks/useIdentityQwallet.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "useQwalletState",
+            "linkUrl": "./hooks/useQwalletState.md",
+            "targetPath": "qwallet-identity-expansion/components/hooks/useQwalletState.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "usePiWallet",
+            "linkUrl": "./hooks/usePiWallet.md",
+            "targetPath": "qwallet-identity-expansion/components/hooks/usePiWallet.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "useWalletAudit",
+            "linkUrl": "./hooks/useWalletAudit.md",
+            "targetPath": "qwallet-identity-expansion/components/hooks/useWalletAudit.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "EnhancedQwalletService",
+            "linkUrl": "./services/EnhancedQwalletService.md",
+            "targetPath": "qwallet-identity-expansion/components/services/EnhancedQwalletService.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "PiWalletService",
+            "linkUrl": "./services/PiWalletService.md",
+            "targetPath": "qwallet-identity-expansion/components/services/PiWalletService.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "QonsentWalletService",
+            "linkUrl": "./services/QonsentWalletService.md",
+            "targetPath": "qwallet-identity-expansion/components/services/QonsentWalletService.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "WalletAuditService",
+            "linkUrl": "./services/WalletAuditService.md",
+            "targetPath": "qwallet-identity-expansion/components/services/WalletAuditService.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/README.md",
+            "linkText": "Service Examples",
+            "linkUrl": "./services/",
+            "targetPath": "qwallet-identity-expansion/examples/services",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/README.md",
+            "linkText": "Integration Examples",
+            "linkUrl": "./integration/",
+            "targetPath": "qwallet-identity-expansion/examples/integration",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/README.md",
+            "linkText": "Testing Examples",
+            "linkUrl": "./testing/",
+            "targetPath": "qwallet-identity-expansion/examples/testing",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/README.md",
+            "linkText": "Service Integration Examples",
+            "linkUrl": "./services/",
+            "targetPath": "qwallet-identity-expansion/examples/services",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/README.md",
+            "linkText": "Testing Examples",
+            "linkUrl": "./testing/",
+            "targetPath": "qwallet-identity-expansion/examples/testing",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "transaction-history.tsx",
+            "linkUrl": "./transaction-history.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/transaction-history.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "pi-wallet-integration.tsx",
+            "linkUrl": "./pi-wallet-integration.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/pi-wallet-integration.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "audit-status-display.tsx",
+            "linkUrl": "./audit-status-display.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/audit-status-display.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "wallet-limit-indicator.tsx",
+            "linkUrl": "./wallet-limit-indicator.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/wallet-limit-indicator.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "identity-selector.tsx",
+            "linkUrl": "./identity-selector.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/identity-selector.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "security-badge.tsx",
+            "linkUrl": "./security-badge.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/security-badge.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "compliance-report-viewer.tsx",
+            "linkUrl": "./compliance-report-viewer.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/compliance-report-viewer.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/README.md",
+            "linkText": "DAO Identity Guide",
+            "linkUrl": "./dao-identity.md",
+            "targetPath": "qwallet-identity-expansion/user-guides/dao-identity.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/README.md",
+            "linkText": "ENTERPRISE Identity Guide",
+            "linkUrl": "./enterprise-identity.md",
+            "targetPath": "qwallet-identity-expansion/user-guides/enterprise-identity.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/README.md",
+            "linkText": "CONSENTIDA Identity Guide",
+            "linkUrl": "./consentida-identity.md",
+            "targetPath": "qwallet-identity-expansion/user-guides/consentida-identity.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/README.md",
+            "linkText": "AID Identity Guide",
+            "linkUrl": "./aid-identity.md",
+            "targetPath": "qwallet-identity-expansion/user-guides/aid-identity.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/root-identity.md",
+            "linkText": "API Reference",
+            "linkUrl": "../api/",
+            "targetPath": "qwallet-identity-expansion/api",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/root-identity.md",
+            "linkText": "Security Guidelines",
+            "linkUrl": "../security/",
+            "targetPath": "qwallet-identity-expansion/security",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/root-identity.md",
+            "linkText": "Troubleshooting Guide",
+            "linkUrl": "../troubleshooting/",
+            "targetPath": "qwallet-identity-expansion/troubleshooting",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Module Overview",
+            "linkUrl": "#module-overview",
+            "targetPath": "runbooks/#module-overview",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Health Checks",
+            "linkUrl": "#health-checks",
+            "targetPath": "runbooks/#health-checks",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Service Management",
+            "linkUrl": "#service-management",
+            "targetPath": "runbooks/#service-management",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Troubleshooting",
+            "linkUrl": "#troubleshooting",
+            "targetPath": "runbooks/#troubleshooting",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Monitoring",
+            "linkUrl": "#monitoring",
+            "targetPath": "runbooks/#monitoring",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Backup and Recovery",
+            "linkUrl": "#backup-and-recovery",
+            "targetPath": "runbooks/#backup-and-recovery",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Scaling",
+            "linkUrl": "#scaling",
+            "targetPath": "runbooks/#scaling",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Security",
+            "linkUrl": "#security",
+            "targetPath": "runbooks/#security",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Maintenance",
+            "linkUrl": "#maintenance",
+            "targetPath": "runbooks/#maintenance",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Contact Information",
+            "linkUrl": "#contact-information",
+            "targetPath": "runbooks/#contact-information",
+            "severity": "medium"
+          }
+        ]
+      },
+      "bilingualParity": {
+        "totalContent": 0,
+        "bilingualContent": 0,
+        "parityScore": 0,
+        "missingTranslations": [],
+        "languageCoverage": {
+          "en": 0,
+          "es": 0
+        }
+      },
+      "contentCoverage": {
+        "totalModules": 14,
+        "completeModules": 14,
+        "coverageScore": 100,
+        "openApiCoverage": 100,
+        "mcpCoverage": 100,
+        "moduleCompletionDetails": [
+          {
+            "module": "dao",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qchat",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qdrive",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qerberos",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qindex",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qlock",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qmail",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qmarket",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qmask",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qnet",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qonsent",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qpic",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qwallet",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "squid",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          }
+        ]
+      },
+      "trends": {
+        "completeness": {
+          "current": 0,
+          "previous": 0,
+          "trend": "stable"
+        },
+        "quality": {
+          "current": 0,
+          "previous": 0,
+          "trend": "stable"
+        },
+        "linkHealth": {
+          "current": 0,
+          "previous": 0,
+          "trend": "stable"
+        },
+        "reviewBacklog": {
+          "current": 0,
+          "previous": 0,
+          "trend": "stable"
+        }
+      }
+    },
+    "overallHealth": "poor",
+    "alerts": 2,
+    "recommendations": 2
+  },
+  {
+    "timestamp": "2025-08-30T18:16:03.618Z",
+    "kpis": {
+      "documentationHealth": {
+        "completeness": 100,
+        "quality": 0,
+        "overallScore": 67
+      },
+      "versionFreshness": {
+        "currentVersionPercentage": 100,
+        "outdatedDocs": 0,
+        "averageDocumentAge": 13,
+        "documentsNeedingUpdate": []
+      },
+      "reviewBacklog": {
+        "pendingReviews": 30,
+        "overdueReviews": 0,
+        "averageReviewTime": 0,
+        "reviewVelocity": 0,
+        "burnDownRate": 0
+      },
+      "linkHealth": {
+        "totalLinks": 472,
+        "brokenLinks": 106,
+        "healthScore": 78,
+        "externalLinks": 10,
+        "internalLinks": 462,
+        "brokenLinkDetails": [
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Multi-chain Guide",
+            "linkUrl": "MULTI_CHAIN_TOKEN_MANAGEMENT_SUMMARY.md",
+            "targetPath": "MULTI_CHAIN_TOKEN_MANAGEMENT_SUMMARY.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Q∞ Architecture",
+            "linkUrl": "global/q-infinity-architecture.md",
+            "targetPath": "global/q-infinity-architecture.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "System Design Patterns",
+            "linkUrl": "modules/*/integration-guide.md",
+            "targetPath": "modules/*/integration-guide.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Standard Headers",
+            "linkUrl": "integration/integration-matrix.md#standard-headers",
+            "targetPath": "integration/integration-matrix.md#standard-headers",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Response Formats",
+            "linkUrl": "integration/integration-matrix.md#response-format",
+            "targetPath": "integration/integration-matrix.md#response-format",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Environment Validation",
+            "linkUrl": "scripts/validate-deployment-readiness.sh",
+            "targetPath": "scripts/validate-deployment-readiness.sh",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Monitoring System",
+            "linkUrl": "docs/performance-monitoring-system.md",
+            "targetPath": "docs/performance-monitoring-system.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "CROSS-REFERENCES.md",
+            "linkText": "Alert Procedures",
+            "linkUrl": "docs/runbooks/",
+            "targetPath": "docs/runbooks",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "DEPLOYMENT.md",
+            "linkText": "Integration Guide",
+            "linkUrl": "./src/components/dao/DAO-INTEGRATION-GUIDE.md",
+            "targetPath": "src/components/dao/DAO-INTEGRATION-GUIDE.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "INDEX.md",
+            "linkText": "Quick Start",
+            "linkUrl": "#quick-start",
+            "targetPath": "#quick-start",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "INDEX.md",
+            "linkText": "Module Documentation",
+            "linkUrl": "#module-documentation",
+            "targetPath": "#module-documentation",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "English Scripts",
+            "linkUrl": "video-scripts/*/en/",
+            "targetPath": "video-scripts/*/en",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Spanish Scripts",
+            "linkUrl": "video-scripts/*/es/",
+            "targetPath": "video-scripts/*/es",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Code Examples",
+            "linkUrl": "modules/*/examples.md",
+            "targetPath": "modules/*/examples.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "MCP Tools",
+            "linkUrl": "modules/*/mcp-tools.md",
+            "targetPath": "modules/*/mcp-tools.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Troubleshooting",
+            "linkUrl": "modules/*/troubleshooting.md",
+            "targetPath": "modules/*/troubleshooting.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Monitoring",
+            "linkUrl": "docs/performance-monitoring-system.md",
+            "targetPath": "docs/performance-monitoring-system.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Module Overviews",
+            "linkUrl": "modules/*/README.md",
+            "targetPath": "modules/*/README.md",
+            "severity": "high"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Technical Analysis",
+            "linkUrl": "docs/global/technical-analysis/",
+            "targetPath": "docs/global/technical-analysis",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Design Decisions",
+            "linkUrl": "modules/*/integration-guide.md",
+            "targetPath": "modules/*/integration-guide.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "NAVIGATION.md",
+            "linkText": "Performance Monitoring",
+            "linkUrl": "docs/performance-monitoring-system.md",
+            "targetPath": "docs/performance-monitoring-system.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Verification API**",
+            "linkUrl": "./verification-api.md",
+            "targetPath": "api/module-registry/verification-api.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Management API**",
+            "linkUrl": "./management-api.md",
+            "targetPath": "api/module-registry/management-api.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Authentication**",
+            "linkUrl": "./authentication.md",
+            "targetPath": "api/module-registry/authentication.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**SDK Integration**",
+            "linkUrl": "./sdk-integration.md",
+            "targetPath": "api/module-registry/sdk-integration.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**CLI Tools**",
+            "linkUrl": "./cli-tools.md",
+            "targetPath": "api/module-registry/cli-tools.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Batch Operations**",
+            "linkUrl": "./batch-operations.md",
+            "targetPath": "api/module-registry/batch-operations.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Sandbox Mode**",
+            "linkUrl": "./sandbox-mode.md",
+            "targetPath": "api/module-registry/sandbox-mode.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Error Handling**",
+            "linkUrl": "./error-handling.md",
+            "targetPath": "api/module-registry/error-handling.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Performance**",
+            "linkUrl": "./performance.md",
+            "targetPath": "api/module-registry/performance.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "**Type Definitions**",
+            "linkUrl": "./types.md",
+            "targetPath": "api/module-registry/types.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/README.md",
+            "linkText": "MIT License",
+            "linkUrl": "./LICENSE",
+            "targetPath": "api/module-registry/LICENSE",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`module-discovery.js`",
+            "linkUrl": "./module-discovery.js",
+            "targetPath": "api/module-registry/examples/module-discovery.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`module-verification.js`",
+            "linkUrl": "./module-verification.js",
+            "targetPath": "api/module-registry/examples/module-verification.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`batch-operations.js`",
+            "linkUrl": "./batch-operations.js",
+            "targetPath": "api/module-registry/examples/batch-operations.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`error-handling.js`",
+            "linkUrl": "./error-handling.js",
+            "targetPath": "api/module-registry/examples/error-handling.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`dependency-management.js`",
+            "linkUrl": "./dependency-management.js",
+            "targetPath": "api/module-registry/examples/dependency-management.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`react-module-browser.tsx`",
+            "linkUrl": "./react-module-browser.tsx",
+            "targetPath": "api/module-registry/examples/react-module-browser.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`react-hooks-examples.tsx`",
+            "linkUrl": "./react-hooks-examples.tsx",
+            "targetPath": "api/module-registry/examples/react-hooks-examples.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`cli-scripts/`",
+            "linkUrl": "./cli-scripts/",
+            "targetPath": "api/module-registry/examples/cli-scripts",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`ci-cd-examples/`",
+            "linkUrl": "./ci-cd-examples/",
+            "targetPath": "api/module-registry/examples/ci-cd-examples",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`express-middleware.js`",
+            "linkUrl": "./express-middleware.js",
+            "targetPath": "api/module-registry/examples/express-middleware.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`nextjs-api-routes.js`",
+            "linkUrl": "./nextjs-api-routes.js",
+            "targetPath": "api/module-registry/examples/nextjs-api-routes.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`webhook-handlers.js`",
+            "linkUrl": "./webhook-handlers.js",
+            "targetPath": "api/module-registry/examples/webhook-handlers.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`module-discovery.js`",
+            "linkUrl": "./module-discovery.js",
+            "targetPath": "api/module-registry/examples/module-discovery.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`error-handling.js`",
+            "linkUrl": "./error-handling.js",
+            "targetPath": "api/module-registry/examples/error-handling.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`batch-operations.js`",
+            "linkUrl": "./batch-operations.js",
+            "targetPath": "api/module-registry/examples/batch-operations.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/examples/README.md",
+            "linkText": "`dependency-management.js`",
+            "linkUrl": "./dependency-management.js",
+            "targetPath": "api/module-registry/examples/dependency-management.js",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/faq.md",
+            "linkText": "support team",
+            "linkUrl": "mailto:support@qwallet.example.com",
+            "targetPath": "api/module-registry/mailto:support@qwallet.example.com",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/getting-started.md",
+            "linkText": "Authentication",
+            "linkUrl": "./authentication.md",
+            "targetPath": "api/module-registry/authentication.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/getting-started.md",
+            "linkText": "Batch Operations",
+            "linkUrl": "./batch-operations.md",
+            "targetPath": "api/module-registry/batch-operations.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/getting-started.md",
+            "linkText": "Sandbox Mode",
+            "linkUrl": "./sandbox-mode.md",
+            "targetPath": "api/module-registry/sandbox-mode.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/getting-started.md",
+            "linkText": "Error Handling",
+            "linkUrl": "./error-handling.md",
+            "targetPath": "api/module-registry/error-handling.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "api/module-registry/getting-started.md",
+            "linkText": "Performance",
+            "linkUrl": "./performance.md",
+            "targetPath": "api/module-registry/performance.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "migration/legacy-to-modular-migration-guide.md",
+            "linkText": "API Compatibility Matrix",
+            "linkUrl": "./compatibility-matrix.md",
+            "targetPath": "migration/compatibility-matrix.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "migration/legacy-to-modular-migration-guide.md",
+            "linkText": "Troubleshooting Guide",
+            "linkUrl": "./troubleshooting.md",
+            "targetPath": "migration/troubleshooting.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "migration/legacy-to-modular-migration-guide.md",
+            "linkText": "Performance Optimization Guide",
+            "linkUrl": "./performance-optimization.md",
+            "targetPath": "migration/performance-optimization.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "modules/qwallet/README.md",
+            "linkText": "Documentation",
+            "linkUrl": "#documentation",
+            "targetPath": "modules/qwallet/#documentation",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "modules/qwallet/README.md",
+            "linkText": "Quick Start",
+            "linkUrl": "#quick-start",
+            "targetPath": "modules/qwallet/#quick-start",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "modules/qwallet/README.md",
+            "linkText": "Key Features",
+            "linkUrl": "#key-features",
+            "targetPath": "modules/qwallet/#key-features",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/README.md",
+            "linkText": "Troubleshooting",
+            "linkUrl": "./troubleshooting/",
+            "targetPath": "qwallet-identity-expansion/troubleshooting",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "TokenTransferForm",
+            "linkUrl": "./TokenTransferForm.md",
+            "targetPath": "qwallet-identity-expansion/components/TokenTransferForm.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "TransactionHistory",
+            "linkUrl": "./TransactionHistory.md",
+            "targetPath": "qwallet-identity-expansion/components/TransactionHistory.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "PiWalletInterface",
+            "linkUrl": "./PiWalletInterface.md",
+            "targetPath": "qwallet-identity-expansion/components/PiWalletInterface.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "AuditStatusDisplay",
+            "linkUrl": "./AuditStatusDisplay.md",
+            "targetPath": "qwallet-identity-expansion/components/AuditStatusDisplay.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "WalletLimitIndicator",
+            "linkUrl": "./WalletLimitIndicator.md",
+            "targetPath": "qwallet-identity-expansion/components/WalletLimitIndicator.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "IdentityWalletSelector",
+            "linkUrl": "./IdentityWalletSelector.md",
+            "targetPath": "qwallet-identity-expansion/components/IdentityWalletSelector.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "SecurityStatusBadge",
+            "linkUrl": "./SecurityStatusBadge.md",
+            "targetPath": "qwallet-identity-expansion/components/SecurityStatusBadge.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "ComplianceReportViewer",
+            "linkUrl": "./ComplianceReportViewer.md",
+            "targetPath": "qwallet-identity-expansion/components/ComplianceReportViewer.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "useIdentityQwallet",
+            "linkUrl": "./hooks/useIdentityQwallet.md",
+            "targetPath": "qwallet-identity-expansion/components/hooks/useIdentityQwallet.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "useQwalletState",
+            "linkUrl": "./hooks/useQwalletState.md",
+            "targetPath": "qwallet-identity-expansion/components/hooks/useQwalletState.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "usePiWallet",
+            "linkUrl": "./hooks/usePiWallet.md",
+            "targetPath": "qwallet-identity-expansion/components/hooks/usePiWallet.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "useWalletAudit",
+            "linkUrl": "./hooks/useWalletAudit.md",
+            "targetPath": "qwallet-identity-expansion/components/hooks/useWalletAudit.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "EnhancedQwalletService",
+            "linkUrl": "./services/EnhancedQwalletService.md",
+            "targetPath": "qwallet-identity-expansion/components/services/EnhancedQwalletService.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "PiWalletService",
+            "linkUrl": "./services/PiWalletService.md",
+            "targetPath": "qwallet-identity-expansion/components/services/PiWalletService.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "QonsentWalletService",
+            "linkUrl": "./services/QonsentWalletService.md",
+            "targetPath": "qwallet-identity-expansion/components/services/QonsentWalletService.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/components/README.md",
+            "linkText": "WalletAuditService",
+            "linkUrl": "./services/WalletAuditService.md",
+            "targetPath": "qwallet-identity-expansion/components/services/WalletAuditService.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/README.md",
+            "linkText": "Service Examples",
+            "linkUrl": "./services/",
+            "targetPath": "qwallet-identity-expansion/examples/services",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/README.md",
+            "linkText": "Integration Examples",
+            "linkUrl": "./integration/",
+            "targetPath": "qwallet-identity-expansion/examples/integration",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/README.md",
+            "linkText": "Testing Examples",
+            "linkUrl": "./testing/",
+            "targetPath": "qwallet-identity-expansion/examples/testing",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/README.md",
+            "linkText": "Service Integration Examples",
+            "linkUrl": "./services/",
+            "targetPath": "qwallet-identity-expansion/examples/services",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/README.md",
+            "linkText": "Testing Examples",
+            "linkUrl": "./testing/",
+            "targetPath": "qwallet-identity-expansion/examples/testing",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "transaction-history.tsx",
+            "linkUrl": "./transaction-history.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/transaction-history.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "pi-wallet-integration.tsx",
+            "linkUrl": "./pi-wallet-integration.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/pi-wallet-integration.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "audit-status-display.tsx",
+            "linkUrl": "./audit-status-display.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/audit-status-display.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "wallet-limit-indicator.tsx",
+            "linkUrl": "./wallet-limit-indicator.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/wallet-limit-indicator.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "identity-selector.tsx",
+            "linkUrl": "./identity-selector.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/identity-selector.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "security-badge.tsx",
+            "linkUrl": "./security-badge.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/security-badge.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/examples/components/README.md",
+            "linkText": "compliance-report-viewer.tsx",
+            "linkUrl": "./compliance-report-viewer.tsx",
+            "targetPath": "qwallet-identity-expansion/examples/components/compliance-report-viewer.tsx",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/README.md",
+            "linkText": "DAO Identity Guide",
+            "linkUrl": "./dao-identity.md",
+            "targetPath": "qwallet-identity-expansion/user-guides/dao-identity.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/README.md",
+            "linkText": "ENTERPRISE Identity Guide",
+            "linkUrl": "./enterprise-identity.md",
+            "targetPath": "qwallet-identity-expansion/user-guides/enterprise-identity.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/README.md",
+            "linkText": "CONSENTIDA Identity Guide",
+            "linkUrl": "./consentida-identity.md",
+            "targetPath": "qwallet-identity-expansion/user-guides/consentida-identity.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/README.md",
+            "linkText": "AID Identity Guide",
+            "linkUrl": "./aid-identity.md",
+            "targetPath": "qwallet-identity-expansion/user-guides/aid-identity.md",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/root-identity.md",
+            "linkText": "API Reference",
+            "linkUrl": "../api/",
+            "targetPath": "qwallet-identity-expansion/api",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/root-identity.md",
+            "linkText": "Security Guidelines",
+            "linkUrl": "../security/",
+            "targetPath": "qwallet-identity-expansion/security",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "qwallet-identity-expansion/user-guides/root-identity.md",
+            "linkText": "Troubleshooting Guide",
+            "linkUrl": "../troubleshooting/",
+            "targetPath": "qwallet-identity-expansion/troubleshooting",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Module Overview",
+            "linkUrl": "#module-overview",
+            "targetPath": "runbooks/#module-overview",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Health Checks",
+            "linkUrl": "#health-checks",
+            "targetPath": "runbooks/#health-checks",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Service Management",
+            "linkUrl": "#service-management",
+            "targetPath": "runbooks/#service-management",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Troubleshooting",
+            "linkUrl": "#troubleshooting",
+            "targetPath": "runbooks/#troubleshooting",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Monitoring",
+            "linkUrl": "#monitoring",
+            "targetPath": "runbooks/#monitoring",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Backup and Recovery",
+            "linkUrl": "#backup-and-recovery",
+            "targetPath": "runbooks/#backup-and-recovery",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Scaling",
+            "linkUrl": "#scaling",
+            "targetPath": "runbooks/#scaling",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Security",
+            "linkUrl": "#security",
+            "targetPath": "runbooks/#security",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Maintenance",
+            "linkUrl": "#maintenance",
+            "targetPath": "runbooks/#maintenance",
+            "severity": "medium"
+          },
+          {
+            "sourceFile": "runbooks/runbook-qwallet.md",
+            "linkText": "Contact Information",
+            "linkUrl": "#contact-information",
+            "targetPath": "runbooks/#contact-information",
+            "severity": "medium"
+          }
+        ]
+      },
+      "bilingualParity": {
+        "totalContent": 0,
+        "bilingualContent": 0,
+        "parityScore": 0,
+        "missingTranslations": [],
+        "languageCoverage": {
+          "en": 0,
+          "es": 0
+        }
+      },
+      "contentCoverage": {
+        "totalModules": 14,
+        "completeModules": 14,
+        "coverageScore": 100,
+        "openApiCoverage": 100,
+        "mcpCoverage": 100,
+        "moduleCompletionDetails": [
+          {
+            "module": "dao",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qchat",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qdrive",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qerberos",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qindex",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qlock",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qmail",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qmarket",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qmask",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qnet",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qonsent",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qpic",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "qwallet",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          },
+          {
+            "module": "squid",
+            "completeness": 100,
+            "existingDocs": 8,
+            "requiredDocs": 8,
+            "missingDocs": [],
+            "priority": "medium"
+          }
+        ]
+      },
+      "trends": {
+        "completeness": {
+          "current": 100,
+          "previous": 100,
+          "change": 0,
+          "percentChange": 0,
+          "trend": "stable"
+        },
+        "quality": {
+          "current": 0,
+          "previous": 0,
+          "change": 0,
+          "percentChange": 0,
+          "trend": "stable"
+        },
+        "linkHealth": {
+          "current": 78,
+          "previous": 78,
+          "change": 0,
+          "percentChange": 0,
+          "trend": "stable"
+        },
+        "reviewBacklog": {
+          "current": 30,
+          "previous": 30,
+          "change": 0,
+          "percentChange": 0,
+          "trend": "stable"
+        }
+      }
+    },
+    "overallHealth": "poor",
+    "alerts": 2,
+    "recommendations": 2
+  }
+]

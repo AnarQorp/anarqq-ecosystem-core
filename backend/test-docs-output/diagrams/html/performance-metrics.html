@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>performance-metrics - AnarQ&Q Ecosystem</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 20px;
+        }
+        .diagram-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .metrics-info {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .timestamp {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>performance metrics</h1>
+            <p>Real-time metrics visualization for AnarQ&Q ecosystem</p>
+        </div>
+        
+        <div class="diagram-container">
+            <div class="mermaid">
+graph TB
+    subgraph "Performance Dashboard"
+        subgraph "Latency Metrics"
+            P50[P50: 45ms]
+            P95[P95: 120ms]
+            P99[P99: 180ms]
+        end
+        
+        subgraph "Throughput Metrics"
+            RPS[Requests/sec<br/>150]
+            TPS[Transactions/sec<br/>25]
+        end
+        
+        subgraph "Resource Utilization"
+            CPU[CPU Usage<br/>35%]
+            Memory[Memory<br/>2.1GB / 8GB]
+            Disk[Disk<br/>45.2GB / 100GB]
+        end
+        
+        subgraph "Quality Metrics"
+            ErrorRate[Error Rate<br/>2%]
+            Availability[Availability<br/>99.8%]
+            CacheHit[Cache Hit<br/>87%]
+        end
+        
+        subgraph "Overall Scores"
+            PerfScore[Performance<br/>63/100]
+            ReliScore[Reliability<br/>92/100]
+            ScaleScore[Scalability<br/>71/100]
+        end
+    end
+    
+    P50 --> PerfScore
+    P95 --> PerfScore
+    P99 --> PerfScore
+    
+    RPS --> ScaleScore
+    TPS --> ScaleScore
+    
+    CPU --> ScaleScore
+    Memory --> ScaleScore
+    Disk --> ScaleScore
+    
+    ErrorRate --> ReliScore
+    Availability --> ReliScore
+    CacheHit --> PerfScore
+    
+    classDef excellent fill:#90EE90
+    classDef good fill:#98FB98
+    classDef warning fill:#FFE4B5
+    classDef critical fill:#FFB6C1
+    
+    class P50,RPS,TPS excellent
+    class P95,CPU,Memory,CacheHit good
+    class P99,Disk,Availability excellent
+    class ErrorRate good
+    class PerfScore,ReliScore,ScaleScore warning
+
+            </div>
+        </div>
+        
+        <div class="metrics-info">
+            <strong>Metrics Information:</strong><br/>
+            This diagram is automatically updated with real-time metrics from the AnarQ&Q ecosystem.
+            Metrics include performance data, integrity validation results, and network topology information.
+            Colors indicate health status: Green (healthy), Yellow (warning), Red (critical).
+        </div>
+        
+        <div class="timestamp">
+            Generated: 2025-08-31T09:42:47.598Z<br/>
+            DocumentationGenerator v1.0.0
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#90EE90',
+                primaryTextColor: '#333',
+                primaryBorderColor: '#666',
+                lineColor: '#666',
+                secondaryColor: '#FFE4B5',
+                tertiaryColor: '#FFB6C1'
+            }
+        });
+    </script>
+</body>
+</html>

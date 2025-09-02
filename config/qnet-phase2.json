@@ -1,0 +1,339 @@
+{
+  "environment": "qnet-phase2",
+  "deployment": {
+    "type": "production",
+    "region": "global",
+    "nodes": {
+      "minimum": 5,
+      "target": 10,
+      "maximum": 20
+    },
+    "replication": {
+      "factor": 3,
+      "strategy": "geographic"
+    }
+  },
+  "network": {
+    "qnet": {
+      "endpoint": "${QNET_PHASE2_ENDPOINT}",
+      "protocol": "libp2p",
+      "discovery": {
+        "bootstrap": [
+          "/ip4/bootstrap1.qnet.anarq.org/tcp/4001/p2p/12D3KooWBootstrap1",
+          "/ip4/bootstrap2.qnet.anarq.org/tcp/4001/p2p/12D3KooWBootstrap2",
+          "/ip4/bootstrap3.qnet.anarq.org/tcp/4001/p2p/12D3KooWBootstrap3"
+        ],
+        "mdns": false,
+        "dht": true
+      },
+      "swarm": {
+        "connectTimeout": "30s",
+        "dialTimeout": "10s",
+        "maxConnections": 100
+      }
+    },
+    "ipfs": {
+      "cluster": {
+        "endpoint": "${IPFS_CLUSTER_ENDPOINT}",
+        "replicationFactor": 3,
+        "pinTimeout": "5m"
+      },
+      "gateway": {
+        "publicUrl": "https://ipfs.anarq.org",
+        "timeout": "30s"
+      }
+    }
+  },
+  "services": {
+    "backend": {
+      "instances": 3,
+      "resources": {
+        "cpu": "2000m",
+        "memory": "4Gi",
+        "storage": "20Gi"
+      },
+      "scaling": {
+        "minReplicas": 2,
+        "maxReplicas": 10,
+        "targetCPU": 70,
+        "targetMemory": 80
+      },
+      "healthCheck": {
+        "path": "/api/health",
+        "interval": "30s",
+        "timeout": "10s",
+        "retries": 3
+      }
+    },
+    "ecosystem": {
+      "instances": 2,
+      "resources": {
+        "cpu": "1000m",
+        "memory": "2Gi",
+        "storage": "10Gi"
+      },
+      "scaling": {
+        "minReplicas": 1,
+        "maxReplicas": 5,
+        "targetCPU": 80
+      }
+    },
+    "validation": {
+      "instances": 2,
+      "resources": {
+        "cpu": "1500m",
+        "memory": "3Gi",
+        "storage": "15Gi"
+      },
+      "monitoring": {
+        "interval": "15s",
+        "alerting": true
+      }
+    }
+  },
+  "database": {
+    "postgresql": {
+      "url": "${DATABASE_URL_PRODUCTION}",
+      "pool": {
+        "min": 5,
+        "max": 20,
+        "idleTimeout": "30s"
+      },
+      "backup": {
+        "enabled": true,
+        "schedule": "0 2 * * *",
+        "retention": "30d"
+      }
+    },
+    "redis": {
+      "url": "${REDIS_URL_PRODUCTION}",
+      "cluster": true,
+      "nodes": 3,
+      "maxMemory": "2gb",
+      "evictionPolicy": "allkeys-lru"
+    }
+  },
+  "security": {
+    "encryption": {
+      "key": "${ENCRYPTION_KEY_PRODUCTION}",
+      "algorithm": "AES-256-GCM"
+    },
+    "jwt": {
+      "secret": "${JWT_SECRET_PRODUCTION}",
+      "expiresIn": "24h",
+      "algorithm": "HS256"
+    },
+    "cors": {
+      "origins": [
+        "https://anarq.org",
+        "https://app.anarq.org",
+        "https://demo.anarq.org"
+      ],
+      "credentials": true
+    },
+    "rateLimit": {
+      "windowMs": 900000,
+      "max": 1000,
+      "skipSuccessfulRequests": true
+    }
+  },
+  "piNetwork": {
+    "environment": "mainnet",
+    "apiKey": "${PI_MAINNET_API_KEY}",
+    "contracts": {
+      "payment": "${PI_PAYMENT_CONTRACT_ADDRESS}",
+      "governance": "${PI_GOVERNANCE_CONTRACT_ADDRESS}",
+      "identity": "${PI_IDENTITY_CONTRACT_ADDRESS}"
+    },
+    "rpc": {
+      "url": "https://api.mainnet.minepi.com",
+      "timeout": "30s",
+      "retries": 3
+    },
+    "featureFlags": {
+      "mainnetEnabled": true,
+      "contractDeployment": true,
+      "webhookVerification": true
+    }
+  },
+  "monitoring": {
+    "observability": {
+      "enabled": true,
+      "metricsInterval": "15s",
+      "tracingEnabled": true,
+      "logLevel": "info"
+    },
+    "alerting": {
+      "enabled": true,
+      "channels": ["email", "slack", "webhook"],
+      "escalationPolicy": "production"
+    },
+    "dashboard": {
+      "enabled": true,
+      "refreshInterval": "30s",
+      "publicAccess": false
+    },
+    "slo": {
+      "performance": {
+        "p95Latency": 150,
+        "p99Latency": 200,
+        "errorRate": 5,
+        "cacheHitRate": 85
+      },
+      "availability": {
+        "uptime": 99.9,
+        "mttr": 300,
+        "mtbf": 86400
+      },
+      "quality": {
+        "chainContinuity": 100,
+        "deterministicReplayDivergence": 1,
+        "consensusQuorum": 60,
+        "consensusRecoveryTime": 60
+      }
+    }
+  },
+  "validation": {
+    "integrityValidator": {
+      "enabled": true,
+      "interval": "5m",
+      "modules": [
+        "qwallet",
+        "squid",
+        "qlock",
+        "qonsent",
+        "qindex",
+        "qerberos",
+        "qflow",
+        "qnet"
+      ]
+    },
+    "dataFlowTester": {
+      "enabled": true,
+      "interval": "10m",
+      "stressTestEnabled": false,
+      "maxParallelEvents": 100
+    },
+    "demoOrchestrator": {
+      "enabled": true,
+      "scenarios": ["identity-flow", "content-flow", "dao-governance"],
+      "schedule": "0 */6 * * *"
+    },
+    "piIntegrationLayer": {
+      "enabled": true,
+      "healthCheckInterval": "2m",
+      "contractValidation": true
+    }
+  },
+  "backup": {
+    "enabled": true,
+    "schedule": {
+      "database": "0 2 * * *",
+      "artifacts": "0 3 * * *",
+      "configuration": "0 4 * * 0"
+    },
+    "retention": {
+      "daily": 7,
+      "weekly": 4,
+      "monthly": 12
+    },
+    "storage": {
+      "type": "ipfs",
+      "encryption": true,
+      "compression": true
+    }
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "outputs": ["stdout", "file"],
+    "rotation": {
+      "maxSize": "100MB",
+      "maxFiles": 10,
+      "compress": true
+    },
+    "audit": {
+      "enabled": true,
+      "events": [
+        "authentication",
+        "authorization",
+        "data_access",
+        "configuration_change",
+        "deployment",
+        "validation_failure"
+      ]
+    }
+  },
+  "performance": {
+    "caching": {
+      "enabled": true,
+      "ttl": "1h",
+      "maxSize": "1GB",
+      "strategy": "lru"
+    },
+    "compression": {
+      "enabled": true,
+      "algorithm": "gzip",
+      "level": 6,
+      "threshold": "1KB"
+    },
+    "optimization": {
+      "lazyLoading": true,
+      "prefetching": true,
+      "bundling": true
+    }
+  },
+  "compliance": {
+    "gdpr": {
+      "enabled": true,
+      "dataRetention": "2y",
+      "rightToErasure": true,
+      "consentManagement": true
+    },
+    "audit": {
+      "enabled": true,
+      "retention": "7y",
+      "immutable": true,
+      "encryption": true
+    },
+    "privacy": {
+      "piiDetection": true,
+      "dataMinimization": true,
+      "anonymization": true
+    }
+  },
+  "disaster_recovery": {
+    "enabled": true,
+    "rto": "1h",
+    "rpo": "15m",
+    "backupSites": [
+      "region-eu-west",
+      "region-us-east",
+      "region-asia-pacific"
+    ],
+    "failover": {
+      "automatic": true,
+      "threshold": "3m",
+      "healthCheck": true
+    }
+  },
+  "deployment": {
+    "strategy": "rolling",
+    "maxUnavailable": "25%",
+    "maxSurge": "25%",
+    "progressDeadline": "600s",
+    "rollback": {
+      "enabled": true,
+      "automatic": false,
+      "threshold": "50%"
+    }
+  },
+  "features": {
+    "decentralizationAttestation": true,
+    "integrityValidation": true,
+    "piNetworkIntegration": true,
+    "demoMode": false,
+    "maintenanceMode": false,
+    "debugMode": false
+  }
+}

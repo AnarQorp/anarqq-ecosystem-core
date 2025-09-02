@@ -1,0 +1,72 @@
+{
+  "expectations": [
+    {
+      "httpRequest": {
+        "method": "POST",
+        "path": "/audit"
+      },
+      "httpResponse": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": ["application/json"]
+        },
+        "body": {
+          "status": "ok",
+          "code": "SUCCESS",
+          "message": "Audit event recorded",
+          "data": {
+            "eventId": "mock-event-id",
+            "recorded": true
+          },
+          "timestamp": "2024-01-15T10:00:00Z"
+        }
+      }
+    },
+    {
+      "httpRequest": {
+        "method": "POST",
+        "path": "/risk-score"
+      },
+      "httpResponse": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": ["application/json"]
+        },
+        "body": {
+          "status": "ok",
+          "code": "SUCCESS",
+          "message": "Risk score calculated",
+          "data": {
+            "riskScore": 0.15,
+            "level": "low",
+            "factors": ["normal_activity", "good_reputation"]
+          },
+          "timestamp": "2024-01-15T10:00:00Z"
+        }
+      }
+    },
+    {
+      "httpRequest": {
+        "method": "GET",
+        "path": "/health"
+      },
+      "httpResponse": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": ["application/json"]
+        },
+        "body": {
+          "status": "ok",
+          "code": "SUCCESS",
+          "message": "Qerberos service healthy",
+          "data": {
+            "service": "qerberos",
+            "version": "1.0.0",
+            "uptime": 3600
+          },
+          "timestamp": "2024-01-15T10:00:00Z"
+        }
+      }
+    }
+  ]
+}

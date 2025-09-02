@@ -1,0 +1,143 @@
+{
+  "topic": "q.qmail.sent.v1",
+  "version": "v1",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "messageId": {
+        "type": "string",
+        "pattern": "^msg_[a-zA-Z0-9_-]+$",
+        "description": "Unique message identifier"
+      },
+      "senderId": {
+        "type": "string",
+        "pattern": "^squid_[a-zA-Z0-9_-]+$",
+        "description": "Sender sQuid identity ID"
+      },
+      "recipientId": {
+        "type": "string",
+        "pattern": "^squid_[a-zA-Z0-9_-]+$",
+        "description": "Recipient sQuid identity ID"
+      },
+      "subject": {
+        "type": "string",
+        "maxLength": 200,
+        "description": "Message subject (not encrypted in event)"
+      },
+      "encryptionLevel": {
+        "type": "string",
+        "enum": ["STANDARD", "HIGH", "QUANTUM"],
+        "description": "Encryption level used"
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["LOW", "NORMAL", "HIGH", "URGENT"],
+        "description": "Message priority"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Message sent timestamp"
+      },
+      "expiresAt": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Message expiration timestamp"
+      },
+      "ipfsCid": {
+        "type": "string",
+        "pattern": "^Qm[a-zA-Z0-9]{44}$|^bafy[a-zA-Z0-9]+$",
+        "description": "IPFS CID of encrypted message"
+      },
+      "deliveryTracking": {
+        "type": "string",
+        "description": "Delivery tracking identifier"
+      },
+      "certifiedDelivery": {
+        "type": "boolean",
+        "description": "Whether certified delivery was requested"
+      },
+      "attachmentCount": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Number of attachments"
+      },
+      "totalSize": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Total message size in bytes"
+      },
+      "signature": {
+        "type": "string",
+        "description": "Message signature for verification"
+      },
+      "metadata": {
+        "type": "object",
+        "properties": {
+          "threadId": {
+            "type": "string",
+            "description": "Thread/conversation ID"
+          },
+          "replyToMessageId": {
+            "type": "string",
+            "description": "ID of message being replied to"
+          },
+          "spamScore": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Spam probability score"
+          },
+          "riskScore": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Security risk score"
+          }
+        }
+      }
+    },
+    "required": [
+      "messageId",
+      "senderId",
+      "recipientId",
+      "subject",
+      "encryptionLevel",
+      "priority",
+      "timestamp",
+      "ipfsCid",
+      "deliveryTracking",
+      "certifiedDelivery",
+      "attachmentCount",
+      "totalSize",
+      "signature"
+    ],
+    "additionalProperties": false
+  },
+  "compatibility": "BACKWARD",
+  "deprecated": false,
+  "description": "Event published when a message is successfully sent and encrypted",
+  "examples": [
+    {
+      "messageId": "msg_1234567890abcdef",
+      "senderId": "squid_alice_123",
+      "recipientId": "squid_bob_456",
+      "subject": "Quarterly Report",
+      "encryptionLevel": "HIGH",
+      "priority": "NORMAL",
+      "timestamp": "2024-01-15T10:30:00Z",
+      "expiresAt": "2024-02-15T10:30:00Z",
+      "ipfsCid": "QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG",
+      "deliveryTracking": "track_abc123def456",
+      "certifiedDelivery": true,
+      "attachmentCount": 2,
+      "totalSize": 1048576,
+      "signature": "0x1234567890abcdef...",
+      "metadata": {
+        "threadId": "thread_quarterly_reports",
+        "spamScore": 0.01,
+        "riskScore": 0.05
+      }
+    }
+  ]
+}

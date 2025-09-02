@@ -1,0 +1,314 @@
+openapi: 3.0.3
+info:
+  title: {{MODULE_NAME}} API
+  description: {{MODULE_DESCRIPTION}}
+  version: 1.0.0
+  contact:
+    name: Q Ecosystem Team
+    url: https://github.com/q-ecosystem/{{MODULE_NAME}}
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.q-ecosystem.com/{{MODULE_NAME}}
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Basic health check
+      description: Returns basic health status of the service
+      operationId: getHealth
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /health/detailed:
+    get:
+      summary: Detailed health check
+      description: Returns detailed health status including dependencies
+      operationId: getDetailedHealth
+      tags:
+        - Health
+      responses:
+        '200':
+          description: Detailed health information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedHealthResponse'
+
+  /metrics:
+    get:
+      summary: Prometheus metrics
+      description: Returns Prometheus-formatted metrics
+      operationId: getMetrics
+      tags:
+        - Monitoring
+      responses:
+        '200':
+          description: Prometheus metrics
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  # Add your module-specific endpoints here
+  /api/v1/example:
+    get:
+      summary: Example endpoint
+      description: Example API endpoint for the module
+      operationId: getExample
+      tags:
+        - {{MODULE_NAME}}
+      parameters:
+        - $ref: '#/components/parameters/SquidIdHeader'
+        - $ref: '#/components/parameters/SubIdHeader'
+        - $ref: '#/components/parameters/QonsentHeader'
+        - $ref: '#/components/parameters/ApiVersionHeader'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  parameters:
+    SquidIdHeader:
+      name: x-squid-id
+      in: header
+      required: true
+      description: sQuid identity identifier
+      schema:
+        type: string
+        format: uuid
+
+    SubIdHeader:
+      name: x-subid
+      in: header
+      required: false
+      description: Subidentity identifier
+      schema:
+        type: string
+        format: uuid
+
+    QonsentHeader:
+      name: x-qonsent
+      in: header
+      required: false
+      description: Qonsent permission token
+      schema:
+        type: string
+
+    ApiVersionHeader:
+      name: x-api-version
+      in: header
+      required: false
+      description: API version
+      schema:
+        type: string
+        default: "1.0"
+
+    SignatureHeader:
+      name: x-sig
+      in: header
+      required: false
+      description: Qlock signature
+      schema:
+        type: string
+
+    TimestampHeader:
+      name: x-ts
+      in: header
+      required: false
+      description: Request timestamp
+      schema:
+        type: string
+        format: date-time
+
+  schemas:
+    StandardResponse:
+      type: object
+      required:
+        - status
+        - code
+        - message
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+          example: SUCCESS
+        message:
+          type: string
+          example: Operation completed successfully
+        data:
+          type: object
+          description: Response data
+        cid:
+          type: string
+          description: IPFS Content ID
+          example: QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco
+
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - code
+        - message
+      properties:
+        status:
+          type: string
+          enum: [error]
+        code:
+          type: string
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          example: Invalid request parameters
+        details:
+          type: object
+          description: Additional error details
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string
+          format: uuid
+        retryable:
+          type: boolean
+          description: Whether the request can be retried
+        suggestedActions:
+          type: array
+          items:
+            type: string
+          description: Suggested actions to resolve the error
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - timestamp
+        - version
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          example: "1.0.0"
+
+    DetailedHealthResponse:
+      allOf:
+        - $ref: '#/components/schemas/HealthResponse'
+        - type: object
+          properties:
+            dependencies:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [up, down, degraded]
+                  latency:
+                    type: number
+                    description: Response time in milliseconds
+                  lastCheck:
+                    type: string
+                    format: date-time
+            metrics:
+              type: object
+              properties:
+                uptime:
+                  type: number
+                  description: Uptime in seconds
+                requestCount:
+                  type: number
+                  description: Total request count
+                errorRate:
+                  type: number
+                  description: Error rate percentage
+                avgResponseTime:
+                  type: number
+                  description: Average response time in milliseconds
+
+    IdentityRef:
+      type: object
+      required:
+        - squidId
+      properties:
+        squidId:
+          type: string
+          format: uuid
+          description: sQuid identity identifier
+        subId:
+          type: string
+          format: uuid
+          description: Subidentity identifier
+        daoId:
+          type: string
+          format: uuid
+          description: DAO identifier
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+    
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []
+
+tags:
+  - name: Health
+    description: Health check endpoints
+  - name: Monitoring
+    description: Monitoring and metrics endpoints
+  - name: {{MODULE_NAME}}
+    description: {{MODULE_NAME}} specific endpoints

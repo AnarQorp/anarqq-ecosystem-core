@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q.anarq.org/qonsent/permission-grant.json",
+  "title": "Permission Grant",
+  "description": "Schema for permission grant requests and responses",
+  "type": "object",
+  "definitions": {
+    "PermissionGrantRequest": {
+      "type": "object",
+      "required": ["resource", "identity", "permissions"],
+      "properties": {
+        "resource": {
+          "type": "string",
+          "pattern": "^[a-z]+:[a-z]+:[a-zA-Z0-9_-]+$",
+          "description": "Resource identifier in format module:type:id"
+        },
+        "identity": {
+          "type": "string",
+          "pattern": "^did:squid:[a-zA-Z0-9_-]+$",
+          "description": "Target identity DID"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["read", "write", "delete", "admin", "share", "execute"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 expiration timestamp"
+        },
+        "conditions": {
+          "type": "object",
+          "properties": {
+            "timeWindow": {
+              "type": "object",
+              "properties": {
+                "start": { "type": "string", "format": "time" },
+                "end": { "type": "string", "format": "time" }
+              }
+            },
+            "ipRestrictions": {
+              "type": "array",
+              "items": { "type": "string", "format": "ipv4" }
+            },
+            "maxUses": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "PermissionGrantResponse": {
+      "type": "object",
+      "required": ["grantId", "resource", "identity", "permissions", "createdAt"],
+      "properties": {
+        "grantId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "identity": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "conditions": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

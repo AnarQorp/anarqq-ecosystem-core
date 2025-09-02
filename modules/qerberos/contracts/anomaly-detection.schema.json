@@ -1,0 +1,243 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qerberos/anomaly-detection.json",
+  "title": "Anomaly Detection",
+  "description": "Schema for anomaly detection in the Qerberos security module",
+  "type": "object",
+  "properties": {
+    "anomalies": {
+      "type": "array",
+      "description": "Detected anomalies",
+      "items": {
+        "$ref": "#/definitions/Anomaly"
+      },
+      "minItems": 0,
+      "maxItems": 1000
+    },
+    "summary": {
+      "$ref": "#/definitions/AnomalySummary",
+      "description": "Summary of anomaly detection results"
+    },
+    "modelInfo": {
+      "$ref": "#/definitions/ModelInfo",
+      "description": "Information about the ML model used"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Analysis timestamp in ISO 8601 format"
+    },
+    "analysisId": {
+      "type": "string",
+      "description": "Unique identifier for this analysis",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    }
+  },
+  "required": ["anomalies", "summary", "timestamp"],
+  "additionalProperties": false,
+  "definitions": {
+    "Anomaly": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique anomaly identifier",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+        },
+        "type": {
+          "type": "string",
+          "description": "Anomaly type",
+          "minLength": 1,
+          "maxLength": 100,
+          "examples": ["behavioral", "statistical", "pattern", "temporal", "frequency"]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Anomaly severity level"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence score of the anomaly detection"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the anomaly",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the anomaly was detected"
+        },
+        "features": {
+          "type": "object",
+          "description": "Features that contributed to the anomaly detection",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "context": {
+          "type": "object",
+          "description": "Additional context about the anomaly",
+          "additionalProperties": true
+        },
+        "recommendations": {
+          "type": "array",
+          "description": "Recommended actions to address the anomaly",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "maxItems": 10
+        }
+      },
+      "required": ["id", "type", "severity", "confidence", "description", "timestamp"],
+      "additionalProperties": false
+    },
+    "AnomalySummary": {
+      "type": "object",
+      "properties": {
+        "totalAnomalies": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of anomalies detected"
+        },
+        "severityDistribution": {
+          "type": "object",
+          "properties": {
+            "low": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "medium": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "high": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "critical": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": ["low", "medium", "high", "critical"],
+          "additionalProperties": false,
+          "description": "Distribution of anomalies by severity"
+        },
+        "averageConfidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Average confidence score across all anomalies"
+        },
+        "highSeverityCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of high and critical severity anomalies"
+        },
+        "typeDistribution": {
+          "type": "object",
+          "description": "Distribution of anomalies by type",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "required": ["totalAnomalies", "severityDistribution", "averageConfidence", "highSeverityCount"],
+      "additionalProperties": false
+    },
+    "ModelInfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Model name",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "version": {
+          "type": "string",
+          "description": "Model version",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "algorithm": {
+          "type": "string",
+          "description": "ML algorithm used",
+          "examples": ["isolation_forest", "one_class_svm", "autoencoder", "lstm"]
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Anomaly detection threshold used"
+        },
+        "trainingDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the model was last trained"
+        }
+      },
+      "required": ["name", "version", "algorithm", "threshold"],
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "anomalies": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440000",
+          "type": "behavioral",
+          "severity": "high",
+          "confidence": 0.92,
+          "description": "Unusual access pattern detected: 50 file downloads in 2 minutes",
+          "timestamp": "2024-02-08T15:30:00.000Z",
+          "features": {
+            "download_rate": 25.0,
+            "session_duration": 120,
+            "file_diversity": 0.1
+          },
+          "context": {
+            "userId": "did:squid:user123",
+            "sessionId": "sess_456789",
+            "ipAddress": "192.168.1.100"
+          },
+          "recommendations": [
+            "Verify user identity through additional authentication",
+            "Temporarily limit download rate for this user",
+            "Review user's recent activity for other suspicious patterns"
+          ]
+        }
+      ],
+      "summary": {
+        "totalAnomalies": 1,
+        "severityDistribution": {
+          "low": 0,
+          "medium": 0,
+          "high": 1,
+          "critical": 0
+        },
+        "averageConfidence": 0.92,
+        "highSeverityCount": 1,
+        "typeDistribution": {
+          "behavioral": 1
+        }
+      },
+      "modelInfo": {
+        "name": "behavioral_anomaly_detector",
+        "version": "2.1.0",
+        "algorithm": "isolation_forest",
+        "threshold": 0.8,
+        "trainingDate": "2024-02-01T10:00:00.000Z"
+      },
+      "timestamp": "2024-02-08T15:30:00.000Z",
+      "analysisId": "550e8400-e29b-41d4-a716-446655440001"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "name": "@qflow/performance-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive performance and load testing suite for Qflow serverless automation engine",
+  "main": "run-performance-tests.js",
+  "bin": {
+    "qflow-performance-tests": "./run-performance-tests.js"
+  },
+  "scripts": {
+    "test": "node run-performance-tests.js run",
+    "test:load": "node run-performance-tests.js load",
+    "test:stress": "node run-performance-tests.js stress",
+    "test:benchmark": "node run-performance-tests.js benchmark",
+    "test:verbose": "node run-performance-tests.js run --verbose",
+    "test:html": "node run-performance-tests.js run --format html",
+    "test:csv": "node run-performance-tests.js run --format csv",
+    "test:xml": "node run-performance-tests.js run --format xml",
+    "test:all-formats": "node run-performance-tests.js run --format json,html,csv,xml",
+    "test:baseline": "node run-performance-tests.js benchmark --baseline",
+    "test:compare": "node run-performance-tests.js benchmark --compare",
+    "test:enterprise": "node run-performance-tests.js run --config enterprise-config.json",
+    "generate-config": "node run-performance-tests.js generate-config",
+    "generate-config:advanced": "node run-performance-tests.js generate-config --template advanced",
+    "generate-config:enterprise": "node run-performance-tests.js generate-config --template enterprise",
+    "build": "tsc",
+    "clean": "rm -rf dist performance-reports",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "watch": "tsc --watch",
+    "dev": "npm run build && npm run test -- --verbose"
+  },
+  "keywords": [
+    "qflow",
+    "performance-testing",
+    "load-testing",
+    "stress-testing",
+    "scalability-testing",
+    "benchmarking",
+    "serverless",
+    "automation"
+  ],
+  "author": "Qflow Team",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "events": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "prettier": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qflow/qflow-serverless-automation.git",
+    "directory": "modules/qflow/tests/performance"
+  },
+  "bugs": {
+    "url": "https://github.com/qflow/qflow-serverless-automation/issues"
+  },
+  "homepage": "https://github.com/qflow/qflow-serverless-automation#readme",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

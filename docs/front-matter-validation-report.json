@@ -1,0 +1,4772 @@
+{
+  "timestamp": "2025-08-30T20:36:59.822Z",
+  "summary": {
+    "totalFiles": 456,
+    "validFiles": 9,
+    "invalidFiles": 447,
+    "successRate": "2.0"
+  },
+  "results": [
+    {
+      "filePath": "docs/API-CHANGES.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/AUTOMATION.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/CONTRIBUTING.md",
+      "isValid": true,
+      "errors": [],
+      "warnings": [
+        "Relative link found, verify it exists: ./STYLEGUIDE.md",
+        "Relative link found, verify it exists: ./GLOSSARY.md",
+        "Relative link found, verify it exists: ./STYLEGUIDE.md",
+        "Relative link found, verify it exists: ./STYLEGUIDE.md",
+        "Relative link found, verify it exists: ./STYLEGUIDE.md",
+        "Relative link found, verify it exists: ./GLOSSARY.md",
+        "Relative link found, verify it exists: ./modules/"
+      ],
+      "metadata": {
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "lastModified": "2025-08-30T16:49:09.046Z",
+        "reviewedBy": "",
+        "module": null,
+        "relatedModules": [],
+        "ecosystemVersion": "v2.0.0",
+        "lastAudit": "2025-08-30T16:49:09.046Z",
+        "category": "global",
+        "language": "en",
+        "completeness": "complete",
+        "dependencies": [],
+        "tags": [
+          "contributing",
+          "guidelines",
+          "review-process"
+        ]
+      }
+    },
+    {
+      "filePath": "docs/CROSS-REFERENCES.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/DAO-DASHBOARD-ARCHITECTURE.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/DEMO/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/DEPLOYMENT.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/DOCUMENTATION-SLA.md",
+      "isValid": true,
+      "errors": [],
+      "warnings": [],
+      "metadata": {
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "lastModified": "2025-08-30T16:49:09.046Z",
+        "reviewedBy": "",
+        "module": null,
+        "relatedModules": [],
+        "ecosystemVersion": "v2.0.0",
+        "lastAudit": "2025-08-30T16:49:09.046Z",
+        "category": "global",
+        "language": "en",
+        "completeness": "complete",
+        "dependencies": [],
+        "tags": [
+          "sla",
+          "documentation",
+          "review-cycles",
+          "governance"
+        ]
+      }
+    },
+    {
+      "filePath": "docs/GLOSSARY.md",
+      "isValid": true,
+      "errors": [],
+      "warnings": [],
+      "metadata": {
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "lastModified": "2025-08-30T16:49:09.046Z",
+        "reviewedBy": "",
+        "module": null,
+        "relatedModules": [],
+        "ecosystemVersion": "v2.0.0",
+        "lastAudit": "2025-08-30T16:49:09.046Z",
+        "category": "global",
+        "language": "en",
+        "completeness": "complete",
+        "dependencies": [],
+        "tags": [
+          "glossary",
+          "terminology",
+          "definitions"
+        ]
+      }
+    },
+    {
+      "filePath": "docs/INDEX.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/INTEGRATIONS/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/IPFS-INTEGRATION.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/MONITORING-SYSTEM.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/NAVIGATION.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/PUBLIC-PORTAL-BLUEPRINT.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/QFLOW-DOCUMENTATION-PIPELINE.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/QSOCIAL-COMPLETE-INTEGRATION.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/QSOCIAL-ECOSYSTEM-INTEGRATION.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/README.md",
+      "isValid": true,
+      "errors": [],
+      "warnings": [
+        "Document should include a Table of Contents",
+        "Relative link found, verify it exists: ./global/",
+        "Relative link found, verify it exists: ./modules/",
+        "Relative link found, verify it exists: ./integration/",
+        "Relative link found, verify it exists: ./deployment/",
+        "Relative link found, verify it exists: ./INTEGRATIONS/",
+        "Relative link found, verify it exists: ./DEMO/",
+        "Relative link found, verify it exists: ./INDEX.md"
+      ],
+      "metadata": {
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "lastModified": "2025-08-30T20:19:14.557Z",
+        "reviewedBy": null,
+        "module": null,
+        "relatedModules": [],
+        "ecosystemVersion": "v2.0.0",
+        "lastAudit": "2025-08-30T20:19:14.557Z",
+        "category": "global",
+        "language": "en",
+        "completeness": "draft",
+        "dependencies": [],
+        "tags": []
+      }
+    },
+    {
+      "filePath": "docs/SECURITY/classification-report.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/SECURITY/content-sanitization.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/SECURITY/security-scan-report.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/SECURITY/test-classification-report.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/SECURITY/test-security-report.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/STORJ-INTEGRATION.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/STYLEGUIDE.md",
+      "isValid": true,
+      "errors": [],
+      "warnings": [
+        "Relative link found, verify it exists: ./relative/path.md",
+        "Relative link found, verify it exists: ./api-reference.md",
+        "Relative link found, verify it exists: ./integration-guide.md",
+        "Relative link found, verify it exists: ./troubleshooting.md"
+      ],
+      "metadata": {
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "lastModified": "2025-08-30T16:49:09.046Z",
+        "reviewedBy": "",
+        "module": null,
+        "relatedModules": [],
+        "ecosystemVersion": "v2.0.0",
+        "lastAudit": "2025-08-30T16:49:09.046Z",
+        "category": "global",
+        "language": "en",
+        "completeness": "complete",
+        "dependencies": [],
+        "tags": [
+          "documentation",
+          "standards",
+          "style-guide"
+        ]
+      }
+    },
+    {
+      "filePath": "docs/api/module-registry/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/api/module-registry/discovery-api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/api/module-registry/examples/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/api/module-registry/faq.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/api/module-registry/getting-started.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/api/module-registry/registration-api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/api/module-registry/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/assets/IMPLEMENTATION_SUMMARY.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/assets/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/comprehensive-validation-report.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/deployment/deployment-matrix.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/disaster-recovery-procedures.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/enhanced-monitoring-report.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/front-matter-validation-report.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/architecture/q-infinity-architecture.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/integrations/pi/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/strategy/strategic-narrative.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/technical-analysis/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/technical-analysis/comprehensive-system-testing.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/technical-analysis/performance-optimizations.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/vision/vision-overview.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/whitepapers/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/integration/integration-matrix.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/ipfs-integration.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/metadata-system-implementation-summary.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/migration/deprecation-plan.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/migration/legacy-to-modular-migration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/migration/lessons-learned.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/migration/module-specific/qwallet-migration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/migration/module-specific/squid-migration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/README.md",
+      "isValid": true,
+      "errors": [],
+      "warnings": [
+        "Missing required section: Architecture",
+        "Missing required section: API Reference",
+        "Missing required section: Use Cases",
+        "Missing required section: Integration Patterns",
+        "Relative link found, verify it exists: ./api-reference.md",
+        "Relative link found, verify it exists: ./mcp-tools.md",
+        "Relative link found, verify it exists: ./deployment-guide.md",
+        "Relative link found, verify it exists: ./integration-guide.md",
+        "Relative link found, verify it exists: ./troubleshooting.md"
+      ],
+      "metadata": {
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "lastModified": "2025-08-30T12:08:57.725Z",
+        "reviewedBy": "",
+        "module": "qwallet",
+        "relatedModules": [],
+        "ecosystemVersion": "v2.0.0",
+        "lastAudit": "2025-08-30T12:07:48.455Z",
+        "category": "module",
+        "language": "en",
+        "completeness": "draft",
+        "dependencies": [],
+        "tags": []
+      }
+    },
+    {
+      "filePath": "docs/modules/qwallet/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/production-deployment-runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/qwallet-identity-expansion/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/qwallet-identity-expansion/components/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/qwallet-identity-expansion/components/WalletDashboard.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/qwallet-identity-expansion/examples/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/qwallet-identity-expansion/examples/components/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/qwallet-identity-expansion/faq.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/qwallet-identity-expansion/integration/advanced-patterns.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/qwallet-identity-expansion/integration/overview.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/qwallet-identity-expansion/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/qwallet-identity-expansion/user-guides/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/qwallet-identity-expansion/user-guides/root-identity.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/reports/2025-08-30/monitoring-report.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-dao.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qchat.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qdrive.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qerberos.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qindex.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qlock.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qmail.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qmarket.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qmask.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qnet.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qonsent.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qpic.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qwallet.md",
+      "isValid": true,
+      "errors": [],
+      "warnings": [],
+      "metadata": {
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "lastModified": "2025-08-30T12:10:24.351Z",
+        "reviewedBy": "",
+        "module": "qwallet",
+        "relatedModules": [],
+        "ecosystemVersion": "v2.0.0",
+        "lastAudit": "2025-08-30T12:10:24.350Z",
+        "category": "runbook",
+        "language": "en",
+        "completeness": "draft",
+        "dependencies": [],
+        "tags": []
+      }
+    },
+    {
+      "filePath": "docs/runbooks/runbook-squid.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/video-scripts/IMPLEMENTATION_SUMMARY.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/video-scripts/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/video-scripts/TASK_6_COMPLETION_SUMMARY.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/video-scripts/global/TASK_COMPLETION_SUMMARY.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/video-scripts/global/ecosystem-overview-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "AnarQ&Q Ecosystem Overview",
+        "duration": "5-7 minutes",
+        "language": "en",
+        "targetAudience": "general",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.160Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/global/ecosystem-overview-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Visión General del Ecosistema AnarQ&Q",
+        "duration": "5-7 minutes",
+        "language": "es",
+        "targetAudience": "general",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.165Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/dao-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "DAO/Communities - # DAO/Communities Governance API",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "dao",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.168Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/dao-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "DAO/Communities - # DAO/Communities Governance API",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "dao",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.170Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qchat-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qchat - Instant Messaging Module for AnarQ&Q Ecosystem",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qchat",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.174Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qchat-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qchat - Módulo de Mensajería Instantánea para el Ecosistema AnarQ&Q",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qchat",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.175Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qdrive-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qdrive - # Qdrive API",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qdrive",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.176Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qdrive-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qdrive - # Qdrive API",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qdrive",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.180Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qerberos-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qerberos - # Qerberos Security & Audit API",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qerberos",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.182Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qerberos-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qerberos - # Qerberos Security & Audit API",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qerberos",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.184Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qindex-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qindex - Indexing & Pointers Module for Q Ecosystem",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qindex",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.185Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qindex-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qindex - Indexing & Pointers Module for Q Ecosystem",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qindex",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.186Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qlock-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qlock - # Qlock - Encryption & Signatures Module for Q Ecosystem",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qlock",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.187Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qlock-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qlock - # Qlock - Encryption & Signatures Module for Q Ecosystem",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qlock",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.189Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qmail-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qmail - Certified Messaging Module for AnarQ&Q Ecosystem",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qmail",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.190Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qmail-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qmail - Módulo de Mensajería Certificada para el Ecosistema AnarQ&Q",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qmail",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.191Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qmarket-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qmarket - Content Marketplace Module for AnarQ&Q Ecosystem",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qmarket",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.192Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qmarket-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qmarket - Módulo de Mercado de Contenido para el Ecosistema AnarQ&Q",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qmarket",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.193Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qmask-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qmask - # Qmask API",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qmask",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.194Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qmask-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qmask - # Qmask API",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qmask",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.194Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qnet-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "QNET - # QNET - Network Infrastructure API",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qnet",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.195Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qnet-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "QNET - # QNET - Network Infrastructure API",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qnet",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.196Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qonsent-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qonsent - # Qonsent API",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qonsent",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.197Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qonsent-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qonsent - # Qonsent API",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qonsent",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.198Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qpic-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "QpiC - # QpiC API",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qpic",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.199Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qpic-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "QpiC - # QpiC API",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qpic",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.199Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qwallet-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qwallet - Payments & Fees Module for AnarQ&Q Ecosystem",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "qwallet",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.200Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/qwallet-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "Qwallet - Módulo de Pagos y Tarifas para el Ecosistema AnarQ&Q",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "qwallet",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.201Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/squid-en.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "sQuid - # sQuid Identity API",
+        "duration": "2-3 minutes",
+        "language": "en",
+        "targetAudience": "developers",
+        "module": "squid",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.201Z"
+      }
+    },
+    {
+      "filePath": "docs/video-scripts/modules/squid-es.md",
+      "isValid": false,
+      "errors": [
+        "Missing required field: lastModified",
+        "Missing required field: ecosystemVersion",
+        "Missing required field: category"
+      ],
+      "warnings": [
+        "Global documentation should have module field set to null",
+        "Missing required section: Overview",
+        "Document should include a Table of Contents"
+      ],
+      "metadata": {
+        "title": "sQuid - # sQuid Identity API",
+        "duration": "2-3 minutes",
+        "language": "es",
+        "targetAudience": "developers",
+        "module": "squid",
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "reviewStatus": "draft",
+        "generated": "2025-08-30T15:14:37.202Z"
+      }
+    },
+    {
+      "filePath": "docs/modules/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/dao/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qchat/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qdrive/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qerberos/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qindex/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qlock/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmail/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmarket/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qmask/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qnet/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qonsent/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qpic/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/README.md",
+      "isValid": true,
+      "errors": [],
+      "warnings": [
+        "Missing required section: Architecture",
+        "Missing required section: API Reference",
+        "Missing required section: Use Cases",
+        "Missing required section: Integration Patterns",
+        "Relative link found, verify it exists: ./api-reference.md",
+        "Relative link found, verify it exists: ./mcp-tools.md",
+        "Relative link found, verify it exists: ./deployment-guide.md",
+        "Relative link found, verify it exists: ./integration-guide.md",
+        "Relative link found, verify it exists: ./troubleshooting.md"
+      ],
+      "metadata": {
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "lastModified": "2025-08-30T12:08:57.725Z",
+        "reviewedBy": "",
+        "module": "qwallet",
+        "relatedModules": [],
+        "ecosystemVersion": "v2.0.0",
+        "lastAudit": "2025-08-30T12:07:48.455Z",
+        "category": "module",
+        "language": "en",
+        "completeness": "draft",
+        "dependencies": [],
+        "tags": []
+      }
+    },
+    {
+      "filePath": "docs/modules/qwallet/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/qwallet/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/api-reference.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/api.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/deployment-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/deployment.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/examples.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/integration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/mcp-tools.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/mcp.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/runbook.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/modules/squid/troubleshooting.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-dao.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qchat.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qdrive.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qerberos.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qindex.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qlock.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qmail.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qmarket.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qmask.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qnet.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qonsent.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qpic.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/runbooks/runbook-qwallet.md",
+      "isValid": true,
+      "errors": [],
+      "warnings": [],
+      "metadata": {
+        "version": "1.0.0",
+        "author": "Q Ecosystem Team",
+        "lastModified": "2025-08-30T12:10:24.351Z",
+        "reviewedBy": "",
+        "module": "qwallet",
+        "relatedModules": [],
+        "ecosystemVersion": "v2.0.0",
+        "lastAudit": "2025-08-30T12:10:24.350Z",
+        "category": "runbook",
+        "language": "en",
+        "completeness": "draft",
+        "dependencies": [],
+        "tags": []
+      }
+    },
+    {
+      "filePath": "docs/runbooks/runbook-squid.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/architecture/q-infinity-architecture.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/integrations/pi/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/strategy/strategic-narrative.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/technical-analysis/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/technical-analysis/comprehensive-system-testing.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/technical-analysis/performance-optimizations.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/vision/vision-overview.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/global/whitepapers/README.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/integration/integration-matrix.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/deployment/deployment-matrix.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/migration/deprecation-plan.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/migration/legacy-to-modular-migration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/migration/lessons-learned.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/migration/module-specific/qwallet-migration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    },
+    {
+      "filePath": "docs/migration/module-specific/squid-migration-guide.md",
+      "isValid": false,
+      "errors": [
+        "Missing front matter"
+      ],
+      "warnings": [],
+      "metadata": null
+    }
+  ],
+  "errorsByType": {
+    "Missing front matter": 417,
+    "Missing required field: lastModified": 30,
+    "Missing required field: ecosystemVersion": 30,
+    "Missing required field: category": 30
+  },
+  "warningsByType": {
+    "Relative link found, verify it exists": 28,
+    "Document should include a Table of Contents": 31,
+    "Missing required section": 38,
+    "Global documentation should have module field set to null": 30
+  }
+}

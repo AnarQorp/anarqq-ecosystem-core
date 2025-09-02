@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/dao/vote.schema.json",
+  "title": "Vote Schema",
+  "description": "Schema for DAO governance votes",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^vote_[a-zA-Z0-9-_]+$",
+      "description": "Unique vote identifier"
+    },
+    "proposalId": {
+      "type": "string",
+      "pattern": "^prop_[a-zA-Z0-9-_]+$",
+      "description": "Proposal identifier this vote is for"
+    },
+    "daoId": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "DAO identifier"
+    },
+    "voter": {
+      "type": "string",
+      "pattern": "^did:squid:[a-zA-Z0-9-_]+$",
+      "description": "sQuid ID of the voter"
+    },
+    "option": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Selected voting option"
+    },
+    "weight": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Vote weight based on tokens/reputation"
+    },
+    "signature": {
+      "type": "string",
+      "minLength": 64,
+      "description": "Cryptographic signature of the vote"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Vote timestamp"
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "Whether the vote signature has been verified"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "ipAddress": {
+          "type": "string",
+          "format": "ipv4",
+          "description": "Voter's IP address (for audit purposes)"
+        },
+        "userAgent": {
+          "type": "string",
+          "description": "Voter's user agent"
+        },
+        "delegatedFrom": {
+          "type": "string",
+          "pattern": "^did:squid:[a-zA-Z0-9-_]+$",
+          "description": "If vote is delegated, original voter's sQuid ID"
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Optional reason for the vote"
+        }
+      },
+      "description": "Additional vote metadata"
+    }
+  },
+  "required": [
+    "id",
+    "proposalId",
+    "daoId",
+    "voter",
+    "option",
+    "weight",
+    "signature",
+    "timestamp",
+    "verified"
+  ],
+  "additionalProperties": false
+}

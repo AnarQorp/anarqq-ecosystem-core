@@ -1,0 +1,173 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/dao/membership.schema.json",
+  "title": "DAO Membership Schema",
+  "description": "Schema for DAO membership records",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^member_[a-zA-Z0-9-_]+$",
+      "description": "Unique membership identifier"
+    },
+    "daoId": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "DAO identifier"
+    },
+    "userId": {
+      "type": "string",
+      "pattern": "^did:squid:[a-zA-Z0-9-_]+$",
+      "description": "Member's sQuid ID"
+    },
+    "membershipType": {
+      "type": "string",
+      "enum": ["standard", "admin", "founder", "delegate"],
+      "description": "Type of membership"
+    },
+    "joinedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Membership start timestamp"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "suspended", "revoked"],
+      "description": "Current membership status"
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "vote",
+          "propose",
+          "execute",
+          "invite",
+          "moderate",
+          "admin"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "Member permissions within the DAO"
+    },
+    "reputation": {
+      "type": "object",
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Member's reputation score"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last reputation update timestamp"
+        },
+        "factors": {
+          "type": "object",
+          "properties": {
+            "participation": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Participation score (0-100)"
+            },
+            "proposalSuccess": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Proposal success rate (0-100)"
+            },
+            "votingConsistency": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Voting consistency score (0-100)"
+            },
+            "tenure": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Membership tenure in days"
+            }
+          },
+          "description": "Reputation calculation factors"
+        }
+      },
+      "required": ["score", "lastUpdated"],
+      "description": "Member's reputation data"
+    },
+    "tokenHoldings": {
+      "type": "object",
+      "patternProperties": {
+        "^[A-Z0-9]+$": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Token balance"
+        }
+      },
+      "description": "Member's token holdings relevant to DAO"
+    },
+    "delegations": {
+      "type": "object",
+      "properties": {
+        "delegatedTo": {
+          "type": "string",
+          "pattern": "^did:squid:[a-zA-Z0-9-_]+$",
+          "description": "sQuid ID of delegate (if member has delegated voting)"
+        },
+        "delegatedFrom": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^did:squid:[a-zA-Z0-9-_]+$"
+          },
+          "description": "sQuid IDs of members who delegated to this member"
+        },
+        "delegatedWeight": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Total delegated voting weight"
+        }
+      },
+      "description": "Vote delegation information"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "invitedBy": {
+          "type": "string",
+          "pattern": "^did:squid:[a-zA-Z0-9-_]+$",
+          "description": "sQuid ID of member who invited this user"
+        },
+        "accessProfile": {
+          "type": "string",
+          "description": "Qonsent access profile ID"
+        },
+        "lastActivity": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last activity timestamp"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Administrative notes about the member"
+        }
+      },
+      "description": "Additional membership metadata"
+    }
+  },
+  "required": [
+    "id",
+    "daoId",
+    "userId",
+    "membershipType",
+    "joinedAt",
+    "status",
+    "permissions",
+    "reputation"
+  ],
+  "additionalProperties": false
+}

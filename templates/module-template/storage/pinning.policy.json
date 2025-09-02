@@ -1,0 +1,314 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "IPFS Pinning Policy Configuration",
+  "description": "Defines pinning policies for different types of content in {{MODULE_NAME}}",
+  "version": "1.0.0",
+  "policies": {
+    "user_data": {
+      "description": "User-generated content and personal data",
+      "type": "permanent",
+      "priority": "high",
+      "replication": {
+        "minReplicas": 3,
+        "maxReplicas": 5,
+        "preferredLocations": ["local", "backup", "archive"]
+      },
+      "retention": {
+        "policy": "user_controlled",
+        "maxAge": null,
+        "deleteAfterUserDeletion": "30d"
+      },
+      "access": {
+        "pattern": "frequent",
+        "cacheTtl": "24h",
+        "preload": true
+      },
+      "compliance": {
+        "gdpr": true,
+        "dataClassification": "personal",
+        "encryptionRequired": true
+      }
+    },
+    "system_config": {
+      "description": "System configuration and settings",
+      "type": "permanent",
+      "priority": "critical",
+      "replication": {
+        "minReplicas": 5,
+        "maxReplicas": 7,
+        "preferredLocations": ["local", "backup", "archive", "disaster-recovery", "compliance"]
+      },
+      "retention": {
+        "policy": "permanent",
+        "maxAge": null,
+        "auditTrail": true
+      },
+      "access": {
+        "pattern": "infrequent",
+        "cacheTtl": "7d",
+        "preload": false
+      },
+      "compliance": {
+        "sox": true,
+        "dataClassification": "confidential",
+        "encryptionRequired": true
+      }
+    },
+    "audit_logs": {
+      "description": "Audit logs and security events",
+      "type": "permanent",
+      "priority": "critical",
+      "replication": {
+        "minReplicas": 5,
+        "maxReplicas": 10,
+        "preferredLocations": ["local", "backup", "archive", "compliance", "disaster-recovery", "legal-hold"]
+      },
+      "retention": {
+        "policy": "regulatory",
+        "maxAge": "7y",
+        "immutable": true
+      },
+      "access": {
+        "pattern": "rare",
+        "cacheTtl": "1h",
+        "preload": false
+      },
+      "compliance": {
+        "sox": true,
+        "gdpr": true,
+        "dataClassification": "restricted",
+        "encryptionRequired": true,
+        "tamperProof": true
+      }
+    },
+    "temp_files": {
+      "description": "Temporary files and cache data",
+      "type": "temporary",
+      "priority": "low",
+      "replication": {
+        "minReplicas": 1,
+        "maxReplicas": 2,
+        "preferredLocations": ["local"]
+      },
+      "retention": {
+        "policy": "time_based",
+        "maxAge": "7d",
+        "autoCleanup": true
+      },
+      "access": {
+        "pattern": "frequent",
+        "cacheTtl": "1h",
+        "preload": false
+      },
+      "compliance": {
+        "dataClassification": "public",
+        "encryptionRequired": false
+      }
+    },
+    "media_content": {
+      "description": "Media files and large binary content",
+      "type": "conditional",
+      "priority": "medium",
+      "replication": {
+        "minReplicas": 2,
+        "maxReplicas": 4,
+        "preferredLocations": ["local", "cdn", "backup"]
+      },
+      "retention": {
+        "policy": "access_based",
+        "maxAge": "2y",
+        "lastAccessThreshold": "90d"
+      },
+      "access": {
+        "pattern": "variable",
+        "cacheTtl": "12h",
+        "preload": false,
+        "cdnEnabled": true
+      },
+      "compliance": {
+        "dataClassification": "internal",
+        "encryptionRequired": false,
+        "compressionEnabled": true
+      }
+    },
+    "backup_data": {
+      "description": "Backup and recovery data",
+      "type": "permanent",
+      "priority": "high",
+      "replication": {
+        "minReplicas": 3,
+        "maxReplicas": 5,
+        "preferredLocations": ["backup", "archive", "disaster-recovery"]
+      },
+      "retention": {
+        "policy": "versioned",
+        "maxAge": "5y",
+        "versions": 10
+      },
+      "access": {
+        "pattern": "emergency",
+        "cacheTtl": "0",
+        "preload": false
+      },
+      "compliance": {
+        "dataClassification": "confidential",
+        "encryptionRequired": true,
+        "integrityChecks": true
+      }
+    },
+    "public_content": {
+      "description": "Public content and documentation",
+      "type": "permanent",
+      "priority": "medium",
+      "replication": {
+        "minReplicas": 2,
+        "maxReplicas": 3,
+        "preferredLocations": ["local", "cdn", "backup"]
+      },
+      "retention": {
+        "policy": "indefinite",
+        "maxAge": null
+      },
+      "access": {
+        "pattern": "frequent",
+        "cacheTtl": "24h",
+        "preload": true,
+        "cdnEnabled": true
+      },
+      "compliance": {
+        "dataClassification": "public",
+        "encryptionRequired": false
+      }
+    }
+  },
+  "locations": {
+    "local": {
+      "description": "Local IPFS node storage",
+      "type": "primary",
+      "capacity": "1TB",
+      "performance": "high",
+      "availability": "99.9%"
+    },
+    "backup": {
+      "description": "Backup storage location",
+      "type": "backup",
+      "capacity": "10TB",
+      "performance": "medium",
+      "availability": "99.5%"
+    },
+    "archive": {
+      "description": "Long-term archive storage",
+      "type": "archive",
+      "capacity": "100TB",
+      "performance": "low",
+      "availability": "99.0%"
+    },
+    "cdn": {
+      "description": "Content delivery network",
+      "type": "cache",
+      "capacity": "5TB",
+      "performance": "very_high",
+      "availability": "99.95%"
+    },
+    "disaster-recovery": {
+      "description": "Disaster recovery site",
+      "type": "backup",
+      "capacity": "50TB",
+      "performance": "medium",
+      "availability": "99.5%"
+    },
+    "compliance": {
+      "description": "Compliance and regulatory storage",
+      "type": "archive",
+      "capacity": "20TB",
+      "performance": "low",
+      "availability": "99.9%",
+      "immutable": true
+    },
+    "legal-hold": {
+      "description": "Legal hold storage",
+      "type": "archive",
+      "capacity": "10TB",
+      "performance": "low",
+      "availability": "99.9%",
+      "immutable": true
+    }
+  },
+  "rules": {
+    "replication": {
+      "description": "Replication rules and constraints",
+      "minReplicasGlobal": 1,
+      "maxReplicasGlobal": 10,
+      "geographicDistribution": true,
+      "crossRegionReplicas": 2
+    },
+    "performance": {
+      "description": "Performance optimization rules",
+      "hotDataThreshold": "1000_accesses_per_day",
+      "warmDataThreshold": "100_accesses_per_day",
+      "coldDataThreshold": "10_accesses_per_day",
+      "preloadCriteria": ["frequent_access", "high_priority", "user_preference"]
+    },
+    "cleanup": {
+      "description": "Garbage collection and cleanup rules",
+      "gcInterval": "24h",
+      "unpinGracePeriod": "7d",
+      "orphanDetectionInterval": "1h",
+      "cleanupBatchSize": 1000
+    },
+    "monitoring": {
+      "description": "Monitoring and alerting rules",
+      "healthCheckInterval": "5m",
+      "replicationCheckInterval": "1h",
+      "capacityAlertThreshold": "80%",
+      "performanceAlertThreshold": "5s"
+    }
+  },
+  "defaults": {
+    "newContentPolicy": "temp_files",
+    "unknownContentPolicy": "temp_files",
+    "emergencyPolicy": "local_only",
+    "maintenancePolicy": "read_only"
+  },
+  "overrides": {
+    "description": "Policy overrides for special circumstances",
+    "emergency": {
+      "description": "Emergency mode overrides",
+      "enabled": false,
+      "policies": {
+        "replication": { "minReplicas": 1, "maxReplicas": 2 },
+        "locations": ["local", "backup"],
+        "priority": "critical_only"
+      }
+    },
+    "maintenance": {
+      "description": "Maintenance mode overrides",
+      "enabled": false,
+      "policies": {
+        "newContent": "disabled",
+        "replication": "paused",
+        "cleanup": "disabled"
+      }
+    },
+    "disaster": {
+      "description": "Disaster recovery overrides",
+      "enabled": false,
+      "policies": {
+        "primaryLocation": "disaster-recovery",
+        "replication": { "minReplicas": 2, "maxReplicas": 3 },
+        "priority": "critical_and_high_only"
+      }
+    }
+  },
+  "validation": {
+    "description": "Policy validation rules",
+    "required": ["type", "priority", "replication", "retention"],
+    "constraints": {
+      "minReplicas": { "min": 1, "max": 10 },
+      "maxReplicas": { "min": 1, "max": 10 },
+      "maxAge": { "format": "duration", "examples": ["7d", "30d", "1y", "5y"] },
+      "priority": { "enum": ["low", "medium", "high", "critical"] },
+      "type": { "enum": ["permanent", "temporary", "conditional"] }
+    }
+  }
+}

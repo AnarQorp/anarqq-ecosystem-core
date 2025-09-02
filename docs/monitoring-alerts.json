@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-08-30T18:16:03.625Z",
+  "summary": {
+    "total": 2,
+    "critical": 0,
+    "warning": 0,
+    "info": 1
+  },
+  "alerts": [
+    {
+      "level": "error",
+      "type": "link_health",
+      "message": "Link health score is 78%, 106 broken links (1 high severity)",
+      "metric": 78,
+      "threshold": 95,
+      "actionRequired": false
+    },
+    {
+      "level": "info",
+      "type": "bilingual_parity",
+      "message": "Bilingual parity is 0%, 0 high-priority translations missing",
+      "metric": 0,
+      "threshold": 80,
+      "actionRequired": false
+    }
+  ]
+}

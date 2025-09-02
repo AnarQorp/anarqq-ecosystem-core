@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  qwallet:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - QWALLET_MODE=standalone
+      - QWALLET_PI_NETWORK_ENABLED=true
+      - QWALLET_DEFAULT_CURRENCY=QToken
+      - QWALLET_MAX_TRANSACTION_AMOUNT=10000
+      - QWALLET_FEE_CALCULATION_MODE=dynamic
+      - QWALLET_MOCK_SERVICES=true
+    volumes:
+      - ./src:/app/src
+      - ./contracts:/app/contracts
+      - ./events:/app/events
+      - ./security:/app/security
+      - ./storage:/app/storage
+      - ./observability:/app/observability
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - qwallet-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - qwallet-network
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=qwallet
+      - POSTGRES_USER=qwallet
+      - POSTGRES_PASSWORD=qwallet_dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./storage/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - qwallet-network
+
+  # Mock services for standalone mode
+  mock-squid:
+    image: mockserver/mockserver:5.15.0
+    ports:
+      - "1080:1080"
+    environment:
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/squid-mock.json
+    volumes:
+      - ./src/mocks/squid-mock.json:/config/squid-mock.json
+    networks:
+      - qwallet-network
+
+  mock-qonsent:
+    image: mockserver/mockserver:5.15.0
+    ports:
+      - "1081:1080"
+    environment:
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/qonsent-mock.json
+    volumes:
+      - ./src/mocks/qonsent-mock.json:/config/qonsent-mock.json
+    networks:
+      - qwallet-network
+
+  mock-qlock:
+    image: mockserver/mockserver:5.15.0
+    ports:
+      - "1082:1080"
+    environment:
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/qlock-mock.json
+    volumes:
+      - ./src/mocks/qlock-mock.json:/config/qlock-mock.json
+    networks:
+      - qwallet-network
+
+volumes:
+  redis_data:
+  postgres_data:
+
+networks:
+  qwallet-network:
+    driver: bridge

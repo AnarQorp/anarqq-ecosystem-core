@@ -1,0 +1,46 @@
+{
+  "name": "@anarq/qlock",
+  "version": "1.0.0",
+  "description": "Qlock - Encryption & Signatures Module for Q Ecosystem",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js",
+    "start:integrated": "QLOCK_MODE=integrated node src/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:contract": "vitest run tests/contract/",
+    "test:integration": "vitest run tests/integration/",
+    "lint": "eslint src/",
+    "build": "echo 'Build complete'",
+    "docker:build": "docker build -t qlock .",
+    "docker:run": "docker run -p 3000:3000 qlock"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "crypto": "^1.0.1",
+    "node-cron": "^3.0.3",
+    "redis": "^4.6.10",
+    "@anarq/common-schemas": "workspace:*",
+    "@anarq/common-clients": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^1.0.0",
+    "supertest": "^6.3.3",
+    "eslint": "^8.55.0"
+  },
+  "keywords": [
+    "qlock",
+    "encryption",
+    "signatures",
+    "post-quantum",
+    "kms",
+    "hsm",
+    "distributed-locks"
+  ],
+  "author": "AnarQ&Q",
+  "license": "MIT"
+}

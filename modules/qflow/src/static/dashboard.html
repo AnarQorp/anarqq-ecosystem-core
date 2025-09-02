@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qflow Real-time Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .card h3 {
+            color: #f1f5f9;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #334155;
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .metric-value {
+            color: #f1f5f9;
+            font-weight: 600;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-healthy { background: #10b981; }
+        .status-warning { background: #f59e0b; }
+        .status-error { background: #ef4444; }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .logs {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.8rem;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+
+        .log-timestamp {
+            color: #64748b;
+        }
+
+        .log-level-info { color: #3b82f6; }
+        .log-level-warn { color: #f59e0b; }
+        .log-level-error { color: #ef4444; }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        button:disabled {
+            background: #64748b;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            background: #7c2d12;
+            border: 1px solid #dc2626;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: #fca5a5;
+        }
+
+        .alert-description {
+            font-size: 0.9rem;
+            color: #fed7d7;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>Qflow Real-time Dashboard</h1>
+            <div class="connection-status">
+                <span class="status-indicator" id="connectionStatus"></span>
+                <span id="connectionText">Connecting...</span>
+                <span style="margin-left: auto; color: #64748b;" id="lastUpdate">Never</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>System Health</h3>
+            <div class="metric">
+                <span class="metric-label">Overall Status</span>
+                <span class="metric-value" id="overallStatus">Unknown</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Connected Clients</span>
+                <span class="metric-value" id="connectedClients">0</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Active Streams</span>
+                <span class="metric-value" id="activeStreams">0</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Uptime</span>
+                <span class="metric-value" id="uptime">0s</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Performance Metrics</h3>
+            <div class="metric">
+                <span class="metric-label">Flows/sec</span>
+                <span class="metric-value" id="flowsPerSecond">0</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Avg Latency (p95)</span>
+                <span class="metric-value" id="avgLatency">0ms</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Error Rate</span>
+                <span class="metric-value" id="errorRate">0%</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">CPU Usage</span>
+                <span class="metric-value" id="cpuUsage">0%</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Validation Pipeline</h3>
+            <div class="metric">
+                <span class="metric-label">Success Rate</span>
+                <span class="metric-value" id="validationSuccessRate">0%</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Cache Hit Rate</span>
+                <span class="metric-value" id="cacheHitRate">0%</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Avg Duration</span>
+                <span class="metric-value" id="validationDuration">0ms</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Active Flows</h3>
+            <div id="activeFlows">
+                <div class="metric">
+                    <span class="metric-label">No active flows</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Alerts</h3>
+            <div id="alerts">
+                <div class="metric">
+                    <span class="metric-label">No active alerts</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Event Log</h3>
+            <div class="logs" id="eventLog"></div>
+            <div class="controls">
+                <button onclick="clearLogs()">Clear</button>
+                <button onclick="toggleAutoScroll()" id="autoScrollBtn">Auto-scroll: ON</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class QflowDashboard {
+            constructor() {
+                this.ws = null;
+                this.autoScroll = true;
+                this.reconnectAttempts = 0;
+                this.maxReconnectAttempts = 5;
+                this.reconnectDelay = 1000;
+                
+                this.connect();
+                this.startHeartbeat();
+            }
+
+            connect() {
+                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsUrl = `${protocol}//${window.location.hostname}:9090`;
+                
+                try {
+                    this.ws = new WebSocket(wsUrl);
+                    this.setupEventHandlers();
+                } catch (error) {
+                    this.log('error', `Failed to connect: ${error.message}`);
+                    this.scheduleReconnect();
+                }
+            }
+
+            setupEventHandlers() {
+                this.ws.onopen = () => {
+                    this.log('info', 'Connected to Qflow dashboard');
+                    this.updateConnectionStatus('connected');
+                    this.reconnectAttempts = 0;
+                    
+                    // Subscribe to all streams
+                    this.send('subscribe', {
+                        streams: ['performance_metrics', 'scaling_status', 'ecosystem_correlation', 'alert_events', 'flow_executions']
+                    });
+                };
+
+                this.ws.onmessage = (event) => {
+                    try {
+                        const message = JSON.parse(event.data);
+                        this.handleMessage(message);
+                    } catch (error) {
+                        this.log('error', `Failed to parse message: ${error.message}`);
+                    }
+                };
+
+                this.ws.onclose = () => {
+                    this.log('warn', 'Connection closed');
+                    this.updateConnectionStatus('disconnected');
+                    this.scheduleReconnect();
+                };
+
+                this.ws.onerror = (error) => {
+                    this.log('error', `WebSocket error: ${error.message || 'Unknown error'}`);
+                    this.updateConnectionStatus('error');
+                };
+            }
+
+            handleMessage(message) {
+                this.updateLastUpdate();
+
+                switch (message.type) {
+                    case 'welcome':
+                        this.log('info', `Welcome! Client ID: ${message.data.clientId}`);
+                        this.updateDashboardData(message.data.dashboardData);
+                        break;
+                    
+                    case 'stream_update':
+                        this.handleStreamUpdate(message);
+                        break;
+                    
+                    case 'alert_triggered':
+                        this.handleAlert(message.data);
+                        break;
+                    
+                    case 'heartbeat_ack':
+                        // Heartbeat acknowledged
+                        break;
+                    
+                    default:
+                        this.log('info', `Received: ${message.type}`);
+                }
+            }
+
+            handleStreamUpdate(message) {
+                const { stream, data } = message;
+                
+                switch (stream) {
+                    case 'performance_metrics':
+                        this.updatePerformanceMetrics(data);
+                        break;
+                    case 'flow_executions':
+                        this.updateActiveFlows(data);
+                        break;
+                    case 'alert_events':
+                        this.updateAlerts(data);
+                        break;
+                }
+            }
+
+            updateDashboardData(data) {
+                if (data.performance) {
+                    this.updatePerformanceMetrics(data.performance);
+                }
+                if (data.realTimeMetrics) {
+                    this.updateSystemMetrics(data.realTimeMetrics);
+                }
+                if (data.validationPipeline) {
+                    this.updateValidationMetrics(data.validationPipeline);
+                }
+            }
+
+            updatePerformanceMetrics(data) {
+                // Update performance metrics display
+                this.updateElement('flowsPerSecond', data.throughput?.flowsPerSecond || 0);
+                this.updateElement('avgLatency', `${data.latency?.p95 || 0}ms`);
+                this.updateElement('errorRate', `${((data.errorRate?.overall || 0) * 100).toFixed(2)}%`);
+            }
+
+            updateSystemMetrics(data) {
+                if (data.resourceUtilization) {
+                    this.updateElement('cpuUsage', `${(data.resourceUtilization.cpu * 100).toFixed(1)}%`);
+                }
+            }
+
+            updateValidationMetrics(data) {
+                this.updateElement('validationSuccessRate', `${(data.successRate * 100).toFixed(1)}%`);
+                this.updateElement('cacheHitRate', `${(data.cacheHitRate * 100).toFixed(1)}%`);
+                this.updateElement('validationDuration', `${data.avgDuration}ms`);
+            }
+
+            updateActiveFlows(data) {
+                const container = document.getElementById('activeFlows');
+                if (data && data.length > 0) {
+                    container.innerHTML = data.map(flow => `
+                        <div class="metric">
+                            <span class="metric-label">${flow.flowId}</span>
+                            <span class="metric-value">${flow.status}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="metric"><span class="metric-label">No active flows</span></div>';
+                }
+            }
+
+            updateAlerts(data) {
+                const container = document.getElementById('alerts');
+                if (data && data.length > 0) {
+                    container.innerHTML = data.map(alert => `
+                        <div class="alert">
+                            <div class="alert-title">${alert.title || alert.name}</div>
+                            <div class="alert-description">${alert.description || alert.condition}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="metric"><span class="metric-label">No active alerts</span></div>';
+                }
+            }
+
+            handleAlert(alert) {
+                this.log('warn', `Alert: ${alert.name} - ${alert.condition}`);
+            }
+
+            updateConnectionStatus(status) {
+                const indicator = document.getElementById('connectionStatus');
+                const text = document.getElementById('connectionText');
+                
+                indicator.className = 'status-indicator';
+                
+                switch (status) {
+                    case 'connected':
+                        indicator.classList.add('status-healthy');
+                        text.textContent = 'Connected';
+                        break;
+                    case 'disconnected':
+                        indicator.classList.add('status-warning');
+                        text.textContent = 'Disconnected';
+                        break;
+                    case 'error':
+                        indicator.classList.add('status-error');
+                        text.textContent = 'Connection Error';
+                        break;
+                }
+            }
+
+            updateLastUpdate() {
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+            }
+
+            updateElement(id, value) {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = value;
+                }
+            }
+
+            send(type, data) {
+                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                    this.ws.send(JSON.stringify({ type, data }));
+                }
+            }
+
+            startHeartbeat() {
+                setInterval(() => {
+                    this.send('heartbeat', {});
+                }, 30000);
+            }
+
+            scheduleReconnect() {
+                if (this.reconnectAttempts < this.maxReconnectAttempts) {
+                    this.reconnectAttempts++;
+                    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
+                    
+                    this.log('info', `Reconnecting in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+                    
+                    setTimeout(() => {
+                        this.connect();
+                    }, delay);
+                } else {
+                    this.log('error', 'Max reconnection attempts reached');
+                }
+            }
+
+            log(level, message) {
+                const logContainer = document.getElementById('eventLog');
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `
+                    <span class="log-timestamp">[${timestamp}]</span>
+                    <span class="log-level-${level}">[${level.toUpperCase()}]</span>
+                    ${message}
+                `;
+                
+                logContainer.appendChild(logEntry);
+                
+                if (this.autoScroll) {
+                    logContainer.scrollTop = logContainer.scrollHeight;
+                }
+                
+                // Keep only last 100 entries
+                while (logContainer.children.length > 100) {
+                    logContainer.removeChild(logContainer.firstChild);
+                }
+            }
+        }
+
+        // Global functions
+        function clearLogs() {
+            document.getElementById('eventLog').innerHTML = '';
+        }
+
+        function toggleAutoScroll() {
+            dashboard.autoScroll = !dashboard.autoScroll;
+            document.getElementById('autoScrollBtn').textContent = 
+                `Auto-scroll: ${dashboard.autoScroll ? 'ON' : 'OFF'}`;
+        }
+
+        // Initialize dashboard
+        const dashboard = new QflowDashboard();
+
+        // Update system stats periodically
+        setInterval(() => {
+            dashboard.updateElement('uptime', `${Math.floor(performance.now() / 1000)}s`);
+        }, 1000);
+    </script>
+</body>
+</html>

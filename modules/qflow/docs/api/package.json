@@ -1,0 +1,50 @@
+{
+  "name": "@qflow/api-docs",
+  "version": "1.0.0",
+  "description": "Qflow API Documentation Generation Tools",
+  "main": "generate-docs.js",
+  "scripts": {
+    "generate": "node generate-docs.js",
+    "validate": "npm run validate:openapi && npm run validate:postman",
+    "validate:openapi": "swagger-cli validate openapi.yaml",
+    "validate:postman": "newman run postman-collection.json --environment postman-environment.json --dry-run",
+    "serve": "http-server . -p 8080 -c-1",
+    "build": "npm run generate && npm run validate",
+    "watch": "nodemon --watch openapi.yaml --watch generate-docs.js --exec 'npm run generate'",
+    "lint": "eslint generate-docs.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "qflow",
+    "api",
+    "documentation",
+    "openapi",
+    "swagger",
+    "postman"
+  ],
+  "author": "AnarQ Team",
+  "license": "MIT",
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "http-server": "^14.1.1",
+    "jest": "^29.7.0",
+    "newman": "^6.0.0",
+    "nodemon": "^3.0.1",
+    "@apidevtools/swagger-cli": "^4.0.4"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anarq/qflow.git",
+    "directory": "modules/qflow/docs/api"
+  },
+  "bugs": {
+    "url": "https://github.com/anarq/qflow/issues"
+  },
+  "homepage": "https://docs.qflow.anarq.org"
+}

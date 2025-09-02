@@ -1,0 +1,42 @@
+# AnarQ&Q Ecosystem Code Owners
+
+# Global owners
+* @AnarQorp/core-team
+
+# Frontend
+/src/ @AnarQorp/frontend-team
+/frontend/ @AnarQorp/frontend-team
+/frontend-build/ @AnarQorp/frontend-team
+
+# Backend
+/backend/ @AnarQorp/backend-team
+
+# Modules
+/modules/squid/ @AnarQorp/identity-team
+/modules/qlock/ @AnarQorp/security-team
+/modules/qonsent/ @AnarQorp/privacy-team
+/modules/qindex/ @AnarQorp/data-team
+/modules/qerberos/ @AnarQorp/security-team
+/modules/qwallet/ @AnarQorp/fintech-team
+/modules/qflow/ @AnarQorp/automation-team
+/modules/qnet/ @AnarQorp/infrastructure-team
+/modules/qdrive/ @AnarQorp/storage-team
+/modules/qpic/ @AnarQorp/media-team
+/modules/qmarket/ @AnarQorp/commerce-team
+/modules/qmail/ @AnarQorp/communication-team
+/modules/qchat/ @AnarQorp/communication-team
+/modules/dao/ @AnarQorp/governance-team
+/modules/qmask/ @AnarQorp/privacy-team
+
+# Infrastructure
+/docker-compose*.yml @AnarQorp/devops-team
+/Dockerfile* @AnarQorp/devops-team
+/scripts/ @AnarQorp/devops-team
+/config/ @AnarQorp/devops-team
+
+# Contracts
+/contracts/ @AnarQorp/blockchain-team
+
+# Documentation
+/docs/ @AnarQorp/docs-team
+README.md @AnarQorp/docs-team

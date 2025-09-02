@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://anarq.com/schemas/qlock/events/lock.json",
+  "title": "Qlock Lock Events Schema",
+  "description": "Schema for Qlock distributed lock events",
+  "definitions": {
+    "LockAcquiredEvent": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "const": "q.qlock.lock.acquired.v1"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "lockId": {
+              "type": "string"
+            },
+            "owner": {
+              "type": "string"
+            },
+            "resource": {
+              "type": "string"
+            },
+            "ttl": {
+              "type": "integer"
+            },
+            "acquiredAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "expiresAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["lockId", "owner", "resource", "ttl", "acquiredAt", "expiresAt"]
+        }
+      },
+      "required": ["topic", "timestamp", "payload"]
+    },
+    "LockReleasedEvent": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "const": "q.qlock.lock.released.v1"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "lockId": {
+              "type": "string"
+            },
+            "owner": {
+              "type": "string"
+            },
+            "resource": {
+              "type": "string"
+            },
+            "releasedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "duration": {
+              "type": "integer"
+            },
+            "reason": {
+              "type": "string",
+              "enum": ["manual", "expired", "error", "forced"]
+            }
+          },
+          "required": ["lockId", "owner", "resource", "releasedAt", "duration", "reason"]
+        }
+      },
+      "required": ["topic", "timestamp", "payload"]
+    },
+    "LockExtendedEvent": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "const": "q.qlock.lock.extended.v1"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "lockId": {
+              "type": "string"
+            },
+            "owner": {
+              "type": "string"
+            },
+            "previousExpiry": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "newExpiry": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "extension": {
+              "type": "integer"
+            },
+            "extendedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": ["lockId", "owner", "previousExpiry", "newExpiry", "extension", "extendedAt"]
+        }
+      },
+      "required": ["topic", "timestamp", "payload"]
+    },
+    "LockFailedEvent": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "const": "q.qlock.lock.failed.v1"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "lockId": {
+              "type": "string"
+            },
+            "requestor": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            },
+            "currentOwner": {
+              "type": "string"
+            },
+            "failedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": ["lockId", "requestor", "reason", "failedAt"]
+        }
+      },
+      "required": ["topic", "timestamp", "payload"]
+    }
+  }
+}

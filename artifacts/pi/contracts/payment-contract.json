@@ -1,0 +1,58 @@
+{
+  "contractId": "pi_contract_payment_001",
+  "contractName": "PaymentContract",
+  "contractVersion": "1.0.0",
+  "templateType": "payment",
+  "deploymentInfo": {
+    "environment": "testnet",
+    "contractAddress": "0x742d35Cc6634C0532925a3b8D4C0C8b3C2e1e1e1",
+    "deploymentTxHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+    "deployedAt": "2025-01-30T02:20:00.000Z",
+    "blockNumber": 1234567,
+    "status": "DEPLOYED"
+  },
+  "gasEstimation": {
+    "estimated": 150000,
+    "maximum": 200000,
+    "baseFee": 100000,
+    "complexityFee": 35000,
+    "argumentsFee": 15000,
+    "actualUsed": 142350,
+    "efficiency": 94.9
+  },
+  "qflowIntegration": {
+    "workflowId": "qflow_payment_workflow_001",
+    "triggerEvents": ["Deposit", "Withdrawal"],
+    "callbackEndpoints": [
+      "https://api.qflow.com/webhooks/payment-events",
+      "https://api.qerberos.com/audit/contract-events"
+    ],
+    "stateValidation": {
+      "owner": "0x742d35Cc6634C0532925a3b8D4C0C8b3C2e1e1e1",
+      "isActive": true,
+      "lastValidated": "2025-01-30T02:25:00.000Z"
+    }
+  },
+  "contractCode": "contract PaymentContract {\n    address public owner;\n    mapping(address => uint256) public balances;\n    \n    constructor() {\n        owner = msg.sender;\n    }\n    \n    function deposit() public payable {\n        balances[msg.sender] += msg.value;\n    }\n    \n    function withdraw(uint256 amount) public {\n        require(balances[msg.sender] >= amount, \"Insufficient balance\");\n        balances[msg.sender] -= amount;\n        payable(msg.sender).transfer(amount);\n    }\n    \n    function getBalance(address account) public view returns (uint256) {\n        return balances[account];\n    }\n}",
+  "testResults": {
+    "deploymentTest": "PASSED",
+    "functionTests": {
+      "deposit": "PASSED",
+      "withdraw": "PASSED", 
+      "getBalance": "PASSED"
+    },
+    "qflowIntegrationTest": "PASSED",
+    "stateValidationTest": "PASSED"
+  },
+  "securityAudit": {
+    "dangerousPatterns": [],
+    "vulnerabilities": [],
+    "recommendations": [
+      "Consider adding reentrancy protection",
+      "Add event emissions for better tracking",
+      "Implement access control for administrative functions"
+    ],
+    "auditScore": 85,
+    "auditedAt": "2025-01-30T02:22:00.000Z"
+  }
+}

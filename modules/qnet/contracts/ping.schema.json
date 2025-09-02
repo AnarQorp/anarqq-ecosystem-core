@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.io/qnet/ping.json",
+  "title": "Ping Request/Response",
+  "description": "Schema for QNET ping operations",
+  "definitions": {
+    "PingRequest": {
+      "type": "object",
+      "properties": {
+        "nodeId": {
+          "type": "string",
+          "pattern": "^qnet-[a-z0-9-]+$",
+          "description": "Target node identifier"
+        },
+        "timeout": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 30000,
+          "default": 5000,
+          "description": "Ping timeout in milliseconds"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 1,
+          "description": "Number of ping attempts"
+        },
+        "payload": {
+          "type": "string",
+          "maxLength": 1024,
+          "description": "Optional ping payload data"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PingResult": {
+      "type": "object",
+      "properties": {
+        "nodeId": {
+          "type": "string",
+          "description": "Target node identifier"
+        },
+        "latency": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Round-trip latency in milliseconds"
+        },
+        "success": {
+          "type": "boolean",
+          "description": "Whether ping was successful"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if ping failed"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Ping timestamp"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Ping sequence number"
+        }
+      },
+      "required": ["nodeId", "success", "timestamp"],
+      "additionalProperties": false
+    },
+    "PingResponse": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PingResult"
+          },
+          "description": "Individual ping results"
+        },
+        "summary": {
+          "type": "object",
+          "properties": {
+            "totalNodes": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total number of nodes pinged"
+            },
+            "successfulPings": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of successful pings"
+            },
+            "averageLatency": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Average latency across all successful pings"
+            },
+            "minLatency": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Minimum latency observed"
+            },
+            "maxLatency": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Maximum latency observed"
+            },
+            "packetLoss": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Packet loss percentage (0-1)"
+            }
+          },
+          "required": ["totalNodes", "successfulPings"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["results", "summary"],
+      "additionalProperties": false
+    }
+  }
+}

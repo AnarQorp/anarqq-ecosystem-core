@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qflow-ipfs
+  namespace: qflow
+  labels:
+    app.kubernetes.io/name: qflow-ipfs
+    app.kubernetes.io/component: ipfs
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate  # IPFS needs consistent storage
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: qflow-ipfs
+      app.kubernetes.io/component: ipfs
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: qflow-ipfs
+        app.kubernetes.io/component: ipfs
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+      - name: ipfs
+        image: ipfs/go-ipfs:v0.20.0
+        ports:
+        - name: api
+          containerPort: 5001
+          protocol: TCP
+        - name: gateway
+          containerPort: 8080
+          protocol: TCP
+        - name: swarm
+          containerPort: 4001
+          protocol: TCP
+        env:
+        - name: IPFS_PROFILE
+          value: "server"
+        - name: IPFS_PATH
+          value: "/data/ipfs"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/v0/version
+            port: api
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/v0/version
+            port: api
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: ipfs-data
+          mountPath: /data/ipfs
+        - name: ipfs-staging
+          mountPath: /export
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false  # IPFS needs to write to its data directory
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: ipfs-data
+        persistentVolumeClaim:
+          claimName: qflow-ipfs-data
+      - name: ipfs-staging
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qflow-ipfs
+  namespace: qflow
+  labels:
+    app.kubernetes.io/name: qflow-ipfs
+    app.kubernetes.io/component: ipfs
+spec:
+  type: ClusterIP
+  ports:
+  - name: api
+    port: 5001
+    targetPort: api
+    protocol: TCP
+  - name: gateway
+    port: 8080
+    targetPort: gateway
+    protocol: TCP
+  - name: swarm
+    port: 4001
+    targetPort: swarm
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: qflow-ipfs
+    app.kubernetes.io/component: ipfs

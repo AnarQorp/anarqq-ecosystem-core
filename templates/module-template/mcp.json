@@ -1,0 +1,138 @@
+{
+  "name": "{{MODULE_NAME}}",
+  "version": "1.0.0",
+  "description": "{{MODULE_DESCRIPTION}}",
+  "author": "Q Ecosystem Team",
+  "license": "MIT",
+  "homepage": "https://github.com/q-ecosystem/{{MODULE_NAME}}",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/q-ecosystem/{{MODULE_NAME}}.git"
+  },
+  "capabilities": {
+    "tools": {}
+  },
+  "tools": [
+    {
+      "name": "{{MODULE_NAME}}.health",
+      "description": "Check the health status of the {{MODULE_NAME}} service",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "detailed": {
+            "type": "boolean",
+            "description": "Whether to return detailed health information",
+            "default": false
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["healthy", "degraded", "unhealthy"]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "string"
+          },
+          "dependencies": {
+            "type": "object",
+            "description": "Status of service dependencies (only in detailed mode)"
+          }
+        },
+        "required": ["status", "timestamp", "version"]
+      }
+    },
+    {
+      "name": "{{MODULE_NAME}}.example",
+      "description": "Example MCP tool for {{MODULE_NAME}}",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "squidId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "sQuid identity identifier"
+          },
+          "subId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Subidentity identifier (optional)"
+          },
+          "data": {
+            "type": "object",
+            "description": "Request data"
+          }
+        },
+        "required": ["squidId"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["ok", "error"]
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          },
+          "cid": {
+            "type": "string",
+            "description": "IPFS Content ID"
+          }
+        },
+        "required": ["status", "code", "message"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "{{MODULE_NAME}}://health",
+      "name": "Health Status",
+      "description": "Current health status of the {{MODULE_NAME}} service",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "{{MODULE_NAME}}://metrics",
+      "name": "Service Metrics",
+      "description": "Performance and operational metrics",
+      "mimeType": "text/plain"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "{{MODULE_NAME}}-status",
+      "description": "Get comprehensive status information for {{MODULE_NAME}}",
+      "arguments": [
+        {
+          "name": "includeMetrics",
+          "description": "Include performance metrics in the status",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "server": {
+    "command": "node",
+    "args": ["src/mcp-server.js"],
+    "env": {
+      "NODE_ENV": "production"
+    }
+  },
+  "client": {
+    "timeout": 30000,
+    "retries": 3,
+    "backoff": "exponential"
+  }
+}

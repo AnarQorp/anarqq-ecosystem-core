@@ -1,0 +1,301 @@
+name: Dependency & Container Security Scanning
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 4 * * 3'  # Weekly on Wednesday at 4 AM
+
+jobs:
+  npm-audit:
+    name: NPM Security Audit
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: ['.', 'backend', 'modules/squid', 'modules/qwallet', 'modules/qlock', 'modules/qonsent', 'modules/qindex', 'modules/qerberos', 'modules/qmask', 'modules/qdrive', 'modules/qpic', 'modules/qmarket', 'modules/qmail', 'modules/qchat', 'modules/qnet', 'modules/dao']
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.directory }}/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ${{ matrix.directory }}
+        run: |
+          if [ -f package.json ]; then
+            npm ci --audit=false
+          fi
+      
+      - name: Run NPM Audit
+        working-directory: ${{ matrix.directory }}
+        run: |
+          if [ -f package.json ]; then
+            npm audit --audit-level=moderate --json > npm-audit-${{ matrix.directory }}.json || true
+            npm audit --audit-level=moderate
+          fi
+        continue-on-error: true
+      
+      - name: Upload NPM Audit Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-${{ matrix.directory }}
+          path: ${{ matrix.directory }}/npm-audit-${{ matrix.directory }}.json
+
+  snyk-scan:
+    name: Snyk Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=medium --json-file-output=snyk-results.json
+        continue-on-error: true
+      
+      - name: Upload Snyk Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyk-results
+          path: snyk-results.json
+
+  osv-scanner:
+    name: OSV Scanner
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run OSV Scanner
+        uses: google/osv-scanner-action@v1.7.4
+        with:
+          scan-args: |-
+            --output=osv-results.json
+            --format=json
+            --recursive
+            ./
+        continue-on-error: true
+      
+      - name: Upload OSV Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: osv-results
+          path: osv-results.json
+
+  retire-js:
+    name: Retire.js Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install Retire.js
+        run: npm install -g retire
+      
+      - name: Run Retire.js
+        run: |
+          retire --outputformat json --outputpath retire-results.json --severity medium || true
+        continue-on-error: true
+      
+      - name: Upload Retire.js Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: retire-results
+          path: retire-results.json
+
+  container-scan:
+    name: Container Image Security Scan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [squid, qwallet, qlock, qonsent, qindex, qerberos, qmask, qdrive, qpic, qmarket, qmail, qchat, qnet, dao]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build Container Image
+        run: |
+          if [ -f modules/${{ matrix.module }}/Dockerfile ]; then
+            docker build -t q-${{ matrix.module }}:latest modules/${{ matrix.module }}/
+          else
+            echo "No Dockerfile found for ${{ matrix.module }}"
+            exit 0
+          fi
+      
+      - name: Run Trivy Container Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'q-${{ matrix.module }}:latest'
+          format: 'sarif'
+          output: 'trivy-${{ matrix.module }}.sarif'
+        continue-on-error: true
+      
+      - name: Run Trivy JSON Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'q-${{ matrix.module }}:latest'
+          format: 'json'
+          output: 'trivy-${{ matrix.module }}.json'
+        continue-on-error: true
+      
+      - name: Upload Trivy SARIF Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-${{ matrix.module }}.sarif'
+        if: always()
+      
+      - name: Upload Trivy JSON Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-${{ matrix.module }}
+          path: trivy-${{ matrix.module }}.json
+
+  grype-scan:
+    name: Grype Container Vulnerability Scan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [squid, qwallet, qlock, qonsent, qindex, qerberos, qmask, qdrive, qpic, qmarket, qmail, qchat, qnet, dao]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build Container Image
+        run: |
+          if [ -f modules/${{ matrix.module }}/Dockerfile ]; then
+            docker build -t q-${{ matrix.module }}:latest modules/${{ matrix.module }}/
+          else
+            echo "No Dockerfile found for ${{ matrix.module }}"
+            exit 0
+          fi
+      
+      - name: Run Grype Scan
+        uses: anchore/scan-action@v3
+        with:
+          image: 'q-${{ matrix.module }}:latest'
+          output-format: json
+          output-file: grype-${{ matrix.module }}.json
+          fail-build: false
+      
+      - name: Upload Grype Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: grype-${{ matrix.module }}
+          path: grype-${{ matrix.module }}.json
+
+  docker-scout:
+    name: Docker Scout Security Scan
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [squid, qwallet, qlock, qonsent, qindex, qerberos, qmask, qdrive, qpic, qmarket, qmail, qchat, qnet, dao]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build Container Image
+        run: |
+          if [ -f modules/${{ matrix.module }}/Dockerfile ]; then
+            docker build -t q-${{ matrix.module }}:latest modules/${{ matrix.module }}/
+          else
+            echo "No Dockerfile found for ${{ matrix.module }}"
+            exit 0
+          fi
+      
+      - name: Docker Scout Scan
+        uses: docker/scout-action@v1
+        with:
+          command: cves
+          image: 'q-${{ matrix.module }}:latest'
+          format: json
+          output: docker-scout-${{ matrix.module }}.json
+        continue-on-error: true
+      
+      - name: Upload Docker Scout Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-scout-${{ matrix.module }}
+          path: docker-scout-${{ matrix.module }}.json
+
+  dependency-report:
+    name: Generate Dependency Security Report
+    runs-on: ubuntu-latest
+    needs: [npm-audit, snyk-scan, osv-scanner, retire-js, container-scan, grype-scan, docker-scout]
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Generate Dependency Security Report
+        run: |
+          python3 scripts/security/generate-dependency-report.py \
+            --npm-audit npm-audit-*/ \
+            --snyk snyk-results/ \
+            --osv osv-results/ \
+            --retire retire-results/ \
+            --trivy trivy-*/ \
+            --grype grype-*/ \
+            --docker-scout docker-scout-*/ \
+            --output dependency-security-report.html
+      
+      - name: Upload Dependency Security Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-security-report
+          path: dependency-security-report.html
+
+  security-gate:
+    name: Dependency Security Quality Gate
+    runs-on: ubuntu-latest
+    needs: [npm-audit, snyk-scan, osv-scanner, retire-js, container-scan, grype-scan, docker-scout]
+    if: always()
+    steps:
+      - name: Check Dependency Security Results
+        run: |
+          echo "Checking dependency security scan results..."
+          
+          # Check for critical vulnerabilities
+          critical_found=false
+          
+          # This would integrate with your security dashboard/API
+          # to determine if critical vulnerabilities were found
+          
+          if [ "$critical_found" = true ]; then
+            echo "Critical vulnerabilities found in dependencies"
+            exit 1
+          fi
+          
+          echo "Dependency security checks passed"

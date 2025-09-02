@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-08-30T18:16:03.782Z",
+  "overallHealth": "poor",
+  "score": 67,
+  "alerts": {
+    "critical": 0,
+    "warning": 0,
+    "total": 2
+  },
+  "shouldFail": false,
+  "exitCode": 0,
+  "message": "Documentation health check passed"
+}

@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q.network/qmail/send-request.schema.json",
+  "title": "Qmail Send Request Schema",
+  "description": "Schema for message send requests",
+  "type": "object",
+  "properties": {
+    "recipientId": {
+      "type": "string",
+      "pattern": "^squid_[a-zA-Z0-9_-]+$",
+      "description": "Recipient sQuid identity ID"
+    },
+    "subject": {
+      "type": "string",
+      "maxLength": 200,
+      "minLength": 1,
+      "description": "Message subject"
+    },
+    "content": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1048576,
+      "description": "Message content (will be encrypted)"
+    },
+    "encryptionLevel": {
+      "type": "string",
+      "enum": ["STANDARD", "HIGH", "QUANTUM"],
+      "default": "STANDARD",
+      "description": "Encryption level"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["LOW", "NORMAL", "HIGH", "URGENT"],
+      "default": "NORMAL",
+      "description": "Message priority"
+    },
+    "certifiedDelivery": {
+      "type": "boolean",
+      "default": true,
+      "description": "Request certified delivery receipt"
+    },
+    "expiresIn": {
+      "type": "integer",
+      "minimum": 300,
+      "maximum": 31536000,
+      "description": "Message expiration in seconds (5 minutes to 1 year)"
+    },
+    "attachments": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Attachment filename"
+          },
+          "cid": {
+            "type": "string",
+            "pattern": "^Qm[a-zA-Z0-9]{44}$|^bafy[a-zA-Z0-9]+$",
+            "description": "IPFS CID of attachment"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 104857600,
+            "description": "Attachment size in bytes (max 100MB)"
+          },
+          "mimeType": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9!#$&\\-\\^_]*\\/[a-zA-Z0-9][a-zA-Z0-9!#$&\\-\\^_.]*$",
+            "description": "MIME type of attachment"
+          },
+          "checksum": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{64}$",
+            "description": "SHA-256 checksum of original file"
+          }
+        },
+        "required": ["name", "cid", "size", "mimeType", "checksum"],
+        "additionalProperties": false
+      },
+      "description": "File attachments"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "threadId": {
+          "type": "string",
+          "description": "Thread/conversation ID"
+        },
+        "replyToMessageId": {
+          "type": "string",
+          "pattern": "^msg_[a-zA-Z0-9_-]+$",
+          "description": "ID of message being replied to"
+        },
+        "tags": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "description": "Message tags"
+        },
+        "customHeaders": {
+          "type": "object",
+          "patternProperties": {
+            "^X-[a-zA-Z0-9-]+$": {
+              "type": "string",
+              "maxLength": 1000
+            }
+          },
+          "additionalProperties": false,
+          "description": "Custom headers (must start with X-)"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "recipientId",
+    "subject",
+    "content"
+  ],
+  "additionalProperties": false
+}

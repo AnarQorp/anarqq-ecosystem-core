@@ -1,0 +1,53 @@
+{
+  "validationId": "val_1756595520678_5b7895d8",
+  "timestamp": "2025-08-30T23:12:00.679Z",
+  "overallStatus": "failed",
+  "gates": [
+    {
+      "name": "P95 Latency Gate",
+      "passed": true,
+      "current": 0,
+      "threshold": 150,
+      "unit": "ms",
+      "details": "P95 latency 0ms is within threshold 150ms"
+    },
+    {
+      "name": "P99 Latency Gate",
+      "passed": true,
+      "current": 0,
+      "threshold": 200,
+      "unit": "ms",
+      "details": "P99 latency 0ms is within threshold 200ms"
+    },
+    {
+      "name": "Error Burn-Rate Gate",
+      "passed": true,
+      "current": 0,
+      "threshold": 0.1,
+      "unit": "ratio",
+      "details": "Error burn-rate 0.00% is within threshold 10.00%"
+    },
+    {
+      "name": "Cache Hit Rate Gate",
+      "passed": false,
+      "current": 0,
+      "threshold": 0.85,
+      "unit": "ratio",
+      "details": "Cache hit rate 0.00% below threshold 85.00%"
+    }
+  ],
+  "regressions": {
+    "totalDetected": 0,
+    "critical": 0,
+    "moderate": 0
+  },
+  "alerts": [
+    {
+      "type": "gate_failure",
+      "severity": "high",
+      "message": "Cache hit rate 0.00% below threshold 85.00%",
+      "timestamp": "2025-08-30T23:12:00.679Z"
+    }
+  ],
+  "executionTime": 0.9006000000008498
+}

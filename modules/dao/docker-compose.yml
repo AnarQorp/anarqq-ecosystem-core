@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  dao:
+    build: .
+    ports:
+      - "3014:3014"
+    environment:
+      - NODE_ENV=development
+      - USE_MOCKS=true
+      - DAO_PORT=3014
+      - DAO_HOST=0.0.0.0
+      - DAO_DB_PATH=/app/storage/dao.db
+      - JWT_SECRET=dev-jwt-secret-change-in-production
+      - SIGNATURE_VERIFICATION=true
+    volumes:
+      - ./storage:/app/storage
+      - ./src:/app/src
+      - ./tests:/app/tests
+    networks:
+      - dao-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3014/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Mock services for standalone mode
+  mock-squid:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3001:1080"
+    environment:
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/squid-expectations.json
+    volumes:
+      - ./mocks/squid-expectations.json:/config/squid-expectations.json
+    networks:
+      - dao-network
+
+  mock-qonsent:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3002:1080"
+    environment:
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/qonsent-expectations.json
+    volumes:
+      - ./mocks/qonsent-expectations.json:/config/qonsent-expectations.json
+    networks:
+      - dao-network
+
+  mock-qlock:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3003:1080"
+    environment:
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/qlock-expectations.json
+    volumes:
+      - ./mocks/qlock-expectations.json:/config/qlock-expectations.json
+    networks:
+      - dao-network
+
+  mock-qindex:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3004:1080"
+    environment:
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/qindex-expectations.json
+    volumes:
+      - ./mocks/qindex-expectations.json:/config/qindex-expectations.json
+    networks:
+      - dao-network
+
+  mock-qerberos:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3005:1080"
+    environment:
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/qerberos-expectations.json
+    volumes:
+      - ./mocks/qerberos-expectations.json:/config/qerberos-expectations.json
+    networks:
+      - dao-network
+
+  mock-qwallet:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3006:1080"
+    environment:
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/qwallet-expectations.json
+    volumes:
+      - ./mocks/qwallet-expectations.json:/config/qwallet-expectations.json
+    networks:
+      - dao-network
+
+networks:
+  dao-network:
+    driver: bridge
+
+volumes:
+  dao-storage:

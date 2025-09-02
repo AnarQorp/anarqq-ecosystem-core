@@ -1,0 +1,211 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qchat/events/moderation-action.v1.json",
+  "title": "Moderation Action Event",
+  "description": "Event published when a moderation action is performed",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "pattern": "^qchat_event_[a-zA-Z0-9_-]+$",
+      "description": "Unique event identifier"
+    },
+    "topic": {
+      "type": "string",
+      "const": "q.qchat.moderation.action.v1",
+      "description": "Event topic"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp"
+    },
+    "source": {
+      "type": "string",
+      "const": "qchat",
+      "description": "Event source module"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Event schema version"
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "pattern": "^squid_[a-zA-Z0-9_-]+$",
+          "description": "Moderator sQuid identity ID"
+        },
+        "subId": {
+          "type": "string",
+          "pattern": "^sub_[a-zA-Z0-9_-]+$",
+          "description": "Moderator subidentity ID"
+        },
+        "daoId": {
+          "type": "string",
+          "pattern": "^dao_[a-zA-Z0-9_-]+$",
+          "description": "Moderator DAO ID"
+        }
+      },
+      "required": ["squidId"],
+      "additionalProperties": false
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "actionId": {
+          "type": "string",
+          "pattern": "^qchat_mod_[a-zA-Z0-9_-]+$",
+          "description": "Moderation action identifier"
+        },
+        "roomId": {
+          "type": "string",
+          "pattern": "^qchat_room_[a-zA-Z0-9_-]+$",
+          "description": "Room identifier"
+        },
+        "targetId": {
+          "type": "string",
+          "description": "Target sQuid ID or message ID"
+        },
+        "targetType": {
+          "type": "string",
+          "enum": ["USER", "MESSAGE"],
+          "description": "Type of target"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "MUTE",
+            "UNMUTE",
+            "KICK",
+            "BAN",
+            "UNBAN",
+            "DELETE_MESSAGE",
+            "PIN_MESSAGE",
+            "UNPIN_MESSAGE",
+            "WARN"
+          ],
+          "description": "Moderation action type"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+          "description": "Severity level of the violation"
+        },
+        "duration": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Duration in seconds for temporary actions"
+        },
+        "effectiveUntil": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When temporary action expires"
+        },
+        "automated": {
+          "type": "boolean",
+          "description": "Whether action was automated"
+        },
+        "escalatedToQerberos": {
+          "type": "boolean",
+          "description": "Whether action was escalated to Qerberos"
+        },
+        "reputationImpact": {
+          "type": "object",
+          "properties": {
+            "targetId": {
+              "type": "string",
+              "pattern": "^squid_[a-zA-Z0-9_-]+$"
+            },
+            "previousScore": {
+              "type": "number"
+            },
+            "newScore": {
+              "type": "number"
+            },
+            "change": {
+              "type": "number"
+            }
+          },
+          "required": ["targetId", "previousScore", "newScore", "change"],
+          "description": "Impact on target reputation"
+        },
+        "appealable": {
+          "type": "boolean",
+          "description": "Whether the action can be appealed"
+        },
+        "appealDeadline": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Deadline for appeals"
+        }
+      },
+      "required": [
+        "actionId",
+        "roomId",
+        "targetId",
+        "targetType",
+        "action",
+        "severity",
+        "automated"
+      ],
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "correlationId": {
+          "type": "string",
+          "description": "Correlation ID for request tracing"
+        },
+        "causationId": {
+          "type": "string",
+          "description": "ID of the event that caused this event"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Cryptographic signature of event data"
+        },
+        "cid": {
+          "type": "string",
+          "pattern": "^Qm[a-zA-Z0-9]{44}$",
+          "description": "IPFS CID of event data"
+        },
+        "auditCid": {
+          "type": "string",
+          "pattern": "^Qm[a-zA-Z0-9]{44}$",
+          "description": "IPFS CID of audit record"
+        },
+        "evidenceCids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^Qm[a-zA-Z0-9]{44}$"
+          },
+          "description": "IPFS CIDs of evidence"
+        },
+        "qerberosRisk": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Risk score from Qerberos analysis"
+        }
+      },
+      "required": ["correlationId", "signature", "cid", "auditCid"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "eventId",
+    "topic",
+    "timestamp",
+    "source",
+    "version",
+    "actor",
+    "data",
+    "metadata"
+  ],
+  "additionalProperties": false
+}

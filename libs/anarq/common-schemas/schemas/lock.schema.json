@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/lock.schema.json",
+  "title": "Lock Schemas",
+  "definitions": {
+    "LockSig": {
+      "type": "object",
+      "properties": {
+        "alg": {
+          "type": "string",
+          "enum": ["Ed25519", "ECDSA", "RSA", "Dilithium", "Falcon"],
+          "description": "Cryptographic algorithm used"
+        },
+        "pub": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]+=*$",
+          "description": "Public key in base64 format"
+        },
+        "sig": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]+=*$",
+          "description": "Signature in base64 format"
+        },
+        "ts": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Timestamp when signature was created (Unix timestamp)"
+        },
+        "nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]+=*$",
+          "minLength": 16,
+          "description": "Cryptographic nonce for replay protection"
+        },
+        "kid": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Optional key identifier"
+        }
+      },
+      "required": ["alg", "pub", "sig", "ts", "nonce"],
+      "additionalProperties": false
+    },
+    "EncryptionEnvelope": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "enum": ["AES-256-GCM", "ChaCha20-Poly1305", "Kyber"],
+          "description": "Encryption algorithm used"
+        },
+        "encryptedData": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]+=*$",
+          "description": "Encrypted data in base64 format"
+        },
+        "iv": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]+=*$",
+          "description": "Initialization vector in base64 format"
+        },
+        "keyId": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Optional key identifier"
+        },
+        "aad": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]+=*$",
+          "description": "Optional additional authenticated data"
+        },
+        "tag": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]+=*$",
+          "description": "Authentication tag for AEAD modes"
+        }
+      },
+      "required": ["algorithm", "encryptedData", "iv"],
+      "additionalProperties": false
+    },
+    "DistributedLock": {
+      "type": "object",
+      "properties": {
+        "lockId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Lock identifier"
+        },
+        "resource": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "Resource being locked"
+        },
+        "holder": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Lock holder identity"
+        },
+        "acquiredAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Lock acquisition timestamp"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Lock expiration timestamp"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ACQUIRED", "RELEASED", "EXPIRED"],
+          "description": "Lock status"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Optional lock metadata"
+        }
+      },
+      "required": ["lockId", "resource", "holder", "acquiredAt", "expiresAt", "status"],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "topic": "q.qmail.sent.v1",
+  "version": "v1",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "messageId": {
+        "type": "string",
+        "description": "Unique message identifier"
+      },
+      "from": {
+        "type": "string",
+        "format": "email",
+        "description": "Sender email address"
+      },
+      "to": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "email"
+        },
+        "description": "Recipient email addresses"
+      },
+      "subject": {
+        "type": "string",
+        "maxLength": 200,
+        "description": "Message subject"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "When the message was sent"
+      },
+      "encrypted": {
+        "type": "boolean",
+        "description": "Whether the message content is encrypted"
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["low", "normal", "high"],
+        "default": "normal",
+        "description": "Message priority level"
+      }
+    },
+    "required": ["messageId", "from", "to", "subject", "timestamp"],
+    "additionalProperties": false
+  },
+  "compatibility": "BACKWARD",
+  "deprecated": false,
+  "description": "Event published when a message is sent via Qmail",
+  "examples": [
+    {
+      "messageId": "msg_1234567890",
+      "from": "alice@q.network",
+      "to": ["bob@q.network"],
+      "subject": "Hello from Q Ecosystem",
+      "timestamp": "2024-01-15T10:30:00Z",
+      "encrypted": true,
+      "priority": "normal"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "@anarq/qnet",
+  "version": "1.0.0",
+  "description": "QNET - Network Infrastructure Module for Q Ecosystem",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js",
+    "start:integrated": "QNET_MODE=integrated node src/server.js",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:contract": "vitest --run tests/contract/",
+    "test:integration": "vitest --run tests/integration/",
+    "lint": "eslint src/ tests/",
+    "validate:openapi": "swagger-codegen validate -i openapi.yaml",
+    "validate:mcp": "ajv validate -s ../../../schemas/mcp.schema.json -d mcp.json"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^6.7.0",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1"
+  },
+  "devDependencies": {
+    "vitest": "^0.34.0",
+    "supertest": "^6.3.3",
+    "eslint": "^8.44.0",
+    "ajv": "^8.12.0"
+  },
+  "keywords": [
+    "qnet",
+    "network",
+    "infrastructure",
+    "monitoring",
+    "routing",
+    "q-ecosystem"
+  ],
+  "author": "AnarQ Team",
+  "license": "MIT"
+}

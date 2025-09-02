@@ -1,0 +1,266 @@
+{
+  "name": "qmask",
+  "version": "2.0.0",
+  "description": "Privacy & Anonymization module with privacy profile management",
+  "tools": [
+    {
+      "name": "qmask.apply",
+      "description": "Apply privacy masking to data using a specified profile",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "description": "Data object to apply masking to",
+            "additionalProperties": true
+          },
+          "profileName": {
+            "type": "string",
+            "description": "Name of the privacy profile to apply"
+          },
+          "context": {
+            "type": "object",
+            "description": "Additional context for masking decisions",
+            "properties": {
+              "purpose": {
+                "type": "string",
+                "description": "Purpose of data processing"
+              },
+              "jurisdiction": {
+                "type": "string",
+                "description": "Legal jurisdiction"
+              },
+              "dataSubject": {
+                "type": "string",
+                "description": "Data subject identifier"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "required": ["data", "profileName"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "maskedData": {
+            "type": "object",
+            "description": "Data with privacy masking applied",
+            "additionalProperties": true
+          },
+          "appliedRules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "strategy": {
+                  "type": "string"
+                },
+                "applied": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "description": "List of rules that were applied"
+          },
+          "riskScore": {
+            "type": "number",
+            "description": "Re-identification risk score (0-1)"
+          },
+          "complianceFlags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Compliance requirements met"
+          }
+        }
+      }
+    },
+    {
+      "name": "qmask.profile",
+      "description": "Manage privacy profiles - create, update, retrieve, or delete",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": ["create", "update", "get", "delete", "list"],
+            "description": "Action to perform on the profile"
+          },
+          "profileName": {
+            "type": "string",
+            "description": "Name of the profile (required for all actions except list)"
+          },
+          "profile": {
+            "type": "object",
+            "description": "Profile data (required for create/update)",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "rules": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "strategy": {
+                      "type": "string",
+                      "enum": ["REDACT", "HASH", "ENCRYPT", "ANONYMIZE", "REMOVE"]
+                    },
+                    "params": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  },
+                  "required": ["field", "strategy"]
+                }
+              },
+              "defaults": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "version": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["action"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "profile": {
+            "type": "object",
+            "description": "Profile data (for get/create/update actions)"
+          },
+          "profiles": {
+            "type": "array",
+            "description": "List of profiles (for list action)",
+            "items": {
+              "type": "object"
+            }
+          },
+          "message": {
+            "type": "string",
+            "description": "Operation result message"
+          }
+        }
+      }
+    },
+    {
+      "name": "qmask.assess",
+      "description": "Perform privacy impact assessment on data processing operations",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Type of data processing operation"
+              },
+              "dataTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Types of personal data involved"
+              },
+              "purpose": {
+                "type": "string",
+                "description": "Purpose of processing"
+              },
+              "recipients": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Data recipients"
+              },
+              "retention": {
+                "type": "string",
+                "description": "Data retention period"
+              },
+              "jurisdiction": {
+                "type": "string",
+                "description": "Legal jurisdiction"
+              }
+            },
+            "required": ["type", "dataTypes", "purpose"]
+          }
+        },
+        "required": ["operation"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "riskLevel": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+            "description": "Overall privacy risk level"
+          },
+          "riskScore": {
+            "type": "number",
+            "description": "Numerical risk score (0-1)"
+          },
+          "risks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "severity": {
+                  "type": "string"
+                },
+                "mitigation": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Identified privacy risks"
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Privacy protection recommendations"
+          },
+          "complianceRequirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Applicable compliance requirements"
+          }
+        }
+      }
+    }
+  ],
+  "server": {
+    "host": "localhost",
+    "port": 3007,
+    "basePath": "/mcp/v1"
+  },
+  "authentication": {
+    "type": "bearer",
+    "description": "sQuid identity token required"
+  }
+}

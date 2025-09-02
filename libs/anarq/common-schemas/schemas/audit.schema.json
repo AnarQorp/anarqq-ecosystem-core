@@ -1,0 +1,294 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/audit.schema.json",
+  "title": "Audit Schemas",
+  "definitions": {
+    "AuditEvent": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^[A-Z_]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Event type (e.g., 'AUTH_SUCCESS', 'PERMISSION_DENIED', 'DATA_ACCESS')"
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "Reference to the resource or operation"
+        },
+        "actor": {
+          "type": "object",
+          "properties": {
+            "squidId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]+$",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "subId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]+$",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "daoId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]+$",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          },
+          "required": ["squidId"],
+          "additionalProperties": false,
+          "description": "Actor who performed the action"
+        },
+        "layer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "System layer where event occurred"
+        },
+        "verdict": {
+          "type": "string",
+          "enum": ["ALLOW", "DENY", "WARN"],
+          "description": "Security verdict"
+        },
+        "details": {
+          "type": "object",
+          "description": "Event details and context"
+        },
+        "cid": {
+          "type": "string",
+          "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^bafy[a-z2-7]{55}$",
+          "description": "Optional IPFS CID for additional data"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Event timestamp"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+          "description": "Event severity level"
+        },
+        "correlationId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "maxLength": 64,
+          "description": "Optional correlation ID for related events"
+        }
+      },
+      "required": ["type", "ref", "actor", "layer", "verdict", "details", "timestamp", "severity"],
+      "additionalProperties": false
+    },
+    "RiskAssessment": {
+      "type": "object",
+      "properties": {
+        "assessmentId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Assessment identifier"
+        },
+        "subject": {
+          "type": "object",
+          "properties": {
+            "squidId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]+$",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "subId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]+$",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "daoId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]+$",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          },
+          "required": ["squidId"],
+          "additionalProperties": false,
+          "description": "Subject being assessed"
+        },
+        "riskScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Risk score (0-100)"
+        },
+        "riskLevel": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+          "description": "Risk level classification"
+        },
+        "factors": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/RiskFactor" },
+          "description": "Risk factors contributing to score"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Assessment timestamp"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Assessment validity period"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "maxItems": 10,
+          "description": "Optional recommendations"
+        }
+      },
+      "required": ["assessmentId", "subject", "riskScore", "riskLevel", "factors", "timestamp", "validUntil"],
+      "additionalProperties": false
+    },
+    "RiskFactor": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Factor type"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "Factor description"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Factor weight in overall score"
+        },
+        "value": {
+          "type": "number",
+          "description": "Factor value"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Factor confidence level"
+        }
+      },
+      "required": ["type", "description", "weight", "value", "confidence"],
+      "additionalProperties": false
+    },
+    "SecurityAlert": {
+      "type": "object",
+      "properties": {
+        "alertId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Alert identifier"
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Alert type"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+          "description": "Alert severity"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Alert title"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "description": "Alert description"
+        },
+        "affected": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "squidId": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]+$",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "subId": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]+$",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "daoId": {
+                "type": "string",
+                "pattern": "^[a-zA-Z0-9_-]+$",
+                "minLength": 1,
+                "maxLength": 64
+              }
+            },
+            "required": ["squidId"],
+            "additionalProperties": false
+          },
+          "description": "Affected entities"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Alert timestamp"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["OPEN", "ACKNOWLEDGED", "RESOLVED", "FALSE_POSITIVE"],
+          "description": "Alert status"
+        },
+        "remediation": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "maxItems": 10,
+          "description": "Optional remediation steps"
+        },
+        "relatedEvents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "maxLength": 64
+          },
+          "maxItems": 20,
+          "description": "Optional related events"
+        }
+      },
+      "required": ["alertId", "type", "severity", "title", "description", "affected", "timestamp", "status"],
+      "additionalProperties": false
+    }
+  }
+}

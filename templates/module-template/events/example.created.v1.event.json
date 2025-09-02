@@ -1,0 +1,165 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q-ecosystem.com/events/{{MODULE_NAME}}/example.created.v1.json",
+  "title": "Example Created Event v1",
+  "description": "Event published when a new example resource is created",
+  "type": "object",
+  "required": [
+    "eventId",
+    "eventType",
+    "timestamp",
+    "source",
+    "actor",
+    "data",
+    "metadata"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event identifier"
+    },
+    "eventType": {
+      "type": "string",
+      "const": "q.{{MODULE_NAME}}.example.created.v1",
+      "description": "Event type identifier"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp in ISO 8601 format"
+    },
+    "source": {
+      "type": "string",
+      "const": "{{MODULE_NAME}}",
+      "description": "Source module name"
+    },
+    "actor": {
+      "type": "object",
+      "description": "Identity that triggered the event",
+      "required": ["squidId"],
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "sQuid identity identifier"
+        },
+        "subId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Subidentity identifier"
+        },
+        "daoId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "DAO identifier"
+        }
+      },
+      "additionalProperties": false
+    },
+    "data": {
+      "type": "object",
+      "description": "Event-specific data",
+      "required": ["resourceId", "name"],
+      "properties": {
+        "resourceId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Created resource identifier"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "Resource name"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Resource description"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "maxItems": 10,
+          "description": "Resource tags"
+        },
+        "cid": {
+          "type": "string",
+          "description": "IPFS Content ID of the created resource"
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public", "private", "dao"],
+          "default": "private",
+          "description": "Resource visibility"
+        }
+      },
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Event metadata",
+      "required": ["version"],
+      "properties": {
+        "correlationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Correlation identifier for related events"
+        },
+        "traceId": {
+          "type": "string",
+          "description": "Distributed tracing identifier"
+        },
+        "version": {
+          "type": "string",
+          "const": "1.0",
+          "description": "Event schema version"
+        },
+        "retryCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of retry attempts"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "normal", "high", "critical"],
+          "default": "normal",
+          "description": "Event priority"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "eventId": "123e4567-e89b-12d3-a456-426614174000",
+      "eventType": "q.{{MODULE_NAME}}.example.created.v1",
+      "timestamp": "2023-01-01T00:00:00Z",
+      "source": "{{MODULE_NAME}}",
+      "actor": {
+        "squidId": "123e4567-e89b-12d3-a456-426614174001",
+        "subId": "123e4567-e89b-12d3-a456-426614174002"
+      },
+      "data": {
+        "resourceId": "123e4567-e89b-12d3-a456-426614174003",
+        "name": "Example Resource",
+        "description": "A test resource for demonstration",
+        "tags": ["test", "example"],
+        "cid": "QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco",
+        "visibility": "private"
+      },
+      "metadata": {
+        "correlationId": "123e4567-e89b-12d3-a456-426614174004",
+        "traceId": "trace-123",
+        "version": "1.0",
+        "priority": "normal"
+      }
+    }
+  ]
+}

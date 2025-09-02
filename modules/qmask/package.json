@@ -1,0 +1,62 @@
+{
+  "name": "@anarq/qmask",
+  "version": "2.0.0",
+  "description": "Privacy & Anonymization module for Q ecosystem with privacy profile management",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "NODE_ENV=development ts-node-dev --respawn --transpile-only src/index.ts",
+    "start": "node dist/index.js",
+    "start:integrated": "NODE_ENV=production node dist/index.js",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "docker:build": "docker build -t qmask .",
+    "docker:run": "docker run -p 3007:3007 qmask"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.0",
+    "@fastify/helmet": "^11.0.0",
+    "@fastify/swagger": "^8.0.0",
+    "@fastify/swagger-ui": "^2.0.0",
+    "fastify": "^4.24.0",
+    "mongoose": "^8.0.0",
+    "pino": "^8.16.0",
+    "pino-pretty": "^10.2.0",
+    "zod": "^3.22.0",
+    "uuid": "^9.0.0",
+    "eventemitter3": "^5.0.1",
+    "redis": "^4.6.0",
+    "crypto": "^1.0.1",
+    "lodash": "^4.17.21",
+    "faker": "^6.6.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "@types/uuid": "^9.0.0",
+    "@types/lodash": "^4.14.0",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
+    "eslint": "^8.51.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.2.0",
+    "ts-node-dev": "^2.0.0",
+    "vitest": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "supertest": "^6.3.0",
+    "@types/supertest": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "openapi.yaml",
+    "mcp.json"
+  ]
+}

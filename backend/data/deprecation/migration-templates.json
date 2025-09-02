@@ -1,0 +1,247 @@
+{
+  "apiVersionUpgrade": {
+    "name": "API Version Upgrade",
+    "description": "Migrate from API v1 to v2",
+    "steps": [
+      {
+        "name": "Update API endpoints",
+        "type": "API_UPDATE",
+        "description": "Update all API endpoint references from v1 to v2",
+        "endpoints": ["/api/v1/users", "/api/v1/data"],
+        "rollbackStep": {
+          "name": "Revert API endpoints",
+          "type": "API_UPDATE",
+          "description": "Revert API endpoint references back to v1"
+        }
+      },
+      {
+        "name": "Transform request/response format",
+        "type": "DATA_TRANSFORM",
+        "description": "Transform data format to match v2 schema",
+        "recordCount": 1000,
+        "rollbackStep": {
+          "name": "Revert data format",
+          "type": "DATA_TRANSFORM",
+          "description": "Revert data format back to v1 schema"
+        }
+      },
+      {
+        "name": "Update configuration",
+        "type": "CONFIG_CHANGE",
+        "description": "Update API version configuration",
+        "settings": {
+          "apiVersion": "v2",
+          "compatibilityMode": false
+        },
+        "rollbackStep": {
+          "name": "Revert configuration",
+          "type": "CONFIG_CHANGE",
+          "description": "Revert API version configuration to v1"
+        }
+      },
+      {
+        "name": "Validate migration",
+        "type": "VALIDATION",
+        "description": "Validate that all endpoints work correctly with v2",
+        "checks": ["endpoint_availability", "response_format", "performance"]
+      }
+    ],
+    "validationRules": [
+      {
+        "name": "API Compatibility Check",
+        "type": "API_COMPATIBILITY",
+        "description": "Ensure all API endpoints are accessible and return expected format"
+      },
+      {
+        "name": "Data Integrity Check",
+        "type": "DATA_INTEGRITY",
+        "description": "Verify that all data was transformed correctly"
+      },
+      {
+        "name": "Performance Check",
+        "type": "PERFORMANCE",
+        "description": "Ensure performance is within acceptable limits"
+      }
+    ]
+  },
+  "databaseSchemaUpgrade": {
+    "name": "Database Schema Upgrade",
+    "description": "Migrate database schema to new version",
+    "steps": [
+      {
+        "name": "Backup existing data",
+        "type": "DATA_TRANSFORM",
+        "description": "Create backup of existing database",
+        "recordCount": 50000
+      },
+      {
+        "name": "Create new schema",
+        "type": "DATA_TRANSFORM",
+        "description": "Create new database schema",
+        "rollbackStep": {
+          "name": "Drop new schema",
+          "type": "DATA_TRANSFORM",
+          "description": "Drop the new schema and restore old one"
+        }
+      },
+      {
+        "name": "Migrate data",
+        "type": "DATA_TRANSFORM",
+        "description": "Migrate data from old schema to new schema",
+        "recordCount": 50000,
+        "rollbackStep": {
+          "name": "Restore data",
+          "type": "DATA_TRANSFORM",
+          "description": "Restore data from backup"
+        }
+      },
+      {
+        "name": "Update application configuration",
+        "type": "CONFIG_CHANGE",
+        "description": "Update database connection settings",
+        "settings": {
+          "schemaVersion": "2.0",
+          "migrationCompleted": true
+        },
+        "rollbackStep": {
+          "name": "Revert configuration",
+          "type": "CONFIG_CHANGE",
+          "description": "Revert database configuration to old schema"
+        }
+      },
+      {
+        "name": "Validate data integrity",
+        "type": "VALIDATION",
+        "description": "Validate that all data was migrated correctly",
+        "checks": ["record_count", "data_consistency", "referential_integrity"]
+      }
+    ],
+    "validationRules": [
+      {
+        "name": "Data Integrity Validation",
+        "type": "DATA_INTEGRITY",
+        "description": "Ensure all data was migrated without corruption"
+      },
+      {
+        "name": "Performance Validation",
+        "type": "PERFORMANCE",
+        "description": "Ensure database performance meets requirements"
+      }
+    ]
+  },
+  "serviceEndpointMigration": {
+    "name": "Service Endpoint Migration",
+    "description": "Migrate from old service endpoint to new service",
+    "steps": [
+      {
+        "name": "Update service discovery",
+        "type": "CONFIG_CHANGE",
+        "description": "Update service discovery to point to new endpoint",
+        "settings": {
+          "serviceUrl": "https://new-service.example.com",
+          "timeout": 30000,
+          "retries": 3
+        },
+        "rollbackStep": {
+          "name": "Revert service discovery",
+          "type": "CONFIG_CHANGE",
+          "description": "Revert service discovery to old endpoint"
+        }
+      },
+      {
+        "name": "Update authentication",
+        "type": "CONFIG_CHANGE",
+        "description": "Update authentication configuration for new service",
+        "settings": {
+          "authMethod": "oauth2",
+          "clientId": "new-client-id"
+        },
+        "rollbackStep": {
+          "name": "Revert authentication",
+          "type": "CONFIG_CHANGE",
+          "description": "Revert authentication to old service"
+        }
+      },
+      {
+        "name": "Test connectivity",
+        "type": "VALIDATION",
+        "description": "Test connectivity to new service",
+        "checks": ["connectivity", "authentication", "response_format"]
+      },
+      {
+        "name": "Update monitoring",
+        "type": "CONFIG_CHANGE",
+        "description": "Update monitoring configuration for new service",
+        "settings": {
+          "healthCheckUrl": "https://new-service.example.com/health",
+          "alertThresholds": {
+            "responseTime": 1000,
+            "errorRate": 0.01
+          }
+        }
+      }
+    ],
+    "validationRules": [
+      {
+        "name": "Service Connectivity",
+        "type": "API_COMPATIBILITY",
+        "description": "Ensure new service is accessible and responds correctly"
+      },
+      {
+        "name": "Authentication Validation",
+        "type": "SECURITY",
+        "description": "Ensure authentication works with new service"
+      },
+      {
+        "name": "Performance Validation",
+        "type": "PERFORMANCE",
+        "description": "Ensure new service meets performance requirements"
+      }
+    ]
+  },
+  "configurationUpdate": {
+    "name": "Configuration Update",
+    "description": "Update application configuration",
+    "steps": [
+      {
+        "name": "Backup current configuration",
+        "type": "CONFIG_CHANGE",
+        "description": "Create backup of current configuration"
+      },
+      {
+        "name": "Update configuration values",
+        "type": "CONFIG_CHANGE",
+        "description": "Update configuration with new values",
+        "settings": {},
+        "rollbackStep": {
+          "name": "Restore configuration",
+          "type": "CONFIG_CHANGE",
+          "description": "Restore configuration from backup"
+        }
+      },
+      {
+        "name": "Validate configuration",
+        "type": "VALIDATION",
+        "description": "Validate that configuration is correct",
+        "checks": ["syntax", "required_fields", "value_ranges"]
+      },
+      {
+        "name": "Restart services",
+        "type": "CONFIG_CHANGE",
+        "description": "Restart services to apply new configuration"
+      }
+    ],
+    "validationRules": [
+      {
+        "name": "Configuration Syntax",
+        "type": "DATA_INTEGRITY",
+        "description": "Ensure configuration syntax is valid"
+      },
+      {
+        "name": "Service Health",
+        "type": "API_COMPATIBILITY",
+        "description": "Ensure services start correctly with new configuration"
+      }
+    ]
+  }
+}

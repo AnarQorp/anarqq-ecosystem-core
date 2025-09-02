@@ -1,0 +1,238 @@
+{
+  "validationId": "doc_validation_4c080c5ed67a1c64",
+  "timestamp": "2025-08-31T09:42:47.605Z",
+  "overall": {
+    "status": "fail",
+    "score": 0,
+    "issues": 27,
+    "warnings": 9
+  },
+  "bilingual": {
+    "parity": 53,
+    "missingTranslations": [
+      {
+        "source": "demo/en/README.md",
+        "missing": "demo/es/README.md",
+        "language": "es"
+      },
+      {
+        "source": "demo/en/expected-results.md",
+        "missing": "demo/es/resultados-esperados.md",
+        "language": "es"
+      },
+      {
+        "source": "demo/en/performance-benchmarks.md",
+        "missing": "demo/es/benchmarks-rendimiento.md",
+        "language": "es"
+      },
+      {
+        "source": "demo/en/scripts",
+        "missing": "demo/es/scripts",
+        "language": "es"
+      },
+      {
+        "source": "demo/en/setup-guide.md",
+        "missing": "demo/es/guia-configuracion.md",
+        "language": "es"
+      },
+      {
+        "source": "demo/en/test-scenarios.md",
+        "missing": "demo/es/escenarios-prueba.md",
+        "language": "es"
+      },
+      {
+        "source": "demo/en/troubleshooting.md",
+        "missing": "demo/es/solucion-problemas.md",
+        "language": "es"
+      }
+    ],
+    "inconsistencies": []
+  },
+  "crossReferences": {
+    "brokenLinks": [
+      {
+        "file": "pi/en/README.md",
+        "link": "../README.md",
+        "text": "AnarQ&Q Ecosystem",
+        "reason": "File not found: /home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/pi/README.md"
+      },
+      {
+        "file": "pi/en/README.md",
+        "link": "../demo/README.md",
+        "text": "Demo Documentation",
+        "reason": "File not found: /home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/pi/demo/README.md"
+      },
+      {
+        "file": "demo/en/README.md",
+        "link": "../pi/README.md",
+        "text": "Pi Integration Documentation",
+        "reason": "File not found: /home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/demo/pi/README.md"
+      },
+      {
+        "file": "demo/en/README.md",
+        "link": "../../README.md",
+        "text": "AnarQ&Q Ecosystem",
+        "reason": "File not found: /home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/README.md"
+      },
+      {
+        "file": "demo/en/README.md",
+        "link": "../../api/README.md",
+        "text": "API Guides",
+        "reason": "File not found: /home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/api/README.md"
+      },
+      {
+        "file": "pi/es/README.md",
+        "link": "../README.md",
+        "text": "Ecosistema AnarQ&Q",
+        "reason": "File not found: /home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/pi/README.md"
+      },
+      {
+        "file": "pi/es/README.md",
+        "link": "../demo/README.md",
+        "text": "Documentación Demo",
+        "reason": "File not found: /home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/pi/demo/README.md"
+      }
+    ],
+    "missingReferences": [],
+    "orphanedFiles": [
+      {
+        "file": "demo/en/scripts",
+        "error": "EISDIR: illegal operation on a directory, read"
+      }
+    ]
+  },
+  "content": {
+    "duplicates": [],
+    "outdated": [
+      {
+        "file": "pi/es/README.md",
+        "reason": "Missing generation timestamp"
+      },
+      {
+        "file": "pi/es/compatibilidad-navegador.md",
+        "reason": "Missing generation timestamp"
+      },
+      {
+        "file": "pi/es/contratos-inteligentes.md",
+        "reason": "Missing generation timestamp"
+      },
+      {
+        "file": "pi/es/flujos-ejemplo.md",
+        "reason": "Missing generation timestamp"
+      },
+      {
+        "file": "pi/es/integracion-wallet.md",
+        "reason": "Missing generation timestamp"
+      },
+      {
+        "file": "pi/es/referencia-api.md",
+        "reason": "Missing generation timestamp"
+      },
+      {
+        "file": "pi/es/solucion-problemas.md",
+        "reason": "Missing generation timestamp"
+      },
+      {
+        "file": "pi/es/vinculacion-identidad.md",
+        "reason": "Missing generation timestamp"
+      }
+    ],
+    "incomplete": [
+      {
+        "file": "demo/en/scripts",
+        "error": "EISDIR: illegal operation on a directory, read"
+      }
+    ]
+  },
+  "structure": {
+    "missingFiles": [
+      {
+        "section": "pi",
+        "language": "es",
+        "file": "wallet-integration.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/pi/es/wallet-integration.md"
+      },
+      {
+        "section": "pi",
+        "language": "es",
+        "file": "smart-contracts.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/pi/es/smart-contracts.md"
+      },
+      {
+        "section": "pi",
+        "language": "es",
+        "file": "identity-linking.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/pi/es/identity-linking.md"
+      },
+      {
+        "section": "pi",
+        "language": "es",
+        "file": "browser-compatibility.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/pi/es/browser-compatibility.md"
+      },
+      {
+        "section": "pi",
+        "language": "es",
+        "file": "example-workflows.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/pi/es/example-workflows.md"
+      },
+      {
+        "section": "pi",
+        "language": "es",
+        "file": "api-reference.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/pi/es/api-reference.md"
+      },
+      {
+        "section": "pi",
+        "language": "es",
+        "file": "troubleshooting.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/pi/es/troubleshooting.md"
+      },
+      {
+        "section": "demo",
+        "language": "es",
+        "file": "setup-guide.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/demo/es/setup-guide.md"
+      },
+      {
+        "section": "demo",
+        "language": "es",
+        "file": "test-scenarios.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/demo/es/test-scenarios.md"
+      },
+      {
+        "section": "demo",
+        "language": "es",
+        "file": "expected-results.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/demo/es/expected-results.md"
+      },
+      {
+        "section": "demo",
+        "language": "es",
+        "file": "troubleshooting.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/demo/es/troubleshooting.md"
+      },
+      {
+        "section": "demo",
+        "language": "es",
+        "file": "performance-benchmarks.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/demo/es/performance-benchmarks.md"
+      },
+      {
+        "section": "demo",
+        "language": "es",
+        "file": "README.md",
+        "expectedPath": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/backend/test-docs-output/demo/es/README.md"
+      }
+    ],
+    "incorrectNaming": [
+      {
+        "file": "demo/en/scripts",
+        "reason": "Filename should use kebab-case"
+      }
+    ],
+    "structureViolations": []
+  },
+  "artifacts": [],
+  "duration": 62
+}

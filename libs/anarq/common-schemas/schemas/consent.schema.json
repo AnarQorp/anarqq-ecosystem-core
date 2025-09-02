@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/consent.schema.json",
+  "title": "Consent Schemas",
+  "definitions": {
+    "ConsentRef": {
+      "type": "object",
+      "properties": {
+        "policyCid": {
+          "type": "string",
+          "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^bafy[a-z2-7]{55}$",
+          "description": "IPFS CID of the policy document"
+        },
+        "scope": {
+          "type": "string",
+          "pattern": "^[a-z]+:[a-z_]+$",
+          "maxLength": 128,
+          "description": "Permission scope (e.g., 'read:files', 'write:messages')"
+        },
+        "grant": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "Grant token or identifier"
+        },
+        "exp": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Expiration timestamp (Unix timestamp)"
+        },
+        "issuer": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Optional issuer identity"
+        },
+        "subject": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Optional subject identity"
+        }
+      },
+      "required": ["policyCid", "scope", "grant", "exp"],
+      "additionalProperties": false
+    },
+    "ConsentGrant": {
+      "type": "object",
+      "properties": {
+        "policyCid": {
+          "type": "string",
+          "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^bafy[a-z2-7]{55}$",
+          "description": "IPFS CID of the policy document"
+        },
+        "scope": {
+          "type": "string",
+          "pattern": "^[a-z]+:[a-z_]+$",
+          "maxLength": 128,
+          "description": "Permission scope (e.g., 'read:files', 'write:messages')"
+        },
+        "grant": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "Grant token or identifier"
+        },
+        "exp": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Expiration timestamp (Unix timestamp)"
+        },
+        "issuer": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Optional issuer identity"
+        },
+        "subject": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Optional subject identity"
+        },
+        "grantId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Grant identifier"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ACTIVE", "REVOKED", "EXPIRED"],
+          "description": "Grant status"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Grant creation timestamp"
+        },
+        "revokedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Optional revocation timestamp"
+        },
+        "revocationReason": {
+          "type": "string",
+          "maxLength": 512,
+          "description": "Optional revocation reason"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Grant metadata"
+        }
+      },
+      "required": ["policyCid", "scope", "grant", "exp", "grantId", "status", "createdAt"],
+      "additionalProperties": false
+    }
+  }
+}

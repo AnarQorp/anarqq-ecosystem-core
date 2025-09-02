@@ -1,0 +1,304 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.com/qmarket/listing.json",
+  "title": "Qmarket Listing Schema",
+  "description": "Schema for marketplace listing objects",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^listing_[a-f0-9]{24}$",
+      "description": "Unique listing identifier"
+    },
+    "squidId": {
+      "type": "string",
+      "description": "sQuid identity of the listing creator"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100,
+      "description": "Listing title"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 1000,
+      "description": "Detailed description of the content"
+    },
+    "price": {
+      "type": "number",
+      "minimum": 0.01,
+      "description": "Price in the specified currency"
+    },
+    "currency": {
+      "type": "string",
+      "enum": ["QToken", "PI"],
+      "description": "Currency for the listing"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["digital-art", "media", "documents", "software", "data", "services"],
+      "description": "Content category"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      },
+      "maxItems": 10,
+      "uniqueItems": true,
+      "description": "Tags for discoverability"
+    },
+    "fileCid": {
+      "type": "string",
+      "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^baf[a-z0-9]{56}$",
+      "description": "IPFS CID of the content"
+    },
+    "fileMetadata": {
+      "type": "object",
+      "properties": {
+        "contentType": {
+          "type": "string",
+          "description": "MIME type of the content"
+        },
+        "fileSize": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "File size in bytes"
+        },
+        "thumbnailUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to thumbnail image"
+        },
+        "duration": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Duration in seconds for media content"
+        },
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "required": ["width", "height"]
+        }
+      }
+    },
+    "visibility": {
+      "type": "string",
+      "enum": ["public", "dao-only", "private"],
+      "description": "Visibility level of the listing"
+    },
+    "daoId": {
+      "type": "string",
+      "description": "DAO ID if visibility is dao-only"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "paused", "sold", "expired", "deleted"],
+      "description": "Current status of the listing"
+    },
+    "enableResale": {
+      "type": "boolean",
+      "description": "Whether buyers can resell this item"
+    },
+    "royaltyPercentage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 50,
+      "description": "Royalty percentage for resales"
+    },
+    "qonsent": {
+      "type": "object",
+      "properties": {
+        "profileId": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "string"
+        },
+        "encryptionLevel": {
+          "type": "string",
+          "enum": ["none", "basic", "advanced", "quantum"]
+        },
+        "accessRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["profileId", "visibility", "encryptionLevel"]
+    },
+    "qlock": {
+      "type": "object",
+      "properties": {
+        "encrypted": {
+          "type": "boolean"
+        },
+        "encryptionLevel": {
+          "type": "string",
+          "enum": ["none", "basic", "advanced", "quantum"]
+        },
+        "encryptedData": {
+          "type": "string"
+        },
+        "encryptionMetadata": {
+          "type": "object"
+        }
+      },
+      "required": ["encrypted", "encryptionLevel"]
+    },
+    "qwallet": {
+      "type": "object",
+      "properties": {
+        "transactionId": {
+          "type": "string"
+        },
+        "signature": {
+          "type": "string"
+        },
+        "walletAddress": {
+          "type": "string"
+        },
+        "nft": {
+          "type": "object",
+          "properties": {
+            "tokenId": {
+              "type": "string"
+            },
+            "contractAddress": {
+              "type": "string"
+            },
+            "metadata": {
+              "type": "object"
+            },
+            "mintedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "gasEstimate": {
+          "type": "number"
+        }
+      },
+      "required": ["transactionId", "signature", "walletAddress"]
+    },
+    "qindex": {
+      "type": "object",
+      "properties": {
+        "indexId": {
+          "type": "string"
+        },
+        "searchable": {
+          "type": "boolean"
+        }
+      },
+      "required": ["indexId", "searchable"]
+    },
+    "qnet": {
+      "type": "object",
+      "properties": {
+        "routingId": {
+          "type": "string"
+        },
+        "routedUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "gateway": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        }
+      },
+      "required": ["routingId", "routedUrl"]
+    },
+    "stats": {
+      "type": "object",
+      "properties": {
+        "viewCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "favoriteCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "purchaseCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["viewCount", "favoriteCount", "purchaseCount"]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the listing was created"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the listing was last updated"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the listing expires"
+    },
+    "lastViewedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the listing was last viewed"
+    },
+    "lastPurchasedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the listing was last purchased"
+    }
+  },
+  "required": [
+    "id",
+    "squidId",
+    "title",
+    "description",
+    "price",
+    "currency",
+    "category",
+    "fileCid",
+    "visibility",
+    "status",
+    "qonsent",
+    "qlock",
+    "qwallet",
+    "qindex",
+    "qnet",
+    "stats",
+    "createdAt",
+    "updatedAt"
+  ],
+  "additionalProperties": false
+}

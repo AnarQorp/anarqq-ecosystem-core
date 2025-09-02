@@ -1,0 +1,330 @@
+{
+  "name": "dao",
+  "version": "1.0.0",
+  "description": "DAO/Communities governance tools for the Q ecosystem",
+  "author": "AnarQ&Q Team",
+  "license": "MIT",
+  "homepage": "https://github.com/anarq/q-ecosystem",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anarq/q-ecosystem"
+  },
+  "server": {
+    "command": "node",
+    "args": ["src/mcp-server.js"],
+    "env": {
+      "NODE_ENV": "production",
+      "USE_MOCKS": "false"
+    }
+  },
+  "tools": [
+    {
+      "name": "dao.vote",
+      "description": "Cast a vote on a DAO proposal",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "daoId": {
+            "type": "string",
+            "description": "DAO identifier"
+          },
+          "proposalId": {
+            "type": "string",
+            "description": "Proposal identifier"
+          },
+          "voterId": {
+            "type": "string",
+            "description": "Voter's sQuid identity"
+          },
+          "option": {
+            "type": "string",
+            "description": "Voting option (e.g., 'Yes', 'No', 'Abstain')"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Cryptographic signature of the vote"
+          }
+        },
+        "required": ["daoId", "proposalId", "voterId", "option", "signature"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "voteId": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "proposalStatus": {
+            "type": "object",
+            "properties": {
+              "voteCount": {
+                "type": "integer"
+              },
+              "quorumReached": {
+                "type": "boolean"
+              },
+              "status": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "dao.propose",
+      "description": "Create a new proposal in a DAO",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "daoId": {
+            "type": "string",
+            "description": "DAO identifier"
+          },
+          "title": {
+            "type": "string",
+            "description": "Proposal title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed proposal description"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Voting options",
+            "default": ["Yes", "No"]
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Voting duration in milliseconds (optional)"
+          },
+          "creatorId": {
+            "type": "string",
+            "description": "Creator's sQuid identity"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Cryptographic signature of the proposal"
+          }
+        },
+        "required": ["daoId", "title", "description", "creatorId", "signature"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "proposalId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quorum": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "dao.execute",
+      "description": "Execute an approved DAO proposal",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "daoId": {
+            "type": "string",
+            "description": "DAO identifier"
+          },
+          "proposalId": {
+            "type": "string",
+            "description": "Proposal identifier"
+          },
+          "executorId": {
+            "type": "string",
+            "description": "Executor's sQuid identity"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Cryptographic signature of the execution request"
+          }
+        },
+        "required": ["daoId", "proposalId", "executorId", "signature"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "proposalId": {
+            "type": "string"
+          },
+          "executedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "executionResult": {
+            "type": "object",
+            "description": "Result of the proposal execution"
+          },
+          "transactionHash": {
+            "type": "string",
+            "description": "Blockchain transaction hash (if applicable)"
+          }
+        }
+      }
+    },
+    {
+      "name": "dao.getProposal",
+      "description": "Get detailed information about a specific proposal",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "daoId": {
+            "type": "string",
+            "description": "DAO identifier"
+          },
+          "proposalId": {
+            "type": "string",
+            "description": "Proposal identifier"
+          }
+        },
+        "required": ["daoId", "proposalId"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "proposal": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "status": {
+                "type": "string"
+              },
+              "voteCount": {
+                "type": "integer"
+              },
+              "results": {
+                "type": "object"
+              },
+              "quorumReached": {
+                "type": "boolean"
+              },
+              "timeRemaining": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "dao.getDAOInfo",
+      "description": "Get information about a DAO",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "daoId": {
+            "type": "string",
+            "description": "DAO identifier"
+          }
+        },
+        "required": ["daoId"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "dao": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "memberCount": {
+                "type": "integer"
+              },
+              "proposalCount": {
+                "type": "integer"
+              },
+              "activeProposals": {
+                "type": "integer"
+              },
+              "governanceRules": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "capabilities": {
+    "governance": {
+      "voting": true,
+      "proposals": true,
+      "execution": true,
+      "reputation": true
+    },
+    "integration": {
+      "squid": true,
+      "qonsent": true,
+      "qlock": true,
+      "qindex": true,
+      "qerberos": true,
+      "qwallet": true
+    },
+    "features": {
+      "multiChain": true,
+      "tokenWeighting": true,
+      "reputationBased": true,
+      "auditTrail": true
+    }
+  }
+}

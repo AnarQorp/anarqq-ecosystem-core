@@ -1,0 +1,5 @@
+# This directory stores deprecation management data
+# - calendar.json: Deprecation schedules
+# - telemetry.json: Usage telemetry data
+# - migrations.json: Migration task data
+# - compatibility.json: Compatibility layer configurations

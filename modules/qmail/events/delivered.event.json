@@ -1,0 +1,156 @@
+{
+  "topic": "q.qmail.delivered.v1",
+  "version": "v1",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "messageId": {
+        "type": "string",
+        "pattern": "^msg_[a-zA-Z0-9_-]+$",
+        "description": "Unique message identifier"
+      },
+      "senderId": {
+        "type": "string",
+        "pattern": "^squid_[a-zA-Z0-9_-]+$",
+        "description": "Original sender sQuid identity ID"
+      },
+      "recipientId": {
+        "type": "string",
+        "pattern": "^squid_[a-zA-Z0-9_-]+$",
+        "description": "Recipient sQuid identity ID"
+      },
+      "deliveryTimestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Message delivery timestamp"
+      },
+      "deliveryMethod": {
+        "type": "string",
+        "enum": ["DIRECT", "RELAY", "STORE_FORWARD"],
+        "description": "How the message was delivered"
+      },
+      "deliveryTracking": {
+        "type": "string",
+        "description": "Delivery tracking identifier"
+      },
+      "networkLatency": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Network latency in milliseconds"
+      },
+      "encryptionVerified": {
+        "type": "boolean",
+        "description": "Whether encryption was verified during delivery"
+      },
+      "integrityVerified": {
+        "type": "boolean",
+        "description": "Whether message integrity was verified"
+      },
+      "receiptGenerated": {
+        "type": "boolean",
+        "description": "Whether delivery receipt was generated"
+      },
+      "receiptId": {
+        "type": "string",
+        "pattern": "^rcpt_[a-zA-Z0-9_-]+$",
+        "description": "Delivery receipt ID (if generated)"
+      },
+      "deliveryPath": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "nodeId": {
+              "type": "string",
+              "description": "Network node identifier"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Node processing timestamp"
+            },
+            "action": {
+              "type": "string",
+              "enum": ["RECEIVED", "PROCESSED", "FORWARDED", "DELIVERED"],
+              "description": "Action performed by node"
+            }
+          },
+          "required": ["nodeId", "timestamp", "action"]
+        },
+        "description": "Message delivery path through network"
+      },
+      "metadata": {
+        "type": "object",
+        "properties": {
+          "recipientOnline": {
+            "type": "boolean",
+            "description": "Whether recipient was online during delivery"
+          },
+          "deliveryAttempts": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of delivery attempts"
+          },
+          "queueTime": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Time spent in delivery queue (seconds)"
+          }
+        }
+      }
+    },
+    "required": [
+      "messageId",
+      "senderId",
+      "recipientId",
+      "deliveryTimestamp",
+      "deliveryMethod",
+      "deliveryTracking",
+      "networkLatency",
+      "encryptionVerified",
+      "integrityVerified",
+      "receiptGenerated"
+    ],
+    "additionalProperties": false
+  },
+  "compatibility": "BACKWARD",
+  "deprecated": false,
+  "description": "Event published when a message is successfully delivered to recipient",
+  "examples": [
+    {
+      "messageId": "msg_1234567890abcdef",
+      "senderId": "squid_alice_123",
+      "recipientId": "squid_bob_456",
+      "deliveryTimestamp": "2024-01-15T10:31:23Z",
+      "deliveryMethod": "DIRECT",
+      "deliveryTracking": "track_abc123def456",
+      "networkLatency": 150.5,
+      "encryptionVerified": true,
+      "integrityVerified": true,
+      "receiptGenerated": true,
+      "receiptId": "rcpt_delivery_789xyz",
+      "deliveryPath": [
+        {
+          "nodeId": "node_gateway_01",
+          "timestamp": "2024-01-15T10:30:05Z",
+          "action": "RECEIVED"
+        },
+        {
+          "nodeId": "node_relay_02",
+          "timestamp": "2024-01-15T10:31:20Z",
+          "action": "FORWARDED"
+        },
+        {
+          "nodeId": "node_recipient_03",
+          "timestamp": "2024-01-15T10:31:23Z",
+          "action": "DELIVERED"
+        }
+      ],
+      "metadata": {
+        "recipientOnline": true,
+        "deliveryAttempts": 1,
+        "queueTime": 83.2
+      }
+    }
+  ]
+}

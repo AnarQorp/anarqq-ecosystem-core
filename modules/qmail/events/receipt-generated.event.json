@@ -1,0 +1,160 @@
+{
+  "topic": "q.qmail.receipt.generated.v1",
+  "version": "v1",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "receiptId": {
+        "type": "string",
+        "pattern": "^rcpt_[a-zA-Z0-9_-]+$",
+        "description": "Unique receipt identifier"
+      },
+      "messageId": {
+        "type": "string",
+        "pattern": "^msg_[a-zA-Z0-9_-]+$",
+        "description": "Associated message identifier"
+      },
+      "senderId": {
+        "type": "string",
+        "pattern": "^squid_[a-zA-Z0-9_-]+$",
+        "description": "Original sender sQuid identity ID"
+      },
+      "recipientId": {
+        "type": "string",
+        "pattern": "^squid_[a-zA-Z0-9_-]+$",
+        "description": "Recipient sQuid identity ID"
+      },
+      "receiptType": {
+        "type": "string",
+        "enum": ["DELIVERY", "READ", "FAILED"],
+        "description": "Type of receipt generated"
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Receipt generation timestamp"
+      },
+      "deliveryTimestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Original message delivery timestamp"
+      },
+      "readTimestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Message read timestamp (for READ receipts)"
+      },
+      "signature": {
+        "type": "string",
+        "description": "Cryptographic signature of receipt"
+      },
+      "verificationHash": {
+        "type": "string",
+        "description": "Hash for receipt verification"
+      },
+      "ipfsCid": {
+        "type": "string",
+        "pattern": "^Qm[a-zA-Z0-9]{44}$|^bafy[a-zA-Z0-9]+$",
+        "description": "IPFS CID of receipt data"
+      },
+      "certificationLevel": {
+        "type": "string",
+        "enum": ["BASIC", "ENHANCED", "LEGAL"],
+        "description": "Level of certification provided"
+      },
+      "legallyBinding": {
+        "type": "boolean",
+        "description": "Whether receipt is legally binding"
+      },
+      "complianceStandards": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": ["GDPR", "SOX", "HIPAA", "PCI_DSS", "ISO27001"]
+        },
+        "description": "Compliance standards met by receipt"
+      },
+      "metadata": {
+        "type": "object",
+        "properties": {
+          "deviceInfo": {
+            "type": "object",
+            "properties": {
+              "userAgent": {
+                "type": "string",
+                "description": "Recipient device user agent"
+              },
+              "ipAddress": {
+                "type": "string",
+                "description": "Recipient IP address (hashed for privacy)"
+              },
+              "geolocation": {
+                "type": "string",
+                "description": "Approximate geolocation (country/region)"
+              }
+            }
+          },
+          "readDuration": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Time spent reading message (seconds)"
+          },
+          "attachmentsAccessed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of attachment CIDs accessed"
+          }
+        }
+      }
+    },
+    "required": [
+      "receiptId",
+      "messageId",
+      "senderId",
+      "recipientId",
+      "receiptType",
+      "timestamp",
+      "signature",
+      "verificationHash",
+      "ipfsCid",
+      "certificationLevel",
+      "legallyBinding"
+    ],
+    "additionalProperties": false
+  },
+  "compatibility": "BACKWARD",
+  "deprecated": false,
+  "description": "Event published when a cryptographic delivery receipt is generated",
+  "examples": [
+    {
+      "receiptId": "rcpt_delivery_789xyz",
+      "messageId": "msg_1234567890abcdef",
+      "senderId": "squid_alice_123",
+      "recipientId": "squid_bob_456",
+      "receiptType": "READ",
+      "timestamp": "2024-01-15T10:45:30Z",
+      "deliveryTimestamp": "2024-01-15T10:31:23Z",
+      "readTimestamp": "2024-01-15T10:45:30Z",
+      "signature": "0xabcdef1234567890...",
+      "verificationHash": "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "ipfsCid": "QmReceiptDataCID123456789",
+      "certificationLevel": "ENHANCED",
+      "legallyBinding": true,
+      "complianceStandards": ["GDPR", "SOX"],
+      "metadata": {
+        "deviceInfo": {
+          "userAgent": "Mozilla/5.0 (hash:abc123)",
+          "ipAddress": "hash:def456",
+          "geolocation": "US-CA"
+        },
+        "readDuration": 45.7,
+        "attachmentsAccessed": [
+          "QmAttachment1CID",
+          "QmAttachment2CID"
+        ]
+      }
+    }
+  ]
+}

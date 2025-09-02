@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  qmarket:
+    build: .
+    ports:
+      - "3008:3008"
+    environment:
+      - NODE_ENV=development
+      - PORT=3008
+      - SQUID_SERVICE_URL=mock
+      - QWALLET_SERVICE_URL=mock
+      - QLOCK_SERVICE_URL=mock
+      - QONSENT_SERVICE_URL=mock
+      - QINDEX_SERVICE_URL=mock
+      - QERBEROS_SERVICE_URL=mock
+      - QMASK_SERVICE_URL=mock
+      - DEFAULT_CURRENCY=QToken
+      - MAX_LISTING_PRICE=1000000
+      - LISTING_EXPIRATION_DAYS=365
+      - ENABLE_NFT_MINTING=true
+      - DEFAULT_ROYALTY_PERCENTAGE=5
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./contracts:/app/contracts
+      - ./events:/app/events
+    networks:
+      - qmarket-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3008/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Mock IPFS for standalone development
+  ipfs-mock:
+    image: nginx:alpine
+    ports:
+      - "5001:80"
+    volumes:
+      - ./storage/ipfs-mock:/usr/share/nginx/html
+    networks:
+      - qmarket-network
+
+networks:
+  qmarket-network:
+    driver: bridge
+
+volumes:
+  qmarket-data:

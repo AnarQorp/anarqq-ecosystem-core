@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/dao/dao.schema.json",
+  "title": "DAO Schema",
+  "description": "Schema for DAO (Decentralized Autonomous Organization) objects",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Unique DAO identifier"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100,
+      "description": "Human-readable DAO name"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 1000,
+      "description": "DAO description and purpose"
+    },
+    "visibility": {
+      "type": "string",
+      "enum": ["public", "dao-only", "private"],
+      "description": "DAO visibility level"
+    },
+    "memberCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Current number of DAO members"
+    },
+    "quorum": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Minimum votes required for proposal approval"
+    },
+    "proposalCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of proposals created"
+    },
+    "activeProposals": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of currently active proposals"
+    },
+    "tokenRequirement": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "Required token symbol"
+        },
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Minimum token amount required"
+        }
+      },
+      "required": ["token", "amount"],
+      "description": "Token requirements for DAO membership"
+    },
+    "governanceRules": {
+      "type": "object",
+      "properties": {
+        "votingDuration": {
+          "type": "integer",
+          "minimum": 3600000,
+          "description": "Voting duration in milliseconds (minimum 1 hour)"
+        },
+        "proposalCreationRights": {
+          "type": "string",
+          "enum": ["token_holders", "members", "admins"],
+          "description": "Who can create proposals"
+        },
+        "votingMechanism": {
+          "type": "string",
+          "enum": ["token_weighted", "one_person_one_vote", "reputation_weighted"],
+          "description": "Voting weight calculation method"
+        },
+        "executionDelay": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Delay before proposal execution in milliseconds"
+        }
+      },
+      "required": ["votingDuration", "proposalCreationRights", "votingMechanism"],
+      "description": "DAO governance rules and parameters"
+    },
+    "createdBy": {
+      "type": "string",
+      "pattern": "^did:squid:[a-zA-Z0-9-_]+$",
+      "description": "sQuid ID of DAO creator"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "DAO creation timestamp"
+    },
+    "isActive": {
+      "type": "boolean",
+      "description": "Whether the DAO is currently active"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "description",
+    "visibility",
+    "memberCount",
+    "quorum",
+    "governanceRules",
+    "createdBy",
+    "createdAt",
+    "isActive"
+  ],
+  "additionalProperties": false
+}

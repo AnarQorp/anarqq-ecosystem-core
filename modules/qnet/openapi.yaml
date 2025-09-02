@@ -1,0 +1,440 @@
+openapi: 3.0.3
+info:
+  title: QNET - Network Infrastructure API
+  description: Network infrastructure services for the Q ecosystem
+  version: 1.0.0
+  contact:
+    name: AnarQ Team
+    url: https://anarq.io
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3014
+    description: Development server
+  - url: https://qnet.anarq.io
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Get service health status
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /nodes:
+    get:
+      summary: List network nodes
+      description: Get list of all network nodes
+      operationId: listNodes
+      parameters:
+        - name: region
+          in: query
+          description: Filter by region
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter by status
+          schema:
+            type: string
+            enum: [active, inactive, degraded]
+        - name: tier
+          in: query
+          description: Filter by tier
+          schema:
+            type: string
+            enum: [standard, premium]
+      responses:
+        '200':
+          description: List of network nodes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodesResponse'
+
+  /nodes/{nodeId}:
+    get:
+      summary: Get node details
+      description: Get detailed information about a specific node
+      operationId: getNode
+      parameters:
+        - name: nodeId
+          in: path
+          required: true
+          description: Node identifier
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Node details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeResponse'
+        '404':
+          description: Node not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /nodes/{nodeId}/ping:
+    post:
+      summary: Ping node
+      description: Ping a specific node to test connectivity
+      operationId: pingNode
+      parameters:
+        - name: nodeId
+          in: path
+          required: true
+          description: Node identifier
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PingRequest'
+      responses:
+        '200':
+          description: Ping result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PingResponse'
+
+  /capabilities:
+    get:
+      summary: Get network capabilities
+      description: Get available network capabilities and services
+      operationId: getCapabilities
+      responses:
+        '200':
+          description: Network capabilities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapabilitiesResponse'
+
+  /topology:
+    get:
+      summary: Get network topology
+      description: Get current network topology information
+      operationId: getTopology
+      responses:
+        '200':
+          description: Network topology
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopologyResponse'
+
+  /metrics:
+    get:
+      summary: Get network metrics
+      description: Get network performance metrics
+      operationId: getMetrics
+      parameters:
+        - name: timeRange
+          in: query
+          description: Time range for metrics
+          schema:
+            type: string
+            enum: [1h, 6h, 24h, 7d]
+            default: 1h
+      responses:
+        '200':
+          description: Network metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricsResponse'
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            service:
+              type: string
+            version:
+              type: string
+            uptime:
+              type: number
+            nodeId:
+              type: string
+            region:
+              type: string
+            dependencies:
+              type: object
+        timestamp:
+          type: string
+          format: date-time
+
+    NodesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            nodes:
+              type: array
+              items:
+                $ref: '#/components/schemas/NetworkNode'
+            total:
+              type: integer
+            regions:
+              type: array
+              items:
+                type: string
+
+    NodeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/NetworkNode'
+
+    NetworkNode:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        endpoint:
+          type: string
+        region:
+          type: string
+        type:
+          type: string
+          enum: [primary, secondary, mesh, edge]
+        tier:
+          type: string
+          enum: [standard, premium]
+        status:
+          type: string
+          enum: [active, inactive, degraded]
+        capabilities:
+          type: array
+          items:
+            type: string
+        metrics:
+          type: object
+          properties:
+            latency:
+              type: number
+            uptime:
+              type: number
+            requestCount:
+              type: integer
+            errorCount:
+              type: integer
+            reputation:
+              type: number
+        lastSeen:
+          type: string
+          format: date-time
+
+    PingRequest:
+      type: object
+      properties:
+        timeout:
+          type: integer
+          default: 5000
+        count:
+          type: integer
+          default: 1
+
+    PingResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            nodeId:
+              type: string
+            latency:
+              type: number
+            success:
+              type: boolean
+            timestamp:
+              type: string
+              format: date-time
+
+    CapabilitiesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            services:
+              type: array
+              items:
+                type: string
+            protocols:
+              type: array
+              items:
+                type: string
+            regions:
+              type: array
+              items:
+                type: string
+            features:
+              type: object
+
+    TopologyResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            nodes:
+              type: array
+              items:
+                $ref: '#/components/schemas/NetworkNode'
+            connections:
+              type: array
+              items:
+                type: object
+                properties:
+                  from:
+                    type: string
+                  to:
+                    type: string
+                  latency:
+                    type: number
+                  bandwidth:
+                    type: string
+            clusters:
+              type: array
+              items:
+                type: object
+                properties:
+                  region:
+                    type: string
+                  nodes:
+                    type: array
+                    items:
+                      type: string
+
+    MetricsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            timeRange:
+              type: string
+            metrics:
+              type: object
+              properties:
+                averageLatency:
+                  type: number
+                totalRequests:
+                  type: integer
+                errorRate:
+                  type: number
+                uptime:
+                  type: number
+            nodeMetrics:
+              type: array
+              items:
+                type: object
+                properties:
+                  nodeId:
+                    type: string
+                  latency:
+                    type: number
+                  requests:
+                    type: integer
+                  errors:
+                    type: integer
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+security:
+  - BearerAuth: []
+  - ApiKeyAuth: []

@@ -1,0 +1,244 @@
+{
+  "gdpr": {
+    "dsrDeadlines": {
+      "ACCESS": 30,
+      "RECTIFICATION": 30,
+      "ERASURE": 30,
+      "PORTABILITY": 30,
+      "RESTRICTION": 30
+    },
+    "consentValidityPeriod": 365,
+    "dataRetentionLimits": {
+      "personal-data": 730,
+      "sensitive-data": 365,
+      "marketing-data": 1095,
+      "biometric-data": 180,
+      "location-data": 365
+    },
+    "dataCategories": {
+      "personal": ["name", "email", "phone", "address"],
+      "sensitive": ["health", "biometric", "political", "religious"],
+      "financial": ["payment", "transaction", "credit"],
+      "behavioral": ["preferences", "usage", "analytics"]
+    },
+    "lawfulBases": [
+      "CONSENT",
+      "CONTRACT",
+      "LEGAL_OBLIGATION",
+      "VITAL_INTERESTS",
+      "PUBLIC_TASK",
+      "LEGITIMATE_INTERESTS"
+    ]
+  },
+  "soc2": {
+    "controls": {
+      "CC1": {
+        "name": "Control Environment",
+        "description": "Policies and procedures for governance and risk management",
+        "evidenceTypes": ["policies", "procedures", "training-records"]
+      },
+      "CC2": {
+        "name": "Communication and Information",
+        "description": "Information systems and communication processes",
+        "evidenceTypes": ["communication-logs", "system-documentation"]
+      },
+      "CC3": {
+        "name": "Risk Assessment",
+        "description": "Risk identification and assessment processes",
+        "evidenceTypes": ["risk-assessments", "threat-models"]
+      },
+      "CC4": {
+        "name": "Monitoring Activities",
+        "description": "Ongoing monitoring and evaluation activities",
+        "evidenceTypes": ["monitoring-reports", "audit-logs"]
+      },
+      "CC5": {
+        "name": "Control Activities",
+        "description": "Policies and procedures for control activities",
+        "evidenceTypes": ["control-procedures", "testing-results"]
+      },
+      "CC6": {
+        "name": "Logical and Physical Access Controls",
+        "description": "Access control policies and procedures",
+        "evidenceTypes": ["access-logs", "user-provisioning", "physical-security"]
+      },
+      "CC7": {
+        "name": "System Operations",
+        "description": "System operations and maintenance procedures",
+        "evidenceTypes": ["change-logs", "incident-reports", "backup-records"]
+      },
+      "CC8": {
+        "name": "Change Management",
+        "description": "Change management policies and procedures",
+        "evidenceTypes": ["change-requests", "approval-records", "deployment-logs"]
+      },
+      "CC9": {
+        "name": "Risk Mitigation",
+        "description": "Risk mitigation and incident response procedures",
+        "evidenceTypes": ["incident-responses", "mitigation-plans", "recovery-procedures"]
+      }
+    },
+    "trustServicesCriteria": {
+      "security": ["CC1", "CC2", "CC3", "CC4", "CC5", "CC6", "CC7", "CC8", "CC9"],
+      "availability": ["A1.1", "A1.2", "A1.3"],
+      "processing_integrity": ["PI1.1", "PI1.2", "PI1.3"],
+      "confidentiality": ["C1.1", "C1.2"],
+      "privacy": ["P1.1", "P2.1", "P3.1", "P4.1", "P5.1", "P6.1", "P7.1", "P8.1"]
+    }
+  },
+  "dataRetention": {
+    "policies": {
+      "audit-logs": {
+        "period": "P7Y",
+        "policy": "ARCHIVE",
+        "complianceRequirements": ["SOX", "SOC2"],
+        "description": "Audit logs must be retained for 7 years for compliance"
+      },
+      "user-messages": {
+        "period": "P2Y",
+        "policy": "DELETE",
+        "complianceRequirements": ["GDPR"],
+        "description": "User messages deleted after 2 years unless legally required"
+      },
+      "transaction-records": {
+        "period": "P10Y",
+        "policy": "ARCHIVE",
+        "complianceRequirements": ["PCI-DSS", "SOX"],
+        "description": "Financial transaction records archived for 10 years"
+      },
+      "session-data": {
+        "period": "P30D",
+        "policy": "DELETE",
+        "complianceRequirements": ["GDPR"],
+        "description": "Session data deleted after 30 days"
+      },
+      "temp-files": {
+        "period": "P7D",
+        "policy": "DELETE",
+        "complianceRequirements": [],
+        "description": "Temporary files deleted after 7 days"
+      },
+      "user-profiles": {
+        "period": "P3Y",
+        "policy": "ANONYMIZE",
+        "complianceRequirements": ["GDPR"],
+        "description": "User profiles anonymized after 3 years of inactivity"
+      },
+      "security-logs": {
+        "period": "P5Y",
+        "policy": "ARCHIVE",
+        "complianceRequirements": ["SOC2", "ISO27001"],
+        "description": "Security logs archived for 5 years"
+      }
+    },
+    "exceptions": {
+      "legalHold": {
+        "description": "Data under legal hold is exempt from retention policies",
+        "override": true
+      },
+      "activeInvestigation": {
+        "description": "Data related to active investigations is retained until resolution",
+        "override": true
+      },
+      "userConsent": {
+        "description": "Data retained with explicit user consent beyond standard periods",
+        "override": false
+      }
+    }
+  },
+  "privacy": {
+    "principles": {
+      "dataMinimization": {
+        "enabled": true,
+        "description": "Collect only data necessary for specified purposes"
+      },
+      "purposeLimitation": {
+        "enabled": true,
+        "description": "Use data only for stated and compatible purposes"
+      },
+      "storageMinimization": {
+        "enabled": true,
+        "description": "Retain data only as long as necessary"
+      },
+      "accuracyRequirement": {
+        "enabled": true,
+        "description": "Ensure data accuracy and keep it up to date"
+      },
+      "integrityConfidentiality": {
+        "enabled": true,
+        "description": "Protect data integrity and confidentiality"
+      },
+      "accountability": {
+        "enabled": true,
+        "description": "Demonstrate compliance with privacy principles"
+      }
+    },
+    "riskFactors": {
+      "dataVolume": {
+        "low": 1000,
+        "medium": 10000,
+        "high": 100000
+      },
+      "sensitivityLevel": {
+        "public": 1,
+        "internal": 3,
+        "confidential": 7,
+        "restricted": 9
+      },
+      "processingScope": {
+        "individual": 1,
+        "group": 3,
+        "organization": 5,
+        "population": 9
+      },
+      "automatedDecisionMaking": {
+        "none": 0,
+        "assisted": 3,
+        "automated": 7,
+        "profiling": 9
+      }
+    }
+  },
+  "alerting": {
+    "severityLevels": {
+      "LOW": {
+        "threshold": 3,
+        "escalation": "email",
+        "frequency": "daily"
+      },
+      "MEDIUM": {
+        "threshold": 5,
+        "escalation": "email+slack",
+        "frequency": "hourly"
+      },
+      "HIGH": {
+        "threshold": 7,
+        "escalation": "email+slack+sms",
+        "frequency": "immediate"
+      },
+      "CRITICAL": {
+        "threshold": 9,
+        "escalation": "email+slack+sms+pager",
+        "frequency": "immediate"
+      }
+    },
+    "channels": {
+      "email": {
+        "enabled": true,
+        "recipients": ["compliance@company.com", "security@company.com"]
+      },
+      "slack": {
+        "enabled": true,
+        "channel": "#compliance-alerts"
+      },
+      "sms": {
+        "enabled": false,
+        "recipients": []
+      },
+      "pager": {
+        "enabled": false,
+        "service": "pagerduty"
+      }
+    }
+  }
+}

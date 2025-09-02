@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  {{MODULE_NAME}}:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MOCK_SERVICES=all
+      - LOG_LEVEL=debug
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - redis
+      - ipfs
+    networks:
+      - q-ecosystem
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - q-ecosystem
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - "4001:4001"
+      - "5001:5001"
+      - "8080:8080"
+    volumes:
+      - ipfs_data:/data/ipfs
+    networks:
+      - q-ecosystem
+    environment:
+      - IPFS_PROFILE=server
+    healthcheck:
+      test: ["CMD", "ipfs", "id"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Mock services for standalone mode
+  mock-squid:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3001:1080"
+    environment:
+      - MOCKSERVER_PROPERTY_FILE=/config/mockserver.properties
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/squid-expectations.json
+    volumes:
+      - ./mocks/squid:/config
+    networks:
+      - q-ecosystem
+    profiles:
+      - standalone
+
+  mock-qlock:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3002:1080"
+    environment:
+      - MOCKSERVER_PROPERTY_FILE=/config/mockserver.properties
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/qlock-expectations.json
+    volumes:
+      - ./mocks/qlock:/config
+    networks:
+      - q-ecosystem
+    profiles:
+      - standalone
+
+  mock-qonsent:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3003:1080"
+    environment:
+      - MOCKSERVER_PROPERTY_FILE=/config/mockserver.properties
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/qonsent-expectations.json
+    volumes:
+      - ./mocks/qonsent:/config
+    networks:
+      - q-ecosystem
+    profiles:
+      - standalone
+
+volumes:
+  redis_data:
+  ipfs_data:
+
+networks:
+  q-ecosystem:
+    driver: bridge
+    name: q-ecosystem

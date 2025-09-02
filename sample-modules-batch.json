@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "description": "Sample batch configuration for Qwallet module registration",
+  "defaults": {
+    "identitiesSupported": ["ROOT"],
+    "integrations": ["Qindex", "Qlock"],
+    "compliance": {
+      "audit": false,
+      "risk_scoring": false,
+      "privacy_enforced": false,
+      "kyc_support": false,
+      "gdpr_compliant": false,
+      "data_retention_policy": "standard_retention_2_years"
+    }
+  },
+  "modules": [
+    {
+      "name": "qwallet-core",
+      "version": "1.0.0",
+      "description": "Core Qwallet module for ecosystem integration",
+      "repositoryUrl": "https://github.com/anarq/qwallet-core",
+      "identitiesSupported": ["ROOT", "DAO", "ENTERPRISE"],
+      "integrations": ["Qindex", "Qlock", "Qerberos"],
+      "documentationCid": "QmQwalletCoreDocs1234567890123456789012345678",
+      "auditHash": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890",
+      "compliance": {
+        "audit": true,
+        "risk_scoring": true,
+        "privacy_enforced": true,
+        "kyc_support": false,
+        "gdpr_compliant": true,
+        "data_retention_policy": "audit_retention_5_years"
+      }
+    },
+    {
+      "name": "qwallet-ui",
+      "version": "1.0.0",
+      "description": "User interface components for Qwallet integration",
+      "repositoryUrl": "https://github.com/anarq/qwallet-ui",
+      "integrations": ["Qindex", "Qsocial", "Qpic"]
+    },
+    {
+      "name": "qwallet-plugins",
+      "version": "0.9.0",
+      "description": "Plugin system for extending Qwallet functionality",
+      "repositoryUrl": "https://github.com/anarq/qwallet-plugins",
+      "integrations": ["Qindex", "Qlock", "Qmarket"],
+      "compliance": {
+        "audit": false,
+        "risk_scoring": true,
+        "privacy_enforced": true,
+        "kyc_support": false,
+        "gdpr_compliant": true,
+        "data_retention_policy": "standard_retention_2_years"
+      }
+    }
+  ]
+}

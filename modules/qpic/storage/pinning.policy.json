@@ -1,0 +1,94 @@
+{
+  "version": "1.0",
+  "policies": {
+    "media_originals": {
+      "pin_type": "permanent",
+      "replication_factor": 3,
+      "priority": "high",
+      "backup_required": true,
+      "geo_distribution": ["us-east", "eu-west", "asia-pacific"],
+      "retention": "permanent"
+    },
+    "transcoded_versions": {
+      "pin_type": "temporary",
+      "replication_factor": 2,
+      "priority": "medium",
+      "backup_required": false,
+      "retention": "1_year",
+      "regenerate_on_demand": true
+    },
+    "thumbnails": {
+      "pin_type": "temporary",
+      "replication_factor": 1,
+      "priority": "low",
+      "backup_required": false,
+      "retention": "6_months",
+      "cache_priority": "high"
+    },
+    "temporary_processing": {
+      "pin_type": "temporary",
+      "replication_factor": 1,
+      "priority": "low",
+      "backup_required": false,
+      "retention": "7_days",
+      "auto_cleanup": true
+    }
+  },
+  "rules": {
+    "size_based": {
+      "large_files": {
+        "threshold": "100MB",
+        "replication_factor": 2,
+        "priority": "medium"
+      },
+      "small_files": {
+        "threshold": "10MB",
+        "replication_factor": 3,
+        "priority": "high"
+      }
+    },
+    "access_based": {
+      "hot_content": {
+        "access_frequency": "daily",
+        "replication_factor": 3,
+        "cache_priority": "high"
+      },
+      "warm_content": {
+        "access_frequency": "weekly",
+        "replication_factor": 2,
+        "cache_priority": "medium"
+      },
+      "cold_content": {
+        "access_frequency": "monthly",
+        "replication_factor": 1,
+        "cache_priority": "low"
+      }
+    },
+    "license_based": {
+      "licensed_content": {
+        "pin_type": "permanent",
+        "replication_factor": 3,
+        "backup_required": true,
+        "audit_required": true
+      },
+      "free_content": {
+        "pin_type": "conditional",
+        "replication_factor": 2,
+        "backup_required": false
+      }
+    }
+  },
+  "garbage_collection": {
+    "enabled": true,
+    "schedule": "daily",
+    "grace_period": "7_days",
+    "verify_references": true,
+    "backup_before_delete": true
+  },
+  "monitoring": {
+    "pin_status_check": "hourly",
+    "replication_health": "daily",
+    "storage_usage_alert": "weekly",
+    "cost_optimization": "monthly"
+  }
+}

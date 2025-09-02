@@ -1,0 +1,64 @@
+graph TB
+    subgraph "Frontend Layer"
+        UI[User Interface<br/>Response: 45ms]
+        PiBrowser[Pi Browser<br/>CSP: Compliant]
+    end
+    
+    subgraph "API Gateway"
+        Gateway[API Gateway<br/>RPS: 150<br/>Error: 2%]
+    end
+    
+    subgraph "Core Services"
+        sQuid[sQuid Identity<br/>Status: unknown]
+        Qwallet[Qwallet<br/>Status: unknown]
+        Qlock[Qlock Encryption<br/>Status: unknown]
+        Qonsent[Qonsent Permissions<br/>Status: unknown]
+        Qindex[Qindex Metadata<br/>Status: unknown]
+        Qerberos[Qerberos Audit<br/>Status: unknown<br/>CIDs: 0]
+        Qflow[Qflow Serverless<br/>Status: unknown]
+    end
+    
+    subgraph "Network Layer"
+        QNET[QNET P2P<br/>Nodes: 3/3<br/>Latency: 67ms]
+        IPFS[IPFS Storage<br/>Size: 15.7GB<br/>Objects: 2847]
+    end
+    
+    subgraph "External Integrations"
+        PiNetwork[Pi Network<br/>Testnet/Sandbox]
+        Blockchain[Blockchain<br/>Smart Contracts]
+    end
+    
+    UI -->|45ms| Gateway
+    PiBrowser -->|Auth| Gateway
+    
+    Gateway -->|120ms| sQuid
+    Gateway --> Qwallet
+    Gateway --> Qlock
+    Gateway --> Qonsent
+    Gateway --> Qindex
+    Gateway --> Qerberos
+    Gateway --> Qflow
+    
+    sQuid -.->|Identity| Qwallet
+    Qwallet -.->|Encrypt| Qlock
+    Qlock -.->|Permissions| Qonsent
+    Qonsent -.->|Index| Qindex
+    Qindex -.->|Audit| Qerberos
+    Qerberos -.->|Execute| Qflow
+    
+    Qflow -->|Distribute| QNET
+    Qerberos -->|Store| IPFS
+    IPFS -.->|Replicate| QNET
+    
+    Qwallet -->|Transactions| PiNetwork
+    Qflow -->|Deploy| Blockchain
+    
+    classDef healthy fill:#90EE90
+    classDef degraded fill:#FFE4B5
+    classDef critical fill:#FFB6C1
+    classDef external fill:#E6E6FA
+    
+    class UI,Gateway healthy
+    class sQuid,Qwallet,Qlock,Qonsent,Qindex,Qerberos,Qflow degraded
+    class QNET,IPFS healthy
+    class PiBrowser,PiNetwork,Blockchain external

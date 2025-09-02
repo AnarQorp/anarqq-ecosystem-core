@@ -1,0 +1,147 @@
+{
+  "name": "qlock",
+  "version": "1.0.0",
+  "description": "Qlock encryption, signatures, and distributed locks",
+  "tools": [
+    {
+      "name": "qlock.encrypt",
+      "description": "Encrypt data using specified algorithm and key",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string",
+            "description": "Data to encrypt (base64 encoded for binary data)"
+          },
+          "algorithm": {
+            "type": "string",
+            "enum": ["AES-256-GCM", "ChaCha20-Poly1305", "Kyber-768", "Dilithium-3"],
+            "default": "AES-256-GCM",
+            "description": "Encryption algorithm to use"
+          },
+          "keyId": {
+            "type": "string",
+            "description": "Key identifier (optional, will generate if not provided)"
+          },
+          "identityId": {
+            "type": "string",
+            "description": "Identity ID for key derivation"
+          }
+        },
+        "required": ["data", "identityId"]
+      }
+    },
+    {
+      "name": "qlock.decrypt",
+      "description": "Decrypt data using private key",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "encryptedData": {
+            "type": "string",
+            "description": "Encrypted data to decrypt"
+          },
+          "keyId": {
+            "type": "string",
+            "description": "Key identifier used for encryption"
+          },
+          "identityId": {
+            "type": "string",
+            "description": "Identity ID for key derivation"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Encryption metadata"
+          }
+        },
+        "required": ["encryptedData", "keyId", "identityId"]
+      }
+    },
+    {
+      "name": "qlock.sign",
+      "description": "Create digital signature for data",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string",
+            "description": "Data to sign"
+          },
+          "algorithm": {
+            "type": "string",
+            "enum": ["ECDSA-P256", "RSA-PSS", "Dilithium-3", "Falcon-512"],
+            "default": "ECDSA-P256",
+            "description": "Signature algorithm to use"
+          },
+          "identityId": {
+            "type": "string",
+            "description": "Identity ID for signing key"
+          },
+          "keyId": {
+            "type": "string",
+            "description": "Specific key ID (optional)"
+          }
+        },
+        "required": ["data", "identityId"]
+      }
+    },
+    {
+      "name": "qlock.verify",
+      "description": "Verify digital signature",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string",
+            "description": "Original data that was signed"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Digital signature to verify"
+          },
+          "publicKey": {
+            "type": "string",
+            "description": "Public key for verification"
+          },
+          "algorithm": {
+            "type": "string",
+            "description": "Signature algorithm used"
+          }
+        },
+        "required": ["data", "signature", "publicKey"]
+      }
+    },
+    {
+      "name": "qlock.lock",
+      "description": "Acquire or release distributed lock",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": ["acquire", "release", "extend"],
+            "description": "Lock action to perform"
+          },
+          "lockId": {
+            "type": "string",
+            "description": "Lock identifier"
+          },
+          "ttl": {
+            "type": "integer",
+            "default": 30000,
+            "description": "Lock TTL in milliseconds"
+          },
+          "identityId": {
+            "type": "string",
+            "description": "Identity acquiring the lock"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional lock metadata"
+          }
+        },
+        "required": ["action", "lockId", "identityId"]
+      }
+    }
+  ]
+}

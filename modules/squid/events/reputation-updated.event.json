@@ -1,0 +1,118 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q-ecosystem.com/events/squid/reputation-updated.json",
+  "title": "Reputation Updated Event",
+  "description": "Event published when an identity's reputation score is updated",
+  "type": "object",
+  "required": [
+    "eventId",
+    "timestamp",
+    "version",
+    "source",
+    "type",
+    "data"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "v1",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "const": "squid",
+      "description": "Source module that published the event"
+    },
+    "type": {
+      "type": "string",
+      "const": "reputation.updated",
+      "description": "Event type identifier"
+    },
+    "correlationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Correlation ID for tracing related events"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "identityId",
+        "previousScore",
+        "newScore",
+        "reason"
+      ],
+      "properties": {
+        "identityId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Identity DID whose reputation was updated"
+        },
+        "previousScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Previous reputation score"
+        },
+        "newScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "New reputation score"
+        },
+        "delta": {
+          "type": "number",
+          "description": "Change in reputation score"
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "positive_interaction",
+            "negative_interaction",
+            "verification_completed",
+            "security_violation",
+            "community_contribution",
+            "spam_detected",
+            "manual_adjustment"
+          ],
+          "description": "Reason for the reputation change"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "module": {
+              "type": "string",
+              "description": "Module that triggered the reputation change"
+            },
+            "action": {
+              "type": "string",
+              "description": "Specific action that caused the change"
+            },
+            "details": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Additional details about the reputation change"
+            },
+            "adjustedBy": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Identity DID of who made manual adjustment (if applicable)"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

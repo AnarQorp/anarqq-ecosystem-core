@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.qflow.external.event.received.v1",
+  "title": "Qflow External Event Received Event",
+  "description": "Event emitted when an external event (webhook) is received and validated",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "External system or sQuid identity that sent the event"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "externalEventId": {
+          "type": "string",
+          "description": "Unique identifier for the external event"
+        },
+        "sourceSystem": {
+          "type": "string",
+          "description": "Name/identifier of the external system"
+        },
+        "eventType": {
+          "type": "string",
+          "description": "Type of external event"
+        },
+        "payload": {
+          "type": "object",
+          "description": "Raw payload from the external event"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Qlock-verified signature of the external event"
+        },
+        "validationResult": {
+          "type": "object",
+          "properties": {
+            "valid": {
+              "type": "boolean"
+            },
+            "qlock": {
+              "type": "object",
+              "properties": {
+                "signatureValid": {
+                  "type": "boolean"
+                },
+                "encryptionValid": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "qonsent": {
+              "type": "object",
+              "properties": {
+                "authorized": {
+                  "type": "boolean"
+                },
+                "scopes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "qerberos": {
+              "type": "object",
+              "properties": {
+                "riskScore": {
+                  "type": "number"
+                },
+                "allowed": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "triggeredFlows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "flowId": {
+                "type": "string"
+              },
+              "executionId": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Flows that were triggered by this external event"
+        },
+        "rateLimitInfo": {
+          "type": "object",
+          "properties": {
+            "remaining": {
+              "type": "number"
+            },
+            "resetTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "limited": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "required": ["externalEventId", "sourceSystem", "eventType", "payload", "validationResult"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

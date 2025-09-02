@@ -1,0 +1,993 @@
+openapi: 3.0.0
+info:
+  title: QpiC API
+  description: Media Management module for Q ecosystem with transcoding, optimization, and marketplace integration
+  version: 2.0.0
+  contact:
+    name: Q Ecosystem
+    url: https://q-ecosystem.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3008/api/v1
+    description: Development server
+  - url: https://qpic.q-ecosystem.com/api/v1
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: sQuid identity token
+
+  schemas:
+    MediaMetadata:
+      type: object
+      properties:
+        technical:
+          type: object
+          properties:
+            format:
+              type: string
+              example: "image/jpeg"
+            dimensions:
+              type: object
+              properties:
+                width:
+                  type: integer
+                height:
+                  type: integer
+            fileSize:
+              type: integer
+              description: File size in bytes
+            duration:
+              type: number
+              description: Duration in seconds (for video/audio)
+            bitrate:
+              type: integer
+              description: Bitrate in bps
+            colorSpace:
+              type: string
+              example: "sRGB"
+            compression:
+              type: string
+              example: "JPEG"
+        descriptive:
+          type: object
+          properties:
+            title:
+              type: string
+            description:
+              type: string
+            tags:
+              type: array
+              items:
+                type: string
+            category:
+              type: string
+            keywords:
+              type: array
+              items:
+                type: string
+            creator:
+              type: string
+            copyright:
+              type: string
+        rights:
+          type: object
+          properties:
+            license:
+              type: string
+              enum: [CC0, CC-BY, CC-BY-SA, CC-BY-NC, CC-BY-ND, CC-BY-NC-SA, CC-BY-NC-ND, PROPRIETARY]
+            usage:
+              type: array
+              items:
+                type: string
+                enum: [commercial, editorial, personal, educational, non-profit]
+            restrictions:
+              type: array
+              items:
+                type: string
+        provenance:
+          type: object
+          properties:
+            createdAt:
+              type: string
+              format: date-time
+            modifiedAt:
+              type: string
+              format: date-time
+            uploadedBy:
+              type: string
+            originalFilename:
+              type: string
+            source:
+              type: string
+
+    MediaFile:
+      type: object
+      required:
+        - id
+        - cid
+        - filename
+        - format
+        - size
+        - status
+      properties:
+        id:
+          type: string
+          description: Unique media identifier
+          example: "media_123456"
+        cid:
+          type: string
+          description: IPFS Content Identifier
+          example: "QmXoYpizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco"
+        filename:
+          type: string
+          description: Original filename
+          example: "sunset.jpg"
+        format:
+          type: string
+          description: MIME type
+          example: "image/jpeg"
+        size:
+          type: integer
+          description: File size in bytes
+          example: 2048576
+        status:
+          type: string
+          enum: [uploading, processing, ready, failed, deleted]
+          description: Media processing status
+        metadata:
+          $ref: '#/components/schemas/MediaMetadata'
+        thumbnails:
+          type: array
+          items:
+            type: object
+            properties:
+              size:
+                type: string
+                enum: [small, medium, large]
+              cid:
+                type: string
+              url:
+                type: string
+              dimensions:
+                type: object
+                properties:
+                  width:
+                    type: integer
+                  height:
+                    type: integer
+        formats:
+          type: array
+          items:
+            type: object
+            properties:
+              format:
+                type: string
+              cid:
+                type: string
+              url:
+                type: string
+              size:
+                type: integer
+              quality:
+                type: string
+        privacy:
+          type: object
+          properties:
+            profileApplied:
+              type: string
+            fieldsRedacted:
+              type: array
+              items:
+                type: string
+            riskScore:
+              type: number
+              minimum: 0
+              maximum: 1
+        access:
+          type: object
+          properties:
+            public:
+              type: boolean
+            permissions:
+              type: array
+              items:
+                type: string
+            downloadable:
+              type: boolean
+        marketplace:
+          type: object
+          properties:
+            listed:
+              type: boolean
+            licenseId:
+              type: string
+            price:
+              type: object
+              properties:
+                amount:
+                  type: number
+                currency:
+                  type: string
+
+    TranscodingProfile:
+      type: object
+      required:
+        - name
+        - format
+      properties:
+        name:
+          type: string
+          description: Profile name
+          example: "web-optimized"
+        format:
+          type: string
+          enum: [mp4, webm, jpg, jpeg, png, webp, avif, mp3, aac, opus, flac]
+          description: Output format
+        quality:
+          type: string
+          enum: [low, medium, high, ultra]
+          description: Quality level
+          default: medium
+        resolution:
+          type: string
+          description: Resolution (e.g., '1920x1080', '720p')
+          example: "1080p"
+        bitrate:
+          type: string
+          description: Bitrate (e.g., '2000k', '128k')
+          example: "2000k"
+        options:
+          type: object
+          additionalProperties: true
+          description: Additional transcoding options
+
+    TranscodingJob:
+      type: object
+      properties:
+        jobId:
+          type: string
+          description: Job identifier
+        mediaId:
+          type: string
+          description: Source media identifier
+        status:
+          type: string
+          enum: [queued, processing, completed, failed, cancelled]
+          description: Job status
+        progress:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Completion percentage
+        profiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/TranscodingProfile'
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              profile:
+                type: string
+              cid:
+                type: string
+              url:
+                type: string
+              size:
+                type: integer
+              status:
+                type: string
+                enum: [pending, processing, completed, failed]
+              error:
+                type: string
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+        estimatedTime:
+          type: integer
+          description: Estimated completion time in seconds
+
+    MediaLicense:
+      type: object
+      required:
+        - id
+        - mediaId
+        - type
+        - status
+      properties:
+        id:
+          type: string
+          description: License identifier
+        mediaId:
+          type: string
+          description: Associated media identifier
+        type:
+          type: string
+          enum: [exclusive, non-exclusive, royalty-free, rights-managed, creative-commons]
+          description: License type
+        status:
+          type: string
+          enum: [active, expired, revoked, pending]
+          description: License status
+        licensee:
+          type: string
+          description: Licensee identity
+        usage:
+          type: array
+          items:
+            type: string
+            enum: [commercial, editorial, personal, educational, non-profit]
+          description: Allowed usage types
+        territory:
+          type: string
+          description: Geographic territory
+          example: "worldwide"
+        duration:
+          type: string
+          description: License duration
+          example: "1 year"
+        price:
+          type: object
+          properties:
+            amount:
+              type: number
+            currency:
+              type: string
+        restrictions:
+          type: array
+          items:
+            type: string
+          description: Usage restrictions
+        attribution:
+          type: object
+          properties:
+            required:
+              type: boolean
+            text:
+              type: string
+        contractCid:
+          type: string
+          description: IPFS CID of license contract
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+          description: Response status
+        code:
+          type: string
+          description: Response code
+        message:
+          type: string
+          description: Human readable message
+        data:
+          type: object
+          description: Response data
+        cid:
+          type: string
+          description: IPFS Content Identifier (when applicable)
+        timestamp:
+          type: string
+          format: date-time
+          description: Response timestamp
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+          description: Response status
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Error details
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Check service health status
+      tags:
+        - Health
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /media/upload:
+    post:
+      summary: Upload media file
+      description: Upload a media file with automatic processing and metadata extraction
+      tags:
+        - Media
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Media file to upload
+                metadata:
+                  type: string
+                  description: JSON string of additional metadata
+                privacyProfile:
+                  type: string
+                  description: Privacy profile to apply
+                options:
+                  type: string
+                  description: JSON string of upload options
+      responses:
+        '201':
+          description: Media uploaded successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/MediaFile'
+        '400':
+          description: Invalid file or parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: File too large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /media/{id}:
+    get:
+      summary: Get media file
+      description: Retrieve media file information and download URL
+      tags:
+        - Media
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Media identifier
+        - name: format
+          in: query
+          schema:
+            type: string
+          description: Specific format to retrieve
+        - name: quality
+          in: query
+          schema:
+            type: string
+            enum: [low, medium, high, ultra]
+          description: Quality level
+      responses:
+        '200':
+          description: Media retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/MediaFile'
+        '404':
+          description: Media not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update media metadata
+      description: Update media metadata and properties
+      tags:
+        - Media
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Media identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                metadata:
+                  $ref: '#/components/schemas/MediaMetadata'
+                access:
+                  type: object
+                  properties:
+                    public:
+                      type: boolean
+                    permissions:
+                      type: array
+                      items:
+                        type: string
+      responses:
+        '200':
+          description: Media updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Media not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete media file
+      description: Delete media file and all associated data
+      tags:
+        - Media
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Media identifier
+      responses:
+        '200':
+          description: Media deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '404':
+          description: Media not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /media/{id}/metadata:
+    get:
+      summary: Get media metadata
+      description: Retrieve detailed metadata for a media file
+      tags:
+        - Metadata
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Media identifier
+        - name: includePrivate
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Include private metadata fields
+      responses:
+        '200':
+          description: Metadata retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/MediaMetadata'
+
+    put:
+      summary: Update media metadata
+      description: Update specific metadata fields
+      tags:
+        - Metadata
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Media identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaMetadata'
+      responses:
+        '200':
+          description: Metadata updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /media/{id}/transcode:
+    post:
+      summary: Transcode media
+      description: Start transcoding job for media file
+      tags:
+        - Transcoding
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Media identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - profiles
+              properties:
+                profiles:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TranscodingProfile'
+                priority:
+                  type: string
+                  enum: [low, normal, high, urgent]
+                  default: normal
+                callback:
+                  type: string
+                  description: Webhook URL for completion notification
+      responses:
+        '202':
+          description: Transcoding job started
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/TranscodingJob'
+
+  /media/{id}/optimize:
+    post:
+      summary: Optimize media
+      description: Optimize media for delivery and caching
+      tags:
+        - Optimization
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Media identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - optimizations
+              properties:
+                optimizations:
+                  type: array
+                  items:
+                    type: string
+                    enum: [compress, resize, format-convert, cdn-distribute, cache-warm, thumbnail-generate]
+                targets:
+                  type: object
+                  properties:
+                    web:
+                      type: boolean
+                    mobile:
+                      type: boolean
+                    print:
+                      type: boolean
+                    streaming:
+                      type: boolean
+                cacheStrategy:
+                  type: string
+                  enum: [aggressive, normal, conservative, none]
+                  default: normal
+      responses:
+        '200':
+          description: Optimization completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /media/{id}/license:
+    get:
+      summary: Get media licenses
+      description: Retrieve licenses associated with media
+      tags:
+        - Licensing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Media identifier
+      responses:
+        '200':
+          description: Licenses retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/MediaLicense'
+
+    post:
+      summary: Create media license
+      description: Create a new license for media file
+      tags:
+        - Licensing
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Media identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+                - usage
+                - territory
+                - duration
+              properties:
+                type:
+                  type: string
+                  enum: [exclusive, non-exclusive, royalty-free, rights-managed, creative-commons]
+                usage:
+                  type: array
+                  items:
+                    type: string
+                    enum: [commercial, editorial, personal, educational, non-profit]
+                territory:
+                  type: string
+                duration:
+                  type: string
+                price:
+                  type: object
+                  properties:
+                    amount:
+                      type: number
+                    currency:
+                      type: string
+                restrictions:
+                  type: array
+                  items:
+                    type: string
+                attribution:
+                  type: object
+                  properties:
+                    required:
+                      type: boolean
+                    text:
+                      type: string
+                licensee:
+                  type: string
+      responses:
+        '201':
+          description: License created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/MediaLicense'
+
+  /jobs/{jobId}:
+    get:
+      summary: Get transcoding job status
+      description: Retrieve status and results of transcoding job
+      tags:
+        - Jobs
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Job identifier
+      responses:
+        '200':
+          description: Job status retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/TranscodingJob'
+
+    delete:
+      summary: Cancel transcoding job
+      description: Cancel a running transcoding job
+      tags:
+        - Jobs
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Job identifier
+      responses:
+        '200':
+          description: Job cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /search:
+    get:
+      summary: Search media files
+      description: Search media files by metadata, tags, or content
+      tags:
+        - Search
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Search query
+        - name: format
+          in: query
+          schema:
+            type: string
+          description: Filter by format
+        - name: tags
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of tags
+        - name: category
+          in: query
+          schema:
+            type: string
+          description: Filter by category
+        - name: license
+          in: query
+          schema:
+            type: string
+          description: Filter by license type
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Items per page
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [created, modified, size, name, relevance]
+            default: relevance
+          description: Sort order
+      responses:
+        '200':
+          description: Search results retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          results:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/MediaFile'
+                          total:
+                            type: integer
+                          page:
+                            type: integer
+                          limit:
+                            type: integer
+                          pages:
+                            type: integer
+
+tags:
+  - name: Health
+    description: Health check endpoints
+  - name: Media
+    description: Media file operations
+  - name: Metadata
+    description: Media metadata management
+  - name: Transcoding
+    description: Media transcoding operations
+  - name: Optimization
+    description: Media optimization and delivery
+  - name: Licensing
+    description: Media licensing and marketplace integration
+  - name: Jobs
+    description: Background job management
+  - name: Search
+    description: Media search and discovery

@@ -1,0 +1,50 @@
+graph TB
+    subgraph "QNET Distributed Network"
+        subgraph "Node Cluster 1"
+            N1[QNET Node 1<br/>Status: Active<br/>Peers: 2]
+            I1[IPFS Node 1<br/>Objects: 949]
+        end
+        
+        subgraph "Node Cluster 2"
+            N2[QNET Node 2<br/>Status: Active<br/>Peers: 2]
+            I2[IPFS Node 2<br/>Objects: 949]
+        end
+        
+        subgraph "Node Cluster 3"
+            N3[QNET Node 3<br/>Status: Active<br/>Peers: 2]
+            I3[IPFS Node 3<br/>Objects: 949]
+        end
+    end
+    
+    subgraph "External Networks"
+        PiNet[Pi Network<br/>Testnet]
+        Internet[Internet<br/>Gateway]
+    end
+    
+    subgraph "Network Stats"
+        Stats[Total Nodes: 3<br/>Active: 3<br/>Synced: 3<br/>Avg Latency: 67ms<br/>Bandwidth: 2.3/1.8 Mbps]
+    end
+    
+    N1 -.->|67ms| N2
+    N2 -.->|67ms| N3
+    N3 -.->|67ms| N1
+    
+    N1 --- I1
+    N2 --- I2
+    N3 --- I3
+    
+    I1 -.->|Replicate| I2
+    I2 -.->|Replicate| I3
+    I3 -.->|Replicate| I1
+    
+    N1 -->|API| Internet
+    N2 -->|Pi Integration| PiNet
+    
+    classDef active fill:#90EE90
+    classDef synced fill:#98FB98
+    classDef external fill:#E6E6FA
+    classDef stats fill:#F0F8FF
+    
+    class N1,N2,N3,I1,I2,I3 active
+    class PiNet,Internet external
+    class Stats stats

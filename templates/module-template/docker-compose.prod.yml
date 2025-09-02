@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  {{MODULE_NAME}}:
+    build: 
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MOCK_SERVICES=none
+      - LOG_LEVEL=info
+      - SQUID_URL=${SQUID_URL}
+      - QLOCK_URL=${QLOCK_URL}
+      - QONSENT_URL=${QONSENT_URL}
+      - QINDEX_URL=${QINDEX_URL}
+      - QERBEROS_URL=${QERBEROS_URL}
+      - REDIS_URL=${REDIS_URL}
+      - IPFS_URL=${IPFS_URL}
+    networks:
+      - q-ecosystem-prod
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  q-ecosystem-prod:
+    external: true

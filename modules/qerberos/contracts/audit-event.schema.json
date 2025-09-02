@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qerberos/audit-event.json",
+  "title": "Audit Event",
+  "description": "Schema for audit events in the Qerberos security module",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique audit event identifier",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "type": {
+      "type": "string",
+      "description": "Event type classification",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": ["access", "modification", "deletion", "authentication", "authorization"]
+    },
+    "ref": {
+      "type": "string",
+      "description": "Reference to the resource or operation",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "actor": {
+      "$ref": "#/definitions/IdentityRef",
+      "description": "Identity reference of the actor performing the action"
+    },
+    "layer": {
+      "type": "string",
+      "description": "Layer or service that generated the event",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": ["qwallet", "qmail", "qdrive", "qmarket", "qonsent"]
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["ALLOW", "DENY", "WARN"],
+      "description": "Verdict of the operation"
+    },
+    "details": {
+      "type": "object",
+      "description": "Additional event details",
+      "additionalProperties": true
+    },
+    "cid": {
+      "type": "string",
+      "description": "IPFS CID if applicable",
+      "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp in ISO 8601 format"
+    },
+    "signature": {
+      "type": "string",
+      "description": "Cryptographic signature of the event",
+      "minLength": 1
+    },
+    "ipfsCid": {
+      "type": "string",
+      "description": "IPFS CID where the audit event is stored",
+      "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$"
+    }
+  },
+  "required": ["id", "type", "ref", "actor", "layer", "verdict", "timestamp"],
+  "additionalProperties": false,
+  "definitions": {
+    "IdentityRef": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "description": "sQuid identity identifier",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "subId": {
+          "type": "string",
+          "description": "Subidentity identifier",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "daoId": {
+          "type": "string",
+          "description": "DAO identifier",
+          "minLength": 1,
+          "maxLength": 100
+        }
+      },
+      "required": ["squidId"],
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "type": "access",
+      "ref": "file:QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG",
+      "actor": {
+        "squidId": "did:squid:user123",
+        "subId": "work"
+      },
+      "layer": "qdrive",
+      "verdict": "ALLOW",
+      "details": {
+        "operation": "download",
+        "fileSize": 1024,
+        "fileName": "document.pdf"
+      },
+      "cid": "QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG",
+      "timestamp": "2024-02-08T15:30:00.000Z",
+      "signature": "0x1234567890abcdef...",
+      "ipfsCid": "QmAuditEventCid123456789"
+    }
+  ]
+}

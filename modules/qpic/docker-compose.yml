@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  qpic:
+    build: .
+    ports:
+      - "3008:3008"
+    environment:
+      - NODE_ENV=development
+      - PORT=3008
+      - MONGODB_URI=mongodb://mongo:27017/qpic
+      - REDIS_URL=redis://redis:6379
+      - IPFS_URL=http://ipfs:5001
+      - STORAGE_PATH=/app/storage
+      - MAX_FILE_SIZE=100MB
+      - ALLOWED_FORMATS=jpg,jpeg,png,webp,avif,mp4,webm,mp3,aac,flac,pdf
+      - FFMPEG_PATH=/usr/bin/ffmpeg
+      - IMAGEMAGICK_PATH=/usr/bin/convert
+      - TRANSCODING_WORKERS=2
+      - TRANSCODING_TIMEOUT=300
+      # Mock external services in standalone mode
+      - SQUID_URL=http://qpic:3008/mock/squid
+      - QONSENT_URL=http://qpic:3008/mock/qonsent
+      - QMASK_URL=http://qpic:3008/mock/qmask
+      - QERBEROS_URL=http://qpic:3008/mock/qerberos
+      - QINDEX_URL=http://qpic:3008/mock/qindex
+      - QMARKET_URL=http://qpic:3008/mock/qmarket
+    volumes:
+      - qpic_storage:/app/storage
+      - qpic_cache:/app/cache
+    depends_on:
+      - mongo
+      - redis
+      - ipfs
+    networks:
+      - qpic_network
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - qpic_mongo_data:/data/db
+    networks:
+      - qpic_network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - qpic_redis_data:/data
+    networks:
+      - qpic_network
+
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - "4001:4001"
+      - "5001:5001"
+      - "8080:8080"
+    volumes:
+      - qpic_ipfs_data:/data/ipfs
+    environment:
+      - IPFS_PROFILE=server
+    networks:
+      - qpic_network
+
+volumes:
+  qpic_storage:
+  qpic_cache:
+  qpic_mongo_data:
+  qpic_redis_data:
+  qpic_ipfs_data:
+
+networks:
+  qpic_network:
+    driver: bridge

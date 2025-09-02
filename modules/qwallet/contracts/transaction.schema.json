@@ -1,0 +1,157 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.com/qwallet/transaction.json",
+  "title": "Transaction",
+  "description": "Schema for Qwallet transaction objects",
+  "type": "object",
+  "properties": {
+    "transactionId": {
+      "type": "string",
+      "pattern": "^tx_[a-f0-9]{32}$",
+      "description": "Unique transaction identifier"
+    },
+    "intentId": {
+      "type": "string",
+      "pattern": "^intent_[a-f0-9]{32}$",
+      "description": "Associated payment intent ID"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "PAYMENT",
+        "TRANSFER",
+        "MINT",
+        "BURN",
+        "STAKE",
+        "UNSTAKE",
+        "REWARD",
+        "FEE"
+      ],
+      "description": "Transaction type"
+    },
+    "from": {
+      "$ref": "https://schemas.anarq.com/common/identity-ref.json",
+      "description": "Sender identity"
+    },
+    "to": {
+      "$ref": "https://schemas.anarq.com/common/identity-ref.json",
+      "description": "Recipient identity"
+    },
+    "amount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Transaction amount"
+    },
+    "currency": {
+      "type": "string",
+      "enum": ["QToken", "PI"],
+      "description": "Transaction currency"
+    },
+    "fees": {
+      "type": "object",
+      "properties": {
+        "network": {
+          "type": "number",
+          "minimum": 0
+        },
+        "platform": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": ["network", "platform", "total"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PENDING", "SIGNED", "BROADCASTING", "CONFIRMED", "SETTLED", "FAILED"],
+      "description": "Transaction status"
+    },
+    "signature": {
+      "$ref": "https://schemas.anarq.com/common/lock-sig.json",
+      "description": "Cryptographic signature"
+    },
+    "blockchainTx": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "description": "Blockchain transaction hash"
+        },
+        "blockNumber": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blockHash": {
+          "type": "string"
+        },
+        "gasUsed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gasPrice": {
+          "type": "string"
+        },
+        "network": {
+          "type": "string"
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "properties": {
+        "riskScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "complianceChecks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "auditTrail": {
+          "type": "array",
+          "items": {
+            "$ref": "https://schemas.anarq.com/common/audit-event.json"
+          }
+        }
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    },
+    "settledAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Settlement timestamp"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Additional transaction metadata"
+    }
+  },
+  "required": [
+    "transactionId",
+    "type",
+    "from",
+    "to",
+    "amount",
+    "currency",
+    "status",
+    "createdAt"
+  ],
+  "additionalProperties": false
+}

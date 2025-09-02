@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>demo-execution-flow - AnarQ&Q Ecosystem</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 20px;
+        }
+        .diagram-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .metrics-info {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .timestamp {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>demo execution flow</h1>
+            <p>Real-time metrics visualization for AnarQ&Q ecosystem</p>
+        </div>
+        
+        <div class="diagram-container">
+            <div class="mermaid">
+graph LR
+    subgraph "Demo Execution Pipeline"
+        Setup[Setup<br/>Time: 2.1GB RAM]
+        Identity[Identity Flow<br/>14523ms<br/>Success: 96.2%]
+        Content[Content Flow<br/>18765ms<br/>Success: 94.1%]
+        DAO[DAO Flow<br/>22341ms<br/>Success: 93.8%]
+        Pi[Pi Integration<br/>25678ms<br/>Success: 91.5%]
+        Validate[Validation<br/>Error Rate: 2%]
+        Report[Report<br/>Availability: 99.8%]
+    end
+    
+    Setup --> Identity
+    Setup --> Content
+    Setup --> DAO
+    Setup --> Pi
+    
+    Identity --> Validate
+    Content --> Validate
+    DAO --> Validate
+    Pi --> Validate
+    
+    Validate --> Report
+    
+    classDef excellent fill:#90EE90
+    classDef good fill:#98FB98
+    classDef warning fill:#FFE4B5
+    classDef critical fill:#FFB6C1
+    
+    class Setup excellent
+    class Identity excellent
+    class Content good
+    class DAO good
+    class Pi good
+    class Validate,Report good
+
+            </div>
+        </div>
+        
+        <div class="metrics-info">
+            <strong>Metrics Information:</strong><br/>
+            This diagram is automatically updated with real-time metrics from the AnarQ&Q ecosystem.
+            Metrics include performance data, integrity validation results, and network topology information.
+            Colors indicate health status: Green (healthy), Yellow (warning), Red (critical).
+        </div>
+        
+        <div class="timestamp">
+            Generated: 2025-08-31T09:42:47.598Z<br/>
+            DocumentationGenerator v1.0.0
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#90EE90',
+                primaryTextColor: '#333',
+                primaryBorderColor: '#666',
+                lineColor: '#666',
+                secondaryColor: '#FFE4B5',
+                tertiaryColor: '#FFB6C1'
+            }
+        });
+    </script>
+</body>
+</html>

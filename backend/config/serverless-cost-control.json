@@ -1,0 +1,177 @@
+{
+  "defaultLimits": {
+    "perMinute": 1000,
+    "perHour": 50000,
+    "perDay": 1000000,
+    "perMonth": 25000000
+  },
+  "defaultBudgetThresholds": {
+    "warning": 0.8,
+    "critical": 0.95,
+    "cutoff": 1.0
+  },
+  "defaultBudgets": {
+    "squid": 500,
+    "qwallet": 1000,
+    "qlock": 300,
+    "qonsent": 400,
+    "qindex": 600,
+    "qerberos": 800,
+    "qmask": 350,
+    "qdrive": 1200,
+    "qpic": 900,
+    "qmarket": 1500,
+    "qmail": 700,
+    "qchat": 800,
+    "qnet": 400,
+    "dao": 600
+  },
+  "coldStartOptimization": {
+    "defaultMemoryConfigs": {
+      "api-handler": {
+        "memory": 256,
+        "timeout": 30
+      },
+      "data-processor": {
+        "memory": 512,
+        "timeout": 60
+      },
+      "file-handler": {
+        "memory": 1024,
+        "timeout": 300
+      },
+      "batch-processor": {
+        "memory": 2048,
+        "timeout": 900
+      }
+    },
+    "warmupSchedules": {
+      "high-traffic": "*/2 * * * *",
+      "medium-traffic": "*/5 * * * *",
+      "low-traffic": "*/15 * * * *"
+    },
+    "optimizationThresholds": {
+      "memoryUtilizationLow": 0.4,
+      "memoryUtilizationHigh": 0.9,
+      "coldStartDurationSlow": 3000,
+      "coldStartDurationCritical": 5000
+    }
+  },
+  "batchProcessing": {
+    "defaultConfigs": {
+      "high-frequency": {
+        "maxBatchSize": 100,
+        "maxWaitTime": 2000,
+        "maxMemoryUsage": 0.8
+      },
+      "medium-frequency": {
+        "maxBatchSize": 50,
+        "maxWaitTime": 5000,
+        "maxMemoryUsage": 0.7
+      },
+      "low-frequency": {
+        "maxBatchSize": 25,
+        "maxWaitTime": 10000,
+        "maxMemoryUsage": 0.6
+      }
+    },
+    "retryPolicies": {
+      "default": {
+        "retryAttempts": 3,
+        "retryDelay": 1000,
+        "backoffMultiplier": 2
+      },
+      "critical": {
+        "retryAttempts": 5,
+        "retryDelay": 500,
+        "backoffMultiplier": 1.5
+      }
+    }
+  },
+  "gracefulDegradation": {
+    "strategies": {
+      "CACHE_FALLBACK": {
+        "priority": 1,
+        "description": "Serve cached responses when possible",
+        "estimatedSavings": "20-40%"
+      },
+      "FEATURE_TOGGLE": {
+        "priority": 2,
+        "description": "Disable non-essential features",
+        "estimatedSavings": "15-30%"
+      },
+      "QUEUE_DEFERRAL": {
+        "priority": 3,
+        "description": "Queue non-urgent operations",
+        "estimatedSavings": "25-50%"
+      },
+      "RATE_LIMITING": {
+        "priority": 4,
+        "description": "Apply aggressive rate limiting",
+        "estimatedSavings": "30-60%"
+      },
+      "READ_ONLY_MODE": {
+        "priority": 5,
+        "description": "Switch to read-only operations",
+        "estimatedSavings": "40-70%"
+      },
+      "EMERGENCY_CUTOFF": {
+        "priority": 6,
+        "description": "Stop all non-critical operations",
+        "estimatedSavings": "60-90%"
+      }
+    },
+    "triggers": {
+      "budgetThreshold": 0.95,
+      "errorRateThreshold": 0.1,
+      "latencyThreshold": 5000,
+      "memoryThreshold": 0.9
+    },
+    "recoverySettings": {
+      "autoRecover": true,
+      "recoveryDelay": 300000,
+      "escalationDelay": 60000
+    }
+  },
+  "monitoring": {
+    "alertChannels": {
+      "email": {
+        "enabled": true,
+        "recipients": ["admin@example.com"]
+      },
+      "slack": {
+        "enabled": false,
+        "webhook": ""
+      },
+      "webhook": {
+        "enabled": false,
+        "url": ""
+      }
+    },
+    "dashboardRefreshInterval": 30000,
+    "metricsRetentionDays": 90,
+    "alertCooldownMinutes": 15
+  },
+  "moduleSpecificSettings": {
+    "squid": {
+      "criticalOperations": ["verifyIdentity", "createSubidentity"],
+      "nonEssentialFeatures": ["analytics", "recommendations"],
+      "degradationStrategies": ["CACHE_FALLBACK", "FEATURE_TOGGLE"]
+    },
+    "qwallet": {
+      "criticalOperations": ["sign", "pay"],
+      "nonEssentialFeatures": ["transaction_history", "analytics"],
+      "degradationStrategies": ["CACHE_FALLBACK", "QUEUE_DEFERRAL"]
+    },
+    "qdrive": {
+      "criticalOperations": ["put", "get"],
+      "nonEssentialFeatures": ["file_preview", "auto_save"],
+      "degradationStrategies": ["CACHE_FALLBACK", "FEATURE_TOGGLE", "QUEUE_DEFERRAL"]
+    },
+    "qmarket": {
+      "criticalOperations": ["purchase", "license"],
+      "nonEssentialFeatures": ["recommendations", "social_features"],
+      "degradationStrategies": ["CACHE_FALLBACK", "FEATURE_TOGGLE", "READ_ONLY_MODE"]
+    }
+  }
+}

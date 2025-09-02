@@ -1,0 +1,174 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.com/qmarket/events/listed.json",
+  "title": "Qmarket Listed Event Schema",
+  "description": "Event published when a new marketplace listing is created",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "pattern": "^evt_qmarket_listed_[0-9]+$",
+      "description": "Unique event identifier"
+    },
+    "eventType": {
+      "type": "string",
+      "const": "q.qmarket.listed.v1",
+      "description": "Event type following Q ecosystem convention"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred"
+    },
+    "source": {
+      "type": "string",
+      "const": "qmarket",
+      "description": "Source module that published the event"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "correlationId": {
+      "type": "string",
+      "description": "Correlation ID for tracing related events"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "listingId": {
+          "type": "string",
+          "pattern": "^listing_[a-f0-9]{24}$",
+          "description": "Unique listing identifier"
+        },
+        "squidId": {
+          "type": "string",
+          "description": "sQuid identity of the listing creator"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 100,
+          "description": "Listing title"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 1000,
+          "description": "Listing description"
+        },
+        "price": {
+          "type": "number",
+          "minimum": 0.01,
+          "description": "Listing price"
+        },
+        "currency": {
+          "type": "string",
+          "enum": ["QToken", "PI"],
+          "description": "Currency for the listing"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["digital-art", "media", "documents", "software", "data", "services"],
+          "description": "Content category"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10,
+          "description": "Tags for discoverability"
+        },
+        "fileCid": {
+          "type": "string",
+          "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^baf[a-z0-9]{56}$",
+          "description": "IPFS CID of the content"
+        },
+        "fileMetadata": {
+          "type": "object",
+          "properties": {
+            "contentType": {
+              "type": "string"
+            },
+            "fileSize": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "thumbnailUrl": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public", "dao-only", "private"],
+          "description": "Visibility level of the listing"
+        },
+        "daoId": {
+          "type": "string",
+          "description": "DAO ID if visibility is dao-only"
+        },
+        "nftMinted": {
+          "type": "boolean",
+          "description": "Whether an NFT was minted for this listing"
+        },
+        "nftDetails": {
+          "type": "object",
+          "properties": {
+            "tokenId": {
+              "type": "string"
+            },
+            "contractAddress": {
+              "type": "string"
+            },
+            "mintedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "ecosystem": {
+          "type": "object",
+          "properties": {
+            "qonsentProfileId": {
+              "type": "string"
+            },
+            "qindexId": {
+              "type": "string"
+            },
+            "qnetRoutingId": {
+              "type": "string"
+            },
+            "qwalletTransactionId": {
+              "type": "string"
+            }
+          },
+          "description": "Integration details with other Q modules"
+        }
+      },
+      "required": [
+        "listingId",
+        "squidId",
+        "title",
+        "price",
+        "currency",
+        "category",
+        "fileCid",
+        "visibility",
+        "nftMinted"
+      ]
+    }
+  },
+  "required": [
+    "eventId",
+    "eventType",
+    "timestamp",
+    "source",
+    "version",
+    "data"
+  ],
+  "additionalProperties": false
+}

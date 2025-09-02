@@ -1,0 +1,251 @@
+name: Documentation Index Validation
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'modules/**'
+      - 'scripts/**'
+      - '.github/workflows/documentation-validation.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'modules/**'
+      - 'scripts/**'
+
+jobs:
+  validate-documentation-index:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run completeness check
+      id: completeness
+      run: |
+        echo "Running completeness check..."
+        npm run docs:index:completeness
+      continue-on-error: true
+    
+    - name: Run link validation
+      id: links
+      run: |
+        echo "Running link validation..."
+        npm run docs:index:links
+      continue-on-error: true
+    
+    - name: Run role coverage scan
+      id: roles
+      run: |
+        echo "Running role coverage scan..."
+        npm run docs:index:roles
+      continue-on-error: true
+    
+    - name: Run migration sync check
+      id: migration
+      run: |
+        echo "Running migration sync check..."
+        npm run docs:index:migration
+      continue-on-error: true
+    
+    - name: Generate comprehensive validation report
+      run: |
+        echo "Generating validation report..."
+        npm run docs:index:report
+    
+    - name: Upload validation report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: documentation-validation-report
+        path: docs/index-validation-report.json
+        retention-days: 30
+    
+    - name: Comment PR with validation results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          try {
+            const reportPath = 'docs/index-validation-report.json';
+            const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+            
+            const statusEmoji = report.passed ? '✅' : '❌';
+            const statusText = report.passed ? 'PASSED' : 'FAILED';
+            
+            let comment = `## 📚 Documentation Index Validation ${statusEmoji}\n\n`;
+            comment += `**Overall Status:** ${statusText}\n`;
+            comment += `**Total Errors:** ${report.totalErrors}\n`;
+            comment += `**Validation Date:** ${new Date(report.timestamp).toLocaleString()}\n\n`;
+            
+            comment += `### Validation Results\n\n`;
+            comment += `| Check | Status | Errors |\n`;
+            comment += `|-------|--------|--------|\n`;
+            comment += `| Completeness | ${report.summary.completeness === 'PASS' ? '✅' : '❌'} ${report.summary.completeness} | ${report.results.completeness.errors.length} |\n`;
+            comment += `| Link Validation | ${report.summary.linkValidation === 'PASS' ? '✅' : '❌'} ${report.summary.linkValidation} | ${report.results.linkValidation.errors.length} |\n`;
+            comment += `| Role Coverage | ${report.summary.roleCoverage === 'PASS' ? '✅' : '❌'} ${report.summary.roleCoverage} | ${report.results.roleCoverage.errors.length} |\n`;
+            comment += `| Migration Sync | ${report.summary.migrationSync === 'PASS' ? '✅' : '❌'} ${report.summary.migrationSync} | ${report.results.migrationSync.errors.length} |\n\n`;
+            
+            if (!report.passed) {
+              comment += `### ❌ Validation Errors\n\n`;
+              
+              for (const [checkType, result] of Object.entries(report.results)) {
+                if (!result.passed && result.errors.length > 0) {
+                  comment += `#### ${checkType.charAt(0).toUpperCase() + checkType.slice(1)}\n`;
+                  result.errors.slice(0, 5).forEach(error => {
+                    comment += `- ${error.error}\n`;
+                  });
+                  if (result.errors.length > 5) {
+                    comment += `- ... and ${result.errors.length - 5} more errors\n`;
+                  }
+                  comment += `\n`;
+                }
+              }
+              
+              comment += `### 🔧 How to Fix\n\n`;
+              comment += `1. Run \`npm run docs:index:validate\` locally to see all errors\n`;
+              comment += `2. Fix the validation errors listed above\n`;
+              comment += `3. Run \`npm run docs:index:update\` to update the index if needed\n`;
+              comment += `4. Commit and push your changes\n\n`;
+            } else {
+              comment += `### ✅ All Checks Passed!\n\n`;
+              comment += `The documentation index is properly maintained and all validation checks pass.\n\n`;
+            }
+            
+            comment += `<details>\n`;
+            comment += `<summary>📊 Detailed Validation Report</summary>\n\n`;
+            comment += `\`\`\`json\n${JSON.stringify(report, null, 2)}\`\`\`\n`;
+            comment += `</details>\n`;
+            
+            // Find existing comment and update it, or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const existingComment = comments.find(comment => 
+              comment.body.includes('📚 Documentation Index Validation')
+            );
+            
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
+          } catch (error) {
+            console.error('Error processing validation report:', error);
+            
+            // Create a simple error comment
+            const errorComment = `## 📚 Documentation Index Validation ❌\n\n` +
+              `**Status:** FAILED\n` +
+              `**Error:** Could not process validation report\n\n` +
+              `Please check the workflow logs for details.`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: errorComment
+            });
+          }
+    
+    - name: Fail if validation failed
+      if: steps.completeness.outcome == 'failure' || steps.links.outcome == 'failure' || steps.roles.outcome == 'failure' || steps.migration.outcome == 'failure'
+      run: |
+        echo "❌ Documentation validation failed. Please fix the errors above."
+        exit 1
+
+  update-index-on-main:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: validate-documentation-index
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Update master index
+      run: |
+        echo "Updating master documentation index..."
+        npm run docs:index:update
+    
+    - name: Check for changes
+      id: changes
+      run: |
+        if git diff --quiet docs/INDEX.md; then
+          echo "changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "changed=true" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Commit updated index
+      if: steps.changes.outputs.changed == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add docs/INDEX.md
+        git commit -m "docs: auto-update master documentation index [skip ci]"
+        git push
+    
+    - name: Create issue if update failed
+      if: failure()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const title = '📚 Documentation Index Auto-Update Failed';
+          const body = `The automatic documentation index update failed on commit ${context.sha}.
+          
+          **Workflow:** ${context.workflow}
+          **Run:** ${context.runNumber}
+          **Commit:** ${context.sha}
+          
+          Please check the workflow logs and update the documentation index manually:
+          
+          \`\`\`bash
+          npm run docs:index:update
+          \`\`\`
+          
+          This issue was created automatically.`;
+          
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: body,
+            labels: ['documentation', 'automation', 'bug']
+          });

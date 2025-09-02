@@ -1,0 +1,71 @@
+{
+  "$id": "q.qflow.flow.updated.v1",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Qflow Flow Updated Event",
+  "description": "Event emitted when a flow definition is updated",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity that performed the action"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "flowId": {
+          "type": "string",
+          "description": "Unique identifier of the updated flow"
+        },
+        "flowName": {
+          "type": "string",
+          "description": "Name of the updated flow"
+        },
+        "flowVersion": {
+          "type": "string",
+          "description": "New version of the flow"
+        },
+        "previousVersion": {
+          "type": "string",
+          "description": "Previous version of the flow"
+        },
+        "owner": {
+          "type": "string",
+          "description": "sQuid identity of the flow owner"
+        },
+        "daoSubnet": {
+          "type": "string",
+          "description": "DAO subnet the flow belongs to"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional flow metadata"
+        },
+        "ipfsCid": {
+          "type": "string",
+          "description": "IPFS content identifier for the flow definition"
+        }
+      },
+      "required": ["flowId", "flowName", "flowVersion", "previousVersion", "owner", "ipfsCid"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

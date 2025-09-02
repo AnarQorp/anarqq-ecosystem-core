@@ -1,0 +1,192 @@
+{
+  "timestamp": "2025-08-30T08:55:09.081Z",
+  "version": "1.0.0",
+  "checks": {
+    "dependencies": {
+      "totalDependencies": 27,
+      "forbiddenFound": 0,
+      "requiredMissing": 0,
+      "violations": [],
+      "warnings": []
+    },
+    "sourceCode": {
+      "filesScanned": 122,
+      "violations": 0,
+      "warnings": 1,
+      "details": [
+        {
+          "type": "centralization_pattern",
+          "file": "src/core/BootCheck.ts",
+          "pattern": "/class\\s+\\w*Singleton|getInstance\\(\\)|private\\s+static\\s+instance/g",
+          "matches": [
+            "private static instance",
+            "getInstance()",
+            "getInstance()"
+          ],
+          "description": "Singleton patterns (potential centralization)",
+          "severity": "warning",
+          "message": "Singleton patterns (potential centralization) found in src/core/BootCheck.ts"
+        }
+      ]
+    },
+    "runtimeConfiguration": {
+      "filesChecked": 4,
+      "violations": 0,
+      "warnings": 3,
+      "details": [
+        {
+          "type": "config_centralized_service",
+          "file": "docker-compose.yml",
+          "service": "redis",
+          "message": "Configuration references centralized service: redis in docker-compose.yml",
+          "severity": "warning"
+        },
+        {
+          "type": "config_centralized_service",
+          "file": "docker-compose.prod.yml",
+          "service": "redis",
+          "message": "Configuration references centralized service: redis in docker-compose.prod.yml",
+          "severity": "warning"
+        },
+        {
+          "type": "config_fixed_ports",
+          "file": "k8s/service.yaml",
+          "ports": [
+            "port: 8080",
+            "port: 4001",
+            "port: 9090",
+            "port: 4001"
+          ],
+          "message": "Multiple fixed ports found in k8s/service.yaml (potential centralization)",
+          "severity": "warning"
+        }
+      ]
+    },
+    "trafficPatterns": {
+      "violations": 0,
+      "warnings": 0,
+      "details": []
+    },
+    "architecturalPatterns": {
+      "distributedScore": 415,
+      "violations": 0,
+      "warnings": 1,
+      "details": [
+        {
+          "type": "monolithic_pattern",
+          "message": "Single start script detected (potential monolithic architecture)",
+          "severity": "warning"
+        }
+      ]
+    },
+    "deploymentConfiguration": {
+      "violations": 0,
+      "warnings": 1,
+      "details": [
+        {
+          "type": "k8s_persistent_volume",
+          "file": "pvc.yaml",
+          "message": "PersistentVolumeClaim found in pvc.yaml (check for centralized storage)",
+          "severity": "warning"
+        }
+      ]
+    },
+    "distributedRequirements": {
+      "ipfsFound": true,
+      "libp2pFound": true,
+      "pubsubFound": true,
+      "stateFound": true,
+      "violations": 0,
+      "warnings": 0,
+      "details": []
+    }
+  },
+  "violations": [],
+  "warnings": [
+    {
+      "type": "centralization_pattern",
+      "file": "src/core/BootCheck.ts",
+      "pattern": "/class\\s+\\w*Singleton|getInstance\\(\\)|private\\s+static\\s+instance/g",
+      "matches": [
+        "private static instance",
+        "getInstance()",
+        "getInstance()"
+      ],
+      "description": "Singleton patterns (potential centralization)",
+      "severity": "warning",
+      "message": "Singleton patterns (potential centralization) found in src/core/BootCheck.ts"
+    },
+    {
+      "type": "config_centralized_service",
+      "file": "docker-compose.yml",
+      "service": "redis",
+      "message": "Configuration references centralized service: redis in docker-compose.yml",
+      "severity": "warning"
+    },
+    {
+      "type": "config_centralized_service",
+      "file": "docker-compose.prod.yml",
+      "service": "redis",
+      "message": "Configuration references centralized service: redis in docker-compose.prod.yml",
+      "severity": "warning"
+    },
+    {
+      "type": "config_fixed_ports",
+      "file": "k8s/service.yaml",
+      "ports": [
+        "port: 8080",
+        "port: 4001",
+        "port: 9090",
+        "port: 4001"
+      ],
+      "message": "Multiple fixed ports found in k8s/service.yaml (potential centralization)",
+      "severity": "warning"
+    },
+    {
+      "type": "monolithic_pattern",
+      "message": "Single start script detected (potential monolithic architecture)",
+      "severity": "warning"
+    },
+    {
+      "type": "k8s_persistent_volume",
+      "file": "pvc.yaml",
+      "message": "PersistentVolumeClaim found in pvc.yaml (check for centralized storage)",
+      "severity": "warning"
+    }
+  ],
+  "score": 97,
+  "passed": true,
+  "attestation": {
+    "data": {
+      "version": "1.0.0",
+      "timestamp": "2025-08-30T08:55:09.081Z",
+      "projectRoot": "/home/baituman/AnarQmVP/anar-q-nexus-core-main/modules/qflow",
+      "score": 97,
+      "passed": true,
+      "checks": [
+        "dependencies",
+        "sourceCode",
+        "runtimeConfiguration",
+        "trafficPatterns",
+        "architecturalPatterns",
+        "deploymentConfiguration",
+        "distributedRequirements"
+      ],
+      "violations": 0,
+      "warnings": 6,
+      "certificationCriteria": {
+        "noCentralDependencies": true,
+        "noForbiddenPatterns": true,
+        "hasDistributedRequirements": true,
+        "minimumScore": true
+      }
+    },
+    "hash": "0e4d4c87a6ee5d105cd1632b3e9f8f17df4f3ddbd628a27d11d0d9cbf45b85f5",
+    "signature": "e7a8574d4a51a57c192d8ecacc104b3780c8346530621ce7a91311eb607242ac",
+    "algorithm": "SHA256",
+    "signedAt": "2025-08-30T08:55:09.796Z",
+    "validUntil": "2026-08-30T08:55:09.796Z",
+    "issuer": "Qflow No Central Server Certification System",
+    "version": "1.0.0"
+  }
+}

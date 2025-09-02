@@ -1,0 +1,209 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.docs.pipeline.failed.v1",
+  "title": "Documentation Pipeline Failed Event",
+  "description": "Event emitted when the documentation automation pipeline fails",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "const": "qflow-docs-pipeline",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "const": "qflow-docs-pipeline",
+          "description": "sQuid identity of the pipeline system"
+        }
+      },
+      "required": ["squidId"]
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "pipelineId": {
+          "type": "string",
+          "description": "Unique identifier for the failed pipeline execution"
+        },
+        "executionTime": {
+          "type": "number",
+          "description": "Total execution time before failure in milliseconds"
+        },
+        "failedStep": {
+          "type": "string",
+          "enum": ["validate", "regenerate-index", "build-scripts", "publish-portal"],
+          "description": "Pipeline step where failure occurred"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Error message"
+            },
+            "code": {
+              "type": "string",
+              "description": "Error code if available"
+            },
+            "stack": {
+              "type": "string",
+              "description": "Error stack trace"
+            },
+            "type": {
+              "type": "string",
+              "enum": ["validation-error", "generation-error", "network-error", "timeout-error", "system-error"],
+              "description": "Type of error that occurred"
+            }
+          },
+          "required": ["message", "type"]
+        },
+        "stepsCompleted": {
+          "type": "number",
+          "description": "Number of pipeline steps completed before failure"
+        },
+        "stepResults": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step": {
+                "type": "string",
+                "enum": ["validate", "regenerate-index", "build-scripts", "publish-portal"]
+              },
+              "status": {
+                "type": "string",
+                "enum": ["success", "warning", "failure", "skipped"]
+              },
+              "executionTime": {
+                "type": "number",
+                "description": "Step execution time in milliseconds"
+              },
+              "verdict": {
+                "type": "string",
+                "enum": ["ALLOW", "WARN", "DENY"]
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "error": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "required": ["step", "status", "executionTime"]
+          },
+          "description": "Results for each pipeline step attempted"
+        },
+        "rollbackExecuted": {
+          "type": "boolean",
+          "description": "Whether rollback was executed after failure"
+        },
+        "rollbackResult": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "description": "Whether rollback was successful"
+            },
+            "stepsRolledBack": {
+              "type": "number",
+              "description": "Number of steps rolled back"
+            },
+            "error": {
+              "type": "string",
+              "description": "Rollback error message if rollback failed"
+            }
+          }
+        },
+        "retryAttempts": {
+          "type": "number",
+          "description": "Number of retry attempts made"
+        },
+        "canRetry": {
+          "type": "boolean",
+          "description": "Whether the pipeline can be retried"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Severity level of the failure"
+        },
+        "impact": {
+          "type": "object",
+          "properties": {
+            "affectedModules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Modules affected by the failure"
+            },
+            "portalOutdated": {
+              "type": "boolean",
+              "description": "Whether the documentation portal is now outdated"
+            },
+            "scriptsOutdated": {
+              "type": "boolean",
+              "description": "Whether video scripts are now outdated"
+            },
+            "indexOutdated": {
+              "type": "boolean",
+              "description": "Whether the documentation index is now outdated"
+            }
+          }
+        },
+        "recommendedActions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string",
+                "description": "Recommended action to take"
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["low", "medium", "high", "critical"]
+              },
+              "automated": {
+                "type": "boolean",
+                "description": "Whether this action can be automated"
+              }
+            },
+            "required": ["action", "priority"]
+          },
+          "description": "Recommended actions to resolve the failure"
+        }
+      },
+      "required": ["pipelineId", "executionTime", "failedStep", "error", "stepsCompleted"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

@@ -1,0 +1,22 @@
+{
+  "identities": [
+    {
+      "squidId": "squid_demo_identity_01",
+      "username": "demo_user_alice",
+      "email": "alice@demo.anarq.com",
+      "metadata": {
+        "role": "demo_user",
+        "createdAt": "2025-01-30T12:00:00.000Z"
+      }
+    },
+    {
+      "squidId": "squid_demo_identity_02",
+      "username": "demo_user_bob",
+      "email": "bob@demo.anarq.com",
+      "metadata": {
+        "role": "demo_user",
+        "createdAt": "2025-01-30T12:01:00.000Z"
+      }
+    }
+  ]
+}

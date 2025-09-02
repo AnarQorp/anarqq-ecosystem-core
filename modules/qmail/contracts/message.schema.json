@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q.network/qmail/message.schema.json",
+  "title": "Qmail Message Schema",
+  "description": "Schema for Qmail encrypted messages",
+  "type": "object",
+  "properties": {
+    "messageId": {
+      "type": "string",
+      "pattern": "^msg_[a-zA-Z0-9_-]+$",
+      "description": "Unique message identifier"
+    },
+    "senderId": {
+      "type": "string",
+      "pattern": "^squid_[a-zA-Z0-9_-]+$",
+      "description": "Sender sQuid identity ID"
+    },
+    "recipientId": {
+      "type": "string",
+      "pattern": "^squid_[a-zA-Z0-9_-]+$",
+      "description": "Recipient sQuid identity ID"
+    },
+    "subject": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Message subject"
+    },
+    "encryptedContent": {
+      "type": "string",
+      "description": "Encrypted message content (base64)"
+    },
+    "encryptionLevel": {
+      "type": "string",
+      "enum": ["STANDARD", "HIGH", "QUANTUM"],
+      "description": "Encryption level used"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["LOW", "NORMAL", "HIGH", "URGENT"],
+      "description": "Message priority"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["UNREAD", "READ", "REPLIED", "FORWARDED", "DELETED"],
+      "description": "Message status"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Message timestamp"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Message expiration timestamp"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Attachment"
+      },
+      "description": "Message attachments"
+    },
+    "signature": {
+      "type": "string",
+      "description": "Cryptographic signature"
+    },
+    "deliveryTracking": {
+      "type": "string",
+      "description": "Delivery tracking ID"
+    },
+    "certifiedDelivery": {
+      "type": "boolean",
+      "description": "Certified delivery requested"
+    },
+    "ipfsCid": {
+      "type": "string",
+      "pattern": "^Qm[a-zA-Z0-9]{44}$|^bafy[a-zA-Z0-9]+$",
+      "description": "IPFS CID of encrypted message"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Message size in bytes"
+        },
+        "routingPath": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Message routing path"
+        },
+        "spamScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Spam probability score"
+        },
+        "riskScore": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Security risk score"
+        }
+      }
+    }
+  },
+  "required": [
+    "messageId",
+    "senderId",
+    "recipientId",
+    "subject",
+    "encryptedContent",
+    "encryptionLevel",
+    "priority",
+    "status",
+    "timestamp",
+    "signature"
+  ],
+  "definitions": {
+    "Attachment": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 255,
+          "description": "Attachment filename"
+        },
+        "cid": {
+          "type": "string",
+          "pattern": "^Qm[a-zA-Z0-9]{44}$|^bafy[a-zA-Z0-9]+$",
+          "description": "IPFS CID of encrypted attachment"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Attachment size in bytes"
+        },
+        "mimeType": {
+          "type": "string",
+          "description": "MIME type of attachment"
+        },
+        "encryptionKey": {
+          "type": "string",
+          "description": "Encrypted attachment key"
+        },
+        "checksum": {
+          "type": "string",
+          "description": "SHA-256 checksum of original file"
+        }
+      },
+      "required": ["name", "cid", "size", "mimeType", "encryptionKey", "checksum"]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qchat/room.schema.json",
+  "title": "Chat Room Schema",
+  "description": "Schema for chat room data structure",
+  "type": "object",
+  "properties": {
+    "roomId": {
+      "type": "string",
+      "pattern": "^qchat_room_[a-zA-Z0-9_-]+$",
+      "description": "Unique room identifier"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Room display name"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Room description"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["PUBLIC", "PRIVATE", "DAO", "REPUTATION"],
+      "description": "Room access type"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Room creation timestamp"
+    },
+    "createdBy": {
+      "type": "string",
+      "pattern": "^squid_[a-zA-Z0-9_-]+$",
+      "description": "Creator sQuid identity ID"
+    },
+    "memberCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Current number of members"
+    },
+    "maxMembers": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 10000,
+      "description": "Maximum allowed members"
+    },
+    "encryptionLevel": {
+      "type": "string",
+      "enum": ["STANDARD", "HIGH", "QUANTUM"],
+      "description": "Message encryption level"
+    },
+    "moderationLevel": {
+      "type": "string",
+      "enum": ["NONE", "BASIC", "STRICT", "AI_ASSISTED"],
+      "description": "Automatic moderation level"
+    },
+    "minReputation": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Minimum reputation required for REPUTATION type rooms"
+    },
+    "daoId": {
+      "type": "string",
+      "pattern": "^dao_[a-zA-Z0-9_-]+$",
+      "description": "Associated DAO ID for DAO type rooms"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      },
+      "maxItems": 10,
+      "description": "Room tags for discovery"
+    },
+    "ephemeral": {
+      "type": "boolean",
+      "description": "Room disappears when empty"
+    },
+    "messageRetention": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3650,
+      "description": "Message retention period in days"
+    },
+    "lastActivity": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last activity timestamp"
+    },
+    "inviteCode": {
+      "type": "string",
+      "pattern": "^[A-Z0-9]{8}$",
+      "description": "Invite code for private rooms"
+    },
+    "encryptionKey": {
+      "type": "string",
+      "description": "Room encryption key (encrypted)"
+    },
+    "indexCid": {
+      "type": "string",
+      "pattern": "^Qm[a-zA-Z0-9]{44}$",
+      "description": "IPFS CID of room index record"
+    }
+  },
+  "required": [
+    "roomId",
+    "name",
+    "type",
+    "createdAt",
+    "createdBy",
+    "memberCount",
+    "maxMembers",
+    "encryptionLevel",
+    "moderationLevel"
+  ],
+  "additionalProperties": false
+}

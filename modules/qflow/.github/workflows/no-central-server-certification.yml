@@ -1,0 +1,298 @@
+name: No Central Server Certification
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run certification check daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      fail_on_warnings:
+        description: 'Fail on warnings'
+        required: false
+        default: 'false'
+        type: boolean
+      min_score:
+        description: 'Minimum score required'
+        required: false
+        default: '85'
+        type: string
+
+jobs:
+  certification:
+    name: Serverless Certification
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for comprehensive analysis
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: modules/qflow/package-lock.json
+
+    - name: Install dependencies
+      working-directory: modules/qflow
+      run: npm ci
+
+    - name: Run No Central Server Certification
+      id: certification
+      working-directory: modules/qflow
+      run: |
+        # Set options based on inputs
+        FAIL_ON_WARNINGS="${{ github.event.inputs.fail_on_warnings || 'false' }}"
+        MIN_SCORE="${{ github.event.inputs.min_score || '85' }}"
+        
+        # Build command with options
+        CMD="node scripts/ci-certification-check.mjs"
+        CMD="$CMD --output-format junit"
+        CMD="$CMD --output-file reports/certification-results.xml"
+        CMD="$CMD --min-score $MIN_SCORE"
+        
+        if [ "$FAIL_ON_WARNINGS" = "true" ]; then
+          CMD="$CMD --fail-on-warnings"
+        fi
+        
+        echo "Running: $CMD"
+        $CMD
+
+    - name: Upload certification results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: certification-results
+        path: |
+          modules/qflow/reports/certification-results.xml
+          modules/qflow/reports/no-central-server-attestation.json
+          modules/qflow/reports/certification-checksums.json
+        retention-days: 30
+
+    - name: Publish test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: No Central Server Certification
+        path: modules/qflow/reports/certification-results.xml
+        reporter: java-junit
+        fail-on-error: true
+
+    - name: Generate attestation summary
+      if: success()
+      working-directory: modules/qflow
+      run: |
+        echo "## 🏆 No Central Server Certification PASSED" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "reports/no-central-server-attestation.json" ]; then
+          SCORE=$(jq -r '.score' reports/no-central-server-attestation.json)
+          VIOLATIONS=$(jq -r '.violations | length' reports/no-central-server-attestation.json)
+          WARNINGS=$(jq -r '.warnings | length' reports/no-central-server-attestation.json)
+          HASH=$(jq -r '.attestation.hash' reports/no-central-server-attestation.json)
+          VALID_UNTIL=$(jq -r '.attestation.validUntil' reports/no-central-server-attestation.json)
+          
+          echo "- **Score:** $SCORE/100" >> $GITHUB_STEP_SUMMARY
+          echo "- **Violations:** $VIOLATIONS" >> $GITHUB_STEP_SUMMARY
+          echo "- **Warnings:** $WARNINGS" >> $GITHUB_STEP_SUMMARY
+          echo "- **Attestation Hash:** \`${HASH:0:16}...\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Valid Until:** $VALID_UNTIL" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Qflow is certified as truly serverless and distributed!**" >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: Generate failure summary
+      if: failure()
+      working-directory: modules/qflow
+      run: |
+        echo "## ❌ No Central Server Certification FAILED" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "reports/no-central-server-attestation.json" ]; then
+          SCORE=$(jq -r '.score' reports/no-central-server-attestation.json)
+          VIOLATIONS=$(jq -r '.violations | length' reports/no-central-server-attestation.json)
+          WARNINGS=$(jq -r '.warnings | length' reports/no-central-server-attestation.json)
+          
+          echo "- **Score:** $SCORE/100" >> $GITHUB_STEP_SUMMARY
+          echo "- **Violations:** $VIOLATIONS" >> $GITHUB_STEP_SUMMARY
+          echo "- **Warnings:** $WARNINGS" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "❌ **Certification failed. Please address the violations and re-run.**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Show top violations
+          echo "### Top Violations:" >> $GITHUB_STEP_SUMMARY
+          jq -r '.violations[:5][] | "- " + .message' reports/no-central-server-attestation.json >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: Comment on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = 'modules/qflow/reports/no-central-server-attestation.json';
+          
+          if (!fs.existsSync(path)) {
+            console.log('Attestation file not found');
+            return;
+          }
+          
+          const results = JSON.parse(fs.readFileSync(path, 'utf8'));
+          const passed = results.passed;
+          const score = results.score;
+          const violations = results.violations.length;
+          const warnings = results.warnings.length;
+          
+          const status = passed ? '✅ PASSED' : '❌ FAILED';
+          const emoji = passed ? '🎉' : '⚠️';
+          
+          const body = `## ${emoji} No Central Server Certification ${status}
+          
+          **Score:** ${score}/100
+          **Violations:** ${violations}
+          **Warnings:** ${warnings}
+          
+          ${passed 
+            ? '🏆 **Qflow is certified as truly serverless and distributed!**\n\nThe attestation artifact has been generated and proves decentralized operation.'
+            : '❌ **Certification failed.** Please address the violations before merging.\n\n### Top Violations:\n' + 
+              results.violations.slice(0, 3).map(v => `- ${v.message}`).join('\n')
+          }
+          
+          <details>
+          <summary>View detailed results</summary>
+          
+          \`\`\`json
+          ${JSON.stringify({
+            score: results.score,
+            passed: results.passed,
+            violations: results.violations.length,
+            warnings: results.warnings.length,
+            checks: Object.keys(results.checks)
+          }, null, 2)}
+          \`\`\`
+          </details>`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: body
+          });
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: certification
+    if: success()
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: 'modules/qflow'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  publish-attestation:
+    name: Publish Attestation
+    runs-on: ubuntu-latest
+    needs: [certification, security-scan]
+    if: success() && github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download certification results
+      uses: actions/download-artifact@v4
+      with:
+        name: certification-results
+        path: attestation/
+
+    - name: Setup IPFS
+      run: |
+        wget https://dist.ipfs.io/kubo/v0.24.0/kubo_v0.24.0_linux-amd64.tar.gz
+        tar -xzf kubo_v0.24.0_linux-amd64.tar.gz
+        sudo mv kubo/ipfs /usr/local/bin/
+        ipfs init
+        ipfs daemon &
+        sleep 10
+
+    - name: Publish attestation to IPFS
+      id: ipfs
+      run: |
+        # Add attestation to IPFS
+        ATTESTATION_CID=$(ipfs add -Q attestation/no-central-server-attestation.json)
+        CHECKSUMS_CID=$(ipfs add -Q attestation/certification-checksums.json)
+        
+        echo "attestation_cid=$ATTESTATION_CID" >> $GITHUB_OUTPUT
+        echo "checksums_cid=$CHECKSUMS_CID" >> $GITHUB_OUTPUT
+        
+        echo "## 📡 Attestation Published to IPFS" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Attestation CID:** \`$ATTESTATION_CID\`" >> $GITHUB_STEP_SUMMARY
+        echo "- **Checksums CID:** \`$CHECKSUMS_CID\`" >> $GITHUB_STEP_SUMMARY
+        echo "- **IPFS Gateway:** https://ipfs.io/ipfs/$ATTESTATION_CID" >> $GITHUB_STEP_SUMMARY
+
+    - name: Create release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: certification-${{ github.sha }}
+        release_name: No Central Server Certification ${{ github.sha }}
+        body: |
+          ## 🏆 No Central Server Certification
+          
+          This release includes a cryptographically signed attestation proving that Qflow operates without any central server dependencies.
+          
+          **Attestation IPFS CID:** `${{ steps.ipfs.outputs.attestation_cid }}`
+          **Checksums IPFS CID:** `${{ steps.ipfs.outputs.checksums_cid }}`
+          
+          ### Verification
+          
+          To verify this attestation:
+          
+          ```bash
+          # Download from IPFS
+          ipfs get ${{ steps.ipfs.outputs.attestation_cid }}
+          
+          # Or via HTTP gateway
+          curl https://ipfs.io/ipfs/${{ steps.ipfs.outputs.attestation_cid }}
+          
+          # Verify with our tool
+          node scripts/no-central-server-certification.mjs verify
+          ```
+          
+          ### What This Certifies
+          
+          ✅ No centralized database dependencies
+          ✅ No centralized message broker dependencies  
+          ✅ No centralized orchestration dependencies
+          ✅ Uses IPFS for distributed storage
+          ✅ Uses Libp2p for peer-to-peer communication
+          ✅ Implements distributed consensus mechanisms
+          ✅ Passes comprehensive architectural analysis
+          
+          This attestation is valid for 1 year and proves Qflow's truly serverless, distributed architecture.
+        draft: false
+        prerelease: false

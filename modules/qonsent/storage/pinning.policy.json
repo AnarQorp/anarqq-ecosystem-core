@@ -1,0 +1,125 @@
+{
+  "version": "1.0.0",
+  "description": "IPFS pinning policies for Qonsent module",
+  "policies": [
+    {
+      "name": "critical-data",
+      "description": "Critical data requiring permanent pinning",
+      "patterns": [
+        "/qonsent/policies/*/policy.json",
+        "/qonsent/grants/active/*/grant.json",
+        "/qonsent/audit/security/*.jsonl"
+      ],
+      "pinning": {
+        "strategy": "permanent",
+        "replicas": 5,
+        "regions": ["us-east-1", "eu-west-1", "ap-southeast-1"],
+        "priority": "high"
+      },
+      "retention": {
+        "period": "indefinite",
+        "compliance": ["SOC2", "GDPR", "HIPAA"]
+      }
+    },
+    {
+      "name": "important-data",
+      "description": "Important data with long-term retention",
+      "patterns": [
+        "/qonsent/policies/*/metadata.json",
+        "/qonsent/grants/*/audit/*.json",
+        "/qonsent/audit/permissions/*.jsonl",
+        "/qonsent/events/*/grant-issued.jsonl"
+      ],
+      "pinning": {
+        "strategy": "long-term",
+        "replicas": 3,
+        "regions": ["us-east-1", "eu-west-1"],
+        "priority": "medium"
+      },
+      "retention": {
+        "period": "P7Y",
+        "archival": "cold-storage",
+        "compliance": ["SOC2", "GDPR"]
+      }
+    },
+    {
+      "name": "standard-data",
+      "description": "Standard operational data",
+      "patterns": [
+        "/qonsent/grants/expired/*/grant.json",
+        "/qonsent/audit/daily-summary.json",
+        "/qonsent/events/*/policy-updated.jsonl"
+      ],
+      "pinning": {
+        "strategy": "standard",
+        "replicas": 2,
+        "regions": ["us-east-1"],
+        "priority": "medium"
+      },
+      "retention": {
+        "period": "P1Y",
+        "archival": "warm-storage"
+      }
+    },
+    {
+      "name": "temporary-data",
+      "description": "Temporary data with short retention",
+      "patterns": [
+        "/qonsent/cache/*",
+        "/qonsent/sessions/*",
+        "/qonsent/temp/*"
+      ],
+      "pinning": {
+        "strategy": "temporary",
+        "replicas": 1,
+        "regions": ["us-east-1"],
+        "priority": "low"
+      },
+      "retention": {
+        "period": "P30D",
+        "cleanup": "automatic"
+      }
+    }
+  ],
+  "global": {
+    "defaultStrategy": "standard",
+    "garbageCollection": {
+      "enabled": true,
+      "schedule": "0 2 * * *",
+      "graceperiod": "P7D"
+    },
+    "monitoring": {
+      "enabled": true,
+      "alerts": {
+        "pinFailure": true,
+        "storageQuota": 0.8,
+        "replicationFailure": true
+      }
+    },
+    "encryption": {
+      "enabled": true,
+      "algorithm": "AES-256-GCM",
+      "keyRotation": "P30D"
+    }
+  },
+  "regions": {
+    "us-east-1": {
+      "name": "US East (Virginia)",
+      "primary": true,
+      "capacity": "10TB",
+      "provider": "AWS"
+    },
+    "eu-west-1": {
+      "name": "EU West (Ireland)",
+      "primary": false,
+      "capacity": "5TB",
+      "provider": "AWS"
+    },
+    "ap-southeast-1": {
+      "name": "Asia Pacific (Singapore)",
+      "primary": false,
+      "capacity": "5TB",
+      "provider": "AWS"
+    }
+  }
+}

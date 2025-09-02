@@ -1,0 +1,104 @@
+{
+  "healthChecks": {
+    "liveness": {
+      "endpoint": "/health/live",
+      "timeout": 5000,
+      "checks": [
+        {
+          "name": "server",
+          "type": "basic",
+          "description": "Check if the server is running"
+        },
+        {
+          "name": "memory",
+          "type": "resource",
+          "description": "Check memory usage",
+          "threshold": 0.9
+        }
+      ]
+    },
+    "readiness": {
+      "endpoint": "/health/ready",
+      "timeout": 10000,
+      "checks": [
+        {
+          "name": "ipfs",
+          "type": "external",
+          "description": "Check IPFS connectivity",
+          "url": "${IPFS_API_URL}/api/v0/version",
+          "timeout": 5000
+        },
+        {
+          "name": "redis",
+          "type": "external",
+          "description": "Check Redis connectivity",
+          "url": "${REDIS_URL}",
+          "timeout": 3000
+        },
+        {
+          "name": "libp2p",
+          "type": "internal",
+          "description": "Check libp2p node status",
+          "service": "libp2p"
+        },
+        {
+          "name": "validation-pipeline",
+          "type": "internal",
+          "description": "Check validation pipeline",
+          "service": "validation"
+        }
+      ]
+    },
+    "startup": {
+      "endpoint": "/health/startup",
+      "timeout": 30000,
+      "checks": [
+        {
+          "name": "initialization",
+          "type": "internal",
+          "description": "Check if all services are initialized",
+          "service": "initialization"
+        },
+        {
+          "name": "ecosystem-connectivity",
+          "type": "internal",
+          "description": "Check ecosystem service connectivity",
+          "service": "ecosystem"
+        }
+      ]
+    }
+  },
+  "monitoring": {
+    "metrics": {
+      "endpoint": "/metrics",
+      "format": "prometheus",
+      "interval": 30000
+    },
+    "detailed": {
+      "endpoint": "/api/v1/metrics",
+      "format": "json",
+      "interval": 60000,
+      "includeHistograms": true
+    }
+  },
+  "alerts": {
+    "healthCheckFailure": {
+      "enabled": true,
+      "threshold": 3,
+      "window": "5m",
+      "severity": "critical"
+    },
+    "highLatency": {
+      "enabled": true,
+      "threshold": 1000,
+      "window": "5m",
+      "severity": "warning"
+    },
+    "highErrorRate": {
+      "enabled": true,
+      "threshold": 0.05,
+      "window": "5m",
+      "severity": "warning"
+    }
+  }
+}

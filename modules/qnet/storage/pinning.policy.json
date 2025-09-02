@@ -1,0 +1,198 @@
+{
+  "version": "1.0",
+  "description": "IPFS pinning policies for QNET data",
+  "policies": [
+    {
+      "name": "node-configurations",
+      "description": "Node configuration data",
+      "pattern": "/qnet/nodes/*/config",
+      "pinning": {
+        "strategy": "PERMANENT",
+        "replicationFactor": 3,
+        "geoDistribution": ["us-east-1", "eu-west-1", "ap-southeast-1"],
+        "priority": "HIGH"
+      },
+      "retention": {
+        "duration": "PERMANENT",
+        "conditions": ["node_active"]
+      },
+      "access": {
+        "pattern": "HOT",
+        "cacheTTL": "1h",
+        "preload": true
+      }
+    },
+    {
+      "name": "network-topology",
+      "description": "Network topology snapshots",
+      "pattern": "/qnet/topology/*",
+      "pinning": {
+        "strategy": "CONDITIONAL",
+        "replicationFactor": 2,
+        "geoDistribution": ["us-east-1", "eu-west-1"],
+        "priority": "MEDIUM"
+      },
+      "retention": {
+        "duration": "P1Y",
+        "conditions": ["historical_value"]
+      },
+      "access": {
+        "pattern": "WARM",
+        "cacheTTL": "15m",
+        "preload": false
+      }
+    },
+    {
+      "name": "metrics-data",
+      "description": "Node performance metrics",
+      "pattern": "/qnet/metrics/*/*",
+      "pinning": {
+        "strategy": "TEMPORARY",
+        "replicationFactor": 2,
+        "geoDistribution": ["local", "backup"],
+        "priority": "MEDIUM"
+      },
+      "retention": {
+        "duration": "P90D",
+        "conditions": ["compliance_period"]
+      },
+      "access": {
+        "pattern": "WARM",
+        "cacheTTL": "5m",
+        "preload": false
+      }
+    },
+    {
+      "name": "audit-logs",
+      "description": "Security and operational audit logs",
+      "pattern": "/qnet/audit/*/*",
+      "pinning": {
+        "strategy": "PERMANENT",
+        "replicationFactor": 3,
+        "geoDistribution": ["us-east-1", "eu-west-1", "ap-southeast-1"],
+        "priority": "CRITICAL"
+      },
+      "retention": {
+        "duration": "P7Y",
+        "conditions": ["legal_requirement", "compliance"]
+      },
+      "access": {
+        "pattern": "COLD",
+        "cacheTTL": "1h",
+        "preload": false
+      }
+    },
+    {
+      "name": "event-history",
+      "description": "Network event history",
+      "pattern": "/qnet/events/*/*",
+      "pinning": {
+        "strategy": "CONDITIONAL",
+        "replicationFactor": 2,
+        "geoDistribution": ["primary", "backup"],
+        "priority": "LOW"
+      },
+      "retention": {
+        "duration": "P1Y",
+        "conditions": ["operational_value"]
+      },
+      "access": {
+        "pattern": "COLD",
+        "cacheTTL": "30m",
+        "preload": false
+      }
+    },
+    {
+      "name": "real-time-status",
+      "description": "Real-time node status updates",
+      "pattern": "/qnet/status/*",
+      "pinning": {
+        "strategy": "TEMPORARY",
+        "replicationFactor": 1,
+        "geoDistribution": ["local"],
+        "priority": "LOW"
+      },
+      "retention": {
+        "duration": "PT1H",
+        "conditions": ["real_time_only"]
+      },
+      "access": {
+        "pattern": "HOT",
+        "cacheTTL": "30s",
+        "preload": true
+      }
+    }
+  ],
+  "globalSettings": {
+    "defaultReplicationFactor": 2,
+    "defaultRetention": "P30D",
+    "garbageCollection": {
+      "enabled": true,
+      "interval": "PT6H",
+      "gracePeroid": "PT24H"
+    },
+    "monitoring": {
+      "enabled": true,
+      "alertThresholds": {
+        "unpinnedCriticalData": 0,
+        "replicationBelowMinimum": 1,
+        "storageUtilization": 0.85
+      }
+    }
+  },
+  "regions": {
+    "us-east-1": {
+      "nodes": ["qnet-us-east-primary", "qnet-us-east-secondary"],
+      "capacity": "100TB",
+      "priority": "PRIMARY"
+    },
+    "eu-west-1": {
+      "nodes": ["qnet-eu-west-primary", "qnet-eu-west-secondary"],
+      "capacity": "100TB",
+      "priority": "PRIMARY"
+    },
+    "ap-southeast-1": {
+      "nodes": ["qnet-asia-primary"],
+      "capacity": "50TB",
+      "priority": "SECONDARY"
+    }
+  },
+  "costOptimization": {
+    "enabled": true,
+    "strategies": [
+      {
+        "name": "intelligent-tiering",
+        "description": "Move cold data to cheaper storage tiers",
+        "conditions": ["access_frequency < 1/month"],
+        "action": "move_to_archive"
+      },
+      {
+        "name": "deduplication",
+        "description": "Remove duplicate content across regions",
+        "conditions": ["identical_content"],
+        "action": "deduplicate"
+      },
+      {
+        "name": "compression",
+        "description": "Compress large data files",
+        "conditions": ["file_size > 1MB", "compressible_content"],
+        "action": "compress"
+      }
+    ]
+  },
+  "backup": {
+    "enabled": true,
+    "strategy": "3-2-1",
+    "description": "3 copies, 2 different media, 1 offsite",
+    "schedule": {
+      "critical": "PT1H",
+      "important": "PT6H",
+      "standard": "P1D"
+    },
+    "verification": {
+      "enabled": true,
+      "schedule": "P1D",
+      "method": "checksum_validation"
+    }
+  }
+}

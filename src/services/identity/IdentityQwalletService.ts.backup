@@ -1,0 +1,3692 @@
+/**
+ * Enhanced Identity-specific Qwallet Service
+ * Manages wallet context switching, identity-specific wallet permissions,
+ * multi-chain token support, dynamic limits, and governance controls
+ */
+
+import { 
+  ExtendedSquidIdentity, 
+  IdentityType, 
+  PrivacyLevel 
+} from '@/types/identity';
+
+export interface IdentityQwalletServiceInterface {
+  // Wallet Context Management
+  switchWalletContext(fromIdentityId: string, toIdentityId: string): Promise<boolean>;
+  getActiveWalletContext(): Promise<string | null>;
+  setActiveWalletContext(identityId: string): Promise<boolean>;
+  
+  // Identity-specific Wallet Permissions
+  getWalletPermissions(identityId: string): Promise<WalletPermissions>;
+  updateWalletPermissions(identityId: string, permissions: Partial<WalletPermissions>): Promise<boolean>;
+  validateWalletOperation(identityId: string, operation: WalletOperation): Promise<boolean>;
+  
+  // Wallet Context Updates
+  updateWalletContextOnSwitch(identityId: string): Promise<boolean>;
+  syncWalletState(identityId: string): Promise<boolean>;
+  
+  // Multi-Identity Wallet Management
+  getWalletAddressForIdentity(identityId: string): Promise<string | null>;
+  createWalletForIdentity(identity: ExtendedSquidIdentity): Promise<WalletContext>;
+  linkWalletToIdentity(identityId: string, walletAddress: string): Promise<boolean>;
+  
+  // Transaction Context
+  getTransactionContext(identityId: string): Promise<TransactionContext>;
+  signTransactionForIdentity(identityId: string, transaction: any): Promise<SignatureResult>;
+  
+  // Balance and Asset Management
+  getBalancesForIdentity(identityId: string): Promise<IdentityBalances>;
+  transferBetweenIdentities(fromId: string, toId: string, amount: number, token: string): Promise<boolean>;
+  
+  // Integration
+  syncWithQlock(identityId: string): Promise<boolean>;
+  syncWithQonsent(identityId: string): Promise<boolean>;
+}
+
+// Enhanced interface extending the base interface
+export interface EnhancedQwalletServiceInterface extends IdentityQwalletServiceInterface {
+  // Enhanced Wallet Configuration Management
+  getIdentityWalletConfig(identityId: string): Promise<IdentityWalletConfig>;
+  updateIdentityWalletConfig(identityId: string, config: Partial<IdentityWalletConfig>): Promise<boolean>;
+  updateIdentityLimits(identityId: string, limits: WalletLimits): Promise<boolean>;
+  
+  // Pi Wallet Integration
+  linkPiWallet(identityId: string, piWalletData: PiWalletData): Promise<boolean>;
+  unlinkPiWallet(identityId: string): Promise<boolean>;
+  transferToPiWallet(identityId: string, amount: number, token: string): Promise<TransferResult>;
+  transferFromPiWallet(identityId: string, amount: number, token: string): Promise<TransferResult>;
+  getPiWalletStatus(identityId: string): Promise<PiWalletStatus | null>;
+  
+  // Enhanced Audit and Compliance
+  logWalletOperation(operation: WalletAuditLog): Promise<void>;
+  getRiskAssessment(identityId: string): Promise<RiskAssessment>;
+  generateComplianceReport(identityId: string, period: DateRange): Promise<ComplianceReport>;
+  
+  // Multi-chain Token Management
+  getSupportedTokens(identityId: string): Promise<TokenInfo[]>;
+  addCustomToken(identityId: string, tokenConfig: CustomTokenConfig): Promise<boolean>;
+  removeCustomToken(identityId: string, tokenId: string): Promise<boolean>;
+  validateTokenSupport(identityId: string, tokenId: string): Promise<boolean>;
+  
+  // Emergency Controls
+  freezeWallet(identityId: string, reason: string): Promise<boolean>;
+  unfreezeWallet(identityId: string): Promise<boolean>;
+  isWalletFrozen(identityId: string): Promise<boolean>;
+  
+  // Governance Controls
+  requestGovernanceApproval(identityId: string, operation: WalletOperation): Promise<GovernanceRequest>;
+  checkGovernanceStatus(requestId: string): Promise<GovernanceStatus>;
+  applyGovernanceDecision(requestId: string, approved: boolean): Promise<boolean>;
+}
+
+export interface WalletPermissions {
+  canTransfer: boolean;
+  canReceive: boolean;
+  canMintNFT: boolean;
+  canSignTransactions: boolean;
+  canAccessDeFi: boolean;
+  canCreateDAO: boolean;
+  maxTransactionAmount: number;
+  allowedTokens: string[];
+  restrictedOperations: string[];
+  governanceLevel: 'FULL' | 'LIMITED' | 'READ_ONLY';
+}
+
+export interface WalletOperation {
+  type: 'TRANSFER' | 'MINT' | 'SIGN' | 'DEFI' | 'DAO_CREATE' | 'DAO_VOTE';
+  amount?: number;
+  token?: string;
+  recipient?: string;
+  metadata?: any;
+}
+
+export interface WalletContext {
+  identityId: string;
+  walletAddress: string;
+  privateKey: string; // Encrypted
+  publicKey: string;
+  network: string;
+  permissions: WalletPermissions;
+  createdAt: string;
+  lastUsed: string;
+}
+
+export interface TransactionContext {
+  identityId: string;
+  walletAddress: string;
+  nonce: number;
+  gasPrice: string;
+  chainId: number;
+  permissions: WalletPermissions;
+}
+
+export interface SignatureResult {
+  signature: string;
+  transactionHash?: string;
+  identityId: string;
+  timestamp: string;
+  success: boolean;
+  error?: string;
+}
+
+export interface IdentityBalances {
+  identityId: string;
+  walletAddress: string;
+  balances: TokenBalance[];
+  totalValueUSD: number;
+  lastUpdated: string;
+}
+
+export interface TokenBalance {
+  token: string;
+  symbol: string;
+  balance: number;
+  decimals: number;
+  valueUSD: number;
+  contractAddress?: string;
+}
+
+// Enhanced interfaces for the new functionality
+
+export interface IdentityWalletConfig {
+  identityId: string;
+  identityType: IdentityType;
+  permissions: WalletPermissions;
+  limits: WalletLimits;
+  securitySettings: SecuritySettings;
+  privacySettings: PrivacySettings;
+  auditSettings: AuditSettings;
+  piWalletConfig?: PiWalletConfig;
+  customTokens: CustomTokenConfig[];
+  emergencyContacts?: string[];
+  frozen: boolean;
+  frozenReason?: string;
+  frozenAt?: string;
+}
+
+export interface WalletLimits {
+  dailyTransferLimit: number;
+  monthlyTransferLimit: number;
+  maxTransactionAmount: number;
+  maxTransactionsPerHour: number;
+  allowedTokens: string[];
+  restrictedAddresses: string[];
+  requiresApprovalAbove: number;
+  dynamicLimitsEnabled?: boolean;
+  governanceControlled?: boolean;
+  policyId?: string;
+  daoOverrides?: Record<string, any>;
+}
+
+export interface SecuritySettings {
+  requiresDeviceVerification: boolean;
+  requiresMultiSig: boolean;
+  sessionTimeout: number;
+  maxConcurrentSessions: number;
+  suspiciousActivityThreshold: number;
+  autoFreezeOnSuspiciousActivity: boolean;
+}
+
+export interface PrivacySettings {
+  logTransactions: boolean;
+  shareWithAnalytics: boolean;
+  anonymizeMetadata: boolean;
+  ephemeralStorage: boolean;
+  dataRetentionPeriod: number;
+}
+
+export interface AuditSettings {
+  enableAuditLogging: boolean;
+  logLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  retentionPeriod: number;
+  complianceReporting: boolean;
+  qerberosIntegration: boolean;
+}
+
+export interface PiWalletConfig {
+  enabled: boolean;
+  piUserId?: string;
+  piWalletAddress?: string;
+  linkedAt?: string;
+  permissions: string[];
+  transferLimits: {
+    dailyLimit: number;
+    maxTransactionAmount: number;
+  };
+}
+
+export interface PiWalletData {
+  piUserId: string;
+  piWalletAddress: string;
+  accessToken: string;
+  refreshToken: string;
+  permissions: string[];
+  linkedAt: string;
+  lastSync: string;
+  syncErrors: string[];
+}
+
+export interface PiWalletStatus {
+  connected: boolean;
+  balance: number;
+  lastSync: string;
+  connectionError?: string;
+  supportedOperations: string[];
+}
+
+export interface TransferResult {
+  success: boolean;
+  transactionHash?: string;
+  amount: number;
+  token: string;
+  fromAddress: string;
+  toAddress: string;
+  timestamp: string;
+  error?: string;
+  fees?: number;
+}
+
+export interface TokenInfo {
+  tokenId: string;
+  name: string;
+  symbol: string;
+  chain: 'PI' | 'ANARQ' | 'ETH' | 'BTC' | 'FILECOIN' | 'CUSTOM';
+  decimals: number;
+  iconUrl?: string;
+  governanceRequired?: boolean;
+  contractAddress?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface CustomTokenConfig {
+  tokenId: string;
+  name: string;
+  symbol: string;
+  chain: string;
+  contractAddress: string;
+  decimals: number;
+  iconUrl?: string;
+  addedBy: string;
+  addedAt: string;
+  verified: boolean;
+  governanceApproved?: boolean;
+}
+
+export interface WalletAuditLog {
+  id: string;
+  identityId: string;
+  operation: string;
+  operationType: 'TRANSFER' | 'MINT' | 'SIGN' | 'DEFI' | 'DAO_CREATE' | 'DAO_VOTE' | 'CONFIG_CHANGE' | 'EMERGENCY';
+  amount?: number;
+  token?: string;
+  recipient?: string;
+  timestamp: string;
+  success: boolean;
+  error?: string;
+  riskScore: number;
+  metadata: {
+    deviceFingerprint?: string;
+    ipAddress?: string;
+    userAgent?: string;
+    geolocation?: string;
+    sessionId: string;
+    chain?: string;
+  };
+  qerberosLogId?: string;
+}
+
+export interface RiskAssessment {
+  identityId: string;
+  overallRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  riskFactors: RiskFactor[];
+  recommendations: string[];
+  lastAssessment: string;
+  nextAssessment: string;
+  autoActions: AutoAction[];
+  reputationScore?: number;
+  reputationTier?: 'TRUSTED' | 'NEUTRAL' | 'RESTRICTED';
+  trustedByDAOs?: string[];
+}
+
+export interface RiskFactor {
+  type: 'VELOCITY' | 'AMOUNT' | 'FREQUENCY' | 'PATTERN' | 'DEVICE' | 'LOCATION';
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  description: string;
+  value: number;
+  threshold: number;
+  firstDetected: string;
+  lastDetected: string;
+}
+
+export interface AutoAction {
+  trigger: string;
+  action: 'LOG' | 'WARN' | 'RESTRICT' | 'FREEZE' | 'NOTIFY';
+  executed: boolean;
+  executedAt?: string;
+  result?: string;
+}
+
+export interface DateRange {
+  startDate: string;
+  endDate: string;
+}
+
+export interface ComplianceReport {
+  identityId: string;
+  period: DateRange;
+  totalTransactions: number;
+  totalVolume: number;
+  riskEvents: number;
+  complianceViolations: string[];
+  auditTrail: WalletAuditLog[];
+  generatedAt: string;
+  reportId: string;
+}
+
+export interface GovernanceRequest {
+  requestId: string;
+  identityId: string;
+  operation: WalletOperation;
+  requestedAt: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'EXPIRED';
+  approvers: string[];
+  requiredApprovals: number;
+  currentApprovals: number;
+  expiresAt: string;
+  metadata?: Record<string, any>;
+}
+
+export interface GovernanceStatus {
+  requestId: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'EXPIRED';
+  approvals: Array<{
+    approverId: string;
+    approvedAt: string;
+    decision: boolean;
+    reason?: string;
+  }>;
+  lastUpdated: string;
+}
+
+export class IdentityQwalletService implements EnhancedQwalletServiceInterface {
+  private walletContexts: Map<string, WalletContext> = new Map();
+  private activeWalletContext: string | null = null;
+  private walletPermissions: Map<string, WalletPermissions> = new Map();
+  
+  // Enhanced storage for new functionality
+  private walletConfigs: Map<string, IdentityWalletConfig> = new Map();
+  private piWalletData: Map<string, PiWalletData> = new Map();
+  private auditLogs: Map<string, WalletAuditLog[]> = new Map();
+  private riskAssessments: Map<string, RiskAssessment> = new Map();
+  private governanceRequests: Map<string, GovernanceRequest> = new Map();
+  private supportedTokens: Map<string, TokenInfo[]> = new Map();
+
+  constructor() {
+    this.loadDataFromStorage();
+    this.loadEnhancedDataFromStorage();
+  }  /**
+  
+ * Switch wallet context between identities
+   */
+  async switchWalletContext(fromIdentityId: string, toIdentityId: string): Promise<boolean> {
+    try {
+      // Validate target identity has wallet context
+      const targetContext = this.walletContexts.get(toIdentityId);
+      if (!targetContext) {
+        console.error(`[IdentityQwalletService] No wallet context found for identity: ${toIdentityId}`);
+        return false;
+      }
+
+      // Update active context
+      this.activeWalletContext = toIdentityId;
+      
+      // Store in session storage
+      sessionStorage.setItem('active_wallet_context', toIdentityId);
+
+      // Update wallet context
+      await this.updateWalletContextOnSwitch(toIdentityId);
+
+      // Update last used timestamp
+      targetContext.lastUsed = new Date().toISOString();
+
+      await this.saveDataToStorage();
+
+      console.log(`[IdentityQwalletService] Switched wallet context from ${fromIdentityId} to ${toIdentityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error switching wallet context:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get active wallet context
+   */
+  async getActiveWalletContext(): Promise<string | null> {
+    if (!this.activeWalletContext) {
+      // Try to load from session storage
+      this.activeWalletContext = sessionStorage.getItem('active_wallet_context');
+    }
+    
+    return this.activeWalletContext;
+  }
+
+  /**
+   * Set active wallet context
+   */
+  async setActiveWalletContext(identityId: string): Promise<boolean> {
+    try {
+      // Validate that identity has wallet context
+      const context = this.walletContexts.get(identityId);
+      if (!context) {
+        console.error(`[IdentityQwalletService] Cannot set context for identity without wallet: ${identityId}`);
+        return false;
+      }
+
+      this.activeWalletContext = identityId;
+      sessionStorage.setItem('active_wallet_context', identityId);
+      
+      // Update wallet context
+      await this.updateWalletContextOnSwitch(identityId);
+
+      console.log(`[IdentityQwalletService] Set active wallet context: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error setting wallet context:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get wallet permissions for an identity
+   */
+  async getWalletPermissions(identityId: string): Promise<WalletPermissions> {
+    const permissions = this.walletPermissions.get(identityId);
+    
+    if (!permissions) {
+      // Generate default permissions based on identity type
+      const context = this.walletContexts.get(identityId);
+      if (context) {
+        return context.permissions;
+      }
+      
+      // Return minimal permissions if no context
+      return this.getDefaultPermissions(IdentityType.AID);
+    }
+    
+    return permissions;
+  }
+
+  /**
+   * Update wallet permissions for an identity
+   */
+  async updateWalletPermissions(identityId: string, permissions: Partial<WalletPermissions>): Promise<boolean> {
+    try {
+      const currentPermissions = await this.getWalletPermissions(identityId);
+      const updatedPermissions = { ...currentPermissions, ...permissions };
+      
+      this.walletPermissions.set(identityId, updatedPermissions);
+      
+      // Update context permissions if exists
+      const context = this.walletContexts.get(identityId);
+      if (context) {
+        context.permissions = updatedPermissions;
+      }
+
+      await this.saveDataToStorage();
+
+      console.log(`[IdentityQwalletService] Updated wallet permissions for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error updating wallet permissions:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Validate a wallet operation for an identity
+   */
+  async validateWalletOperation(identityId: string, operation: WalletOperation): Promise<boolean> {
+    try {
+      const permissions = await this.getWalletPermissions(identityId);
+      
+      // Check operation type permissions
+      switch (operation.type) {
+        case 'TRANSFER':
+          if (!permissions.canTransfer) return false;
+          if (operation.amount && operation.amount > permissions.maxTransactionAmount) return false;
+          if (operation.token && !permissions.allowedTokens.includes(operation.token)) return false;
+          break;
+          
+        case 'MINT':
+          if (!permissions.canMintNFT) return false;
+          break;
+          
+        case 'SIGN':
+          if (!permissions.canSignTransactions) return false;
+          break;
+          
+        case 'DEFI':
+          if (!permissions.canAccessDeFi) return false;
+          break;
+          
+        case 'DAO_CREATE':
+        case 'DAO_VOTE':
+          if (!permissions.canCreateDAO) return false;
+          break;
+      }
+
+      // Check restricted operations
+      if (permissions.restrictedOperations.includes(operation.type)) {
+        return false;
+      }
+
+      console.log(`[IdentityQwalletService] Validated ${operation.type} operation for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error validating wallet operation:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Update wallet context when switching identities
+   */
+  async updateWalletContextOnSwitch(identityId: string): Promise<boolean> {
+    try {
+      const context = this.walletContexts.get(identityId);
+      if (!context) {
+        return false;
+      }
+
+      // Simulate updating wallet context in external systems
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Update last used timestamp
+      context.lastUsed = new Date().toISOString();
+
+      console.log(`[IdentityQwalletService] Updated wallet context for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error updating wallet context:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Sync wallet state for an identity
+   */
+  async syncWalletState(identityId: string): Promise<boolean> {
+    try {
+      const context = this.walletContexts.get(identityId);
+      if (!context) {
+        return false;
+      }
+
+      // Simulate syncing with blockchain
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      console.log(`[IdentityQwalletService] Synced wallet state for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error syncing wallet state:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get wallet address for an identity
+   */
+  async getWalletAddressForIdentity(identityId: string): Promise<string | null> {
+    const context = this.walletContexts.get(identityId);
+    return context?.walletAddress || null;
+  }
+
+  /**
+   * Create wallet for an identity
+   */
+  async createWalletForIdentity(identity: ExtendedSquidIdentity): Promise<WalletContext> {
+    try {
+      // Generate wallet address (simulated)
+      const walletAddress = this.generateWalletAddress(identity.did);
+      
+      // Generate key pair (simulated)
+      const { publicKey, privateKey } = await this.generateKeyPair();
+
+      // Get default permissions based on identity type
+      const permissions = this.getDefaultPermissions(identity.type);
+
+      const walletContext: WalletContext = {
+        identityId: identity.did,
+        walletAddress,
+        privateKey: await this.encryptPrivateKey(privateKey), // Encrypt for storage
+        publicKey,
+        network: 'mainnet',
+        permissions,
+        createdAt: new Date().toISOString(),
+        lastUsed: new Date().toISOString()
+      };
+
+      // Store wallet context
+      this.walletContexts.set(identity.did, walletContext);
+      this.walletPermissions.set(identity.did, permissions);
+
+      await this.saveDataToStorage();
+
+      console.log(`[IdentityQwalletService] Created wallet for identity: ${identity.did}`);
+      return walletContext;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error creating wallet for identity:', error);
+      throw new Error(`Failed to create wallet for identity: ${identity.did}`);
+    }
+  }
+
+  /**
+   * Link existing wallet to an identity
+   */
+  async linkWalletToIdentity(identityId: string, walletAddress: string): Promise<boolean> {
+    try {
+      // Validate wallet address format (simplified)
+      if (!walletAddress.startsWith('0x') || walletAddress.length !== 42) {
+        console.error(`[IdentityQwalletService] Invalid wallet address format: ${walletAddress}`);
+        return false;
+      }
+
+      // Check if wallet is already linked to another identity
+      for (const [id, context] of this.walletContexts) {
+        if (context.walletAddress === walletAddress && id !== identityId) {
+          console.error(`[IdentityQwalletService] Wallet already linked to identity: ${id}`);
+          return false;
+        }
+      }
+
+      // Create or update wallet context
+      const existingContext = this.walletContexts.get(identityId);
+      const permissions = existingContext?.permissions || this.getDefaultPermissions(IdentityType.ROOT);
+
+      const walletContext: WalletContext = {
+        identityId,
+        walletAddress,
+        privateKey: '', // External wallet, no private key stored
+        publicKey: '', // Would be derived from wallet
+        network: 'mainnet',
+        permissions,
+        createdAt: existingContext?.createdAt || new Date().toISOString(),
+        lastUsed: new Date().toISOString()
+      };
+
+      this.walletContexts.set(identityId, walletContext);
+      await this.saveDataToStorage();
+
+      console.log(`[IdentityQwalletService] Linked wallet ${walletAddress} to identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error linking wallet to identity:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Get transaction context for an identity
+   */
+  async getTransactionContext(identityId: string): Promise<TransactionContext> {
+    const context = this.walletContexts.get(identityId);
+    const permissions = await this.getWalletPermissions(identityId);
+    
+    if (!context) {
+      throw new Error(`No wallet context found for identity: ${identityId}`);
+    }
+
+    return {
+      identityId,
+      walletAddress: context.walletAddress,
+      nonce: await this.getNonce(context.walletAddress),
+      gasPrice: '20000000000', // 20 gwei
+      chainId: 1, // Ethereum mainnet
+      permissions
+    };
+  }
+
+  /**
+   * Sign transaction for an identity
+   */
+  async signTransactionForIdentity(identityId: string, transaction: any): Promise<SignatureResult> {
+    try {
+      const context = this.walletContexts.get(identityId);
+      if (!context) {
+        return {
+          signature: '',
+          identityId,
+          timestamp: new Date().toISOString(),
+          success: false,
+          error: 'No wallet context found'
+        };
+      }
+
+      // Validate operation
+      const operation: WalletOperation = {
+        type: 'SIGN',
+        metadata: transaction
+      };
+
+      const isValid = await this.validateWalletOperation(identityId, operation);
+      if (!isValid) {
+        return {
+          signature: '',
+          identityId,
+          timestamp: new Date().toISOString(),
+          success: false,
+          error: 'Operation not permitted'
+        };
+      }
+
+      // Simulate transaction signing
+      const signature = await this.signTransaction(transaction, context.privateKey);
+      const transactionHash = this.generateTransactionHash(transaction);
+
+      console.log(`[IdentityQwalletService] Signed transaction for identity: ${identityId}`);
+
+      return {
+        signature,
+        transactionHash,
+        identityId,
+        timestamp: new Date().toISOString(),
+        success: true
+      };
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error signing transaction:', error);
+      return {
+        signature: '',
+        identityId,
+        timestamp: new Date().toISOString(),
+        success: false,
+        error: error instanceof Error ? error.message : 'Signing failed'
+      };
+    }
+  }
+
+  /**
+   * Get balances for an identity
+   */
+  async getBalancesForIdentity(identityId: string): Promise<IdentityBalances> {
+    try {
+      const context = this.walletContexts.get(identityId);
+      if (!context) {
+        throw new Error(`No wallet context found for identity: ${identityId}`);
+      }
+
+      // Simulate fetching balances from blockchain
+      const balances = await this.fetchBalances(context.walletAddress);
+      
+      const totalValueUSD = balances.reduce((total, balance) => total + balance.valueUSD, 0);
+
+      return {
+        identityId,
+        walletAddress: context.walletAddress,
+        balances,
+        totalValueUSD,
+        lastUpdated: new Date().toISOString()
+      };
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error getting balances:', error);
+      throw new Error(`Failed to get balances for identity: ${identityId}`);
+    }
+  }
+
+  /**
+   * Transfer tokens between identities
+   */
+  async transferBetweenIdentities(fromId: string, toId: string, amount: number, token: string): Promise<boolean> {
+    try {
+      const fromContext = this.walletContexts.get(fromId);
+      const toContext = this.walletContexts.get(toId);
+
+      if (!fromContext || !toContext) {
+        console.error('[IdentityQwalletService] Missing wallet context for transfer');
+        return false;
+      }
+
+      // Validate transfer operation
+      const operation: WalletOperation = {
+        type: 'TRANSFER',
+        amount,
+        token,
+        recipient: toContext.walletAddress
+      };
+
+      const isValid = await this.validateWalletOperation(fromId, operation);
+      if (!isValid) {
+        console.error('[IdentityQwalletService] Transfer operation not permitted');
+        return false;
+      }
+
+      // Simulate transfer
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      console.log(`[IdentityQwalletService] Transferred ${amount} ${token} from ${fromId} to ${toId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error transferring between identities:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Sync with Qlock for encryption keys
+   */
+  async syncWithQlock(identityId: string): Promise<boolean> {
+    try {
+      // Simulate sync with Qlock service
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      console.log(`[IdentityQwalletService] Synced with Qlock for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error syncing with Qlock:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Sync with Qonsent for privacy settings
+   */
+  async syncWithQonsent(identityId: string): Promise<boolean> {
+    try {
+      // Simulate sync with Qonsent service
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      console.log(`[IdentityQwalletService] Synced with Qonsent for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error syncing with Qonsent:', error);
+      return false;
+    }
+  }
+
+  // Enhanced Wallet Configuration Management Methods
+
+  /**
+   * Get identity wallet configuration
+   */
+  async getIdentityWalletConfig(identityId: string): Promise<IdentityWalletConfig> {
+    try {
+      let config = this.walletConfigs.get(identityId);
+      
+      if (!config) {
+        // Create default configuration based on identity type
+        const context = this.walletContexts.get(identityId);
+        if (!context) {
+          throw new Error(`No wallet context found for identity: ${identityId}`);
+        }
+
+        // Determine identity type (simplified - in real implementation would come from identity service)
+        const identityType = this.determineIdentityType(identityId);
+        
+        config = this.createDefaultWalletConfig(identityId, identityType);
+        this.walletConfigs.set(identityId, config);
+        await this.saveDataToStorage();
+      }
+      
+      return config;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error getting wallet config:', error);
+      throw new Error(`Failed to get wallet config for identity: ${identityId}`);
+    }
+  }
+
+  /**
+   * Update identity wallet configuration
+   */
+  async updateIdentityWalletConfig(identityId: string, config: Partial<IdentityWalletConfig>): Promise<boolean> {
+    try {
+      const currentConfig = await this.getIdentityWalletConfig(identityId);
+      const updatedConfig = { ...currentConfig, ...config };
+      
+      this.walletConfigs.set(identityId, updatedConfig);
+      
+      // Update related data structures
+      if (config.permissions) {
+        this.walletPermissions.set(identityId, config.permissions);
+        const context = this.walletContexts.get(identityId);
+        if (context) {
+          context.permissions = config.permissions;
+        }
+      }
+
+      await this.saveDataToStorage();
+      
+      // Log configuration change
+      await this.logWalletOperation({
+        id: this.generateId(),
+        identityId,
+        operation: 'CONFIG_UPDATE',
+        operationType: 'CONFIG_CHANGE',
+        timestamp: new Date().toISOString(),
+        success: true,
+        riskScore: 0.1,
+        metadata: {
+          sessionId: this.generateSessionId(),
+          configChanges: Object.keys(config)
+        }
+      });
+
+      console.log(`[IdentityQwalletService] Updated wallet config for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error updating wallet config:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Update identity wallet limits with dynamic governance support
+   */
+  async updateIdentityLimits(identityId: string, limits: WalletLimits): Promise<boolean> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      
+      // Check if governance approval is required for limit changes
+      if (config.limits.governanceControlled && limits.maxTransactionAmount > config.limits.maxTransactionAmount) {
+        const operation: WalletOperation = {
+          type: 'TRANSFER',
+          amount: limits.maxTransactionAmount,
+          metadata: { limitIncrease: true }
+        };
+        
+        const governanceRequest = await this.requestGovernanceApproval(identityId, operation);
+        console.log(`[IdentityQwalletService] Governance approval required for limit increase: ${governanceRequest.requestId}`);
+        return false; // Pending governance approval
+      }
+
+      config.limits = { ...config.limits, ...limits };
+      this.walletConfigs.set(identityId, config);
+      
+      await this.saveDataToStorage();
+
+      console.log(`[IdentityQwalletService] Updated wallet limits for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error updating wallet limits:', error);
+      return false;
+    }
+  }
+
+  // Pi Wallet Integration Methods
+
+  /**
+   * Link Pi Wallet to identity
+   */
+  async linkPiWallet(identityId: string, piWalletData: PiWalletData): Promise<boolean> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      
+      // Check if identity type allows Pi Wallet linking
+      if (config.identityType === IdentityType.AID || config.identityType === IdentityType.CONSENTIDA) {
+        console.error(`[IdentityQwalletService] Pi Wallet linking not allowed for identity type: ${config.identityType}`);
+        return false;
+      }
+
+      // Store Pi Wallet data
+      this.piWalletData.set(identityId, piWalletData);
+      
+      // Update wallet config
+      config.piWalletConfig = {
+        enabled: true,
+        piUserId: piWalletData.piUserId,
+        piWalletAddress: piWalletData.piWalletAddress,
+        linkedAt: piWalletData.linkedAt,
+        permissions: piWalletData.permissions,
+        transferLimits: {
+          dailyLimit: 1000, // Default limits
+          maxTransactionAmount: 500
+        }
+      };
+      
+      this.walletConfigs.set(identityId, config);
+      await this.saveDataToStorage();
+
+      console.log(`[IdentityQwalletService] Linked Pi Wallet for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error linking Pi Wallet:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Unlink Pi Wallet from identity
+   */
+  async unlinkPiWallet(identityId: string): Promise<boolean> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      
+      // Remove Pi Wallet data
+      this.piWalletData.delete(identityId);
+      
+      // Update wallet config
+      config.piWalletConfig = {
+        enabled: false,
+        permissions: [],
+        transferLimits: {
+          dailyLimit: 0,
+          maxTransactionAmount: 0
+        }
+      };
+      
+      this.walletConfigs.set(identityId, config);
+      await this.saveDataToStorage();
+
+      console.log(`[IdentityQwalletService] Unlinked Pi Wallet for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error unlinking Pi Wallet:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Transfer to Pi Wallet
+   */
+  async transferToPiWallet(identityId: string, amount: number, token: string): Promise<TransferResult> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      const piData = this.piWalletData.get(identityId);
+      
+      if (!config.piWalletConfig?.enabled || !piData) {
+        return {
+          success: false,
+          amount,
+          token,
+          fromAddress: '',
+          toAddress: '',
+          timestamp: new Date().toISOString(),
+          error: 'Pi Wallet not linked or enabled'
+        };
+      }
+
+      // Validate transfer limits
+      if (amount > config.piWalletConfig.transferLimits.maxTransactionAmount) {
+        return {
+          success: false,
+          amount,
+          token,
+          fromAddress: '',
+          toAddress: piData.piWalletAddress,
+          timestamp: new Date().toISOString(),
+          error: 'Amount exceeds Pi Wallet transfer limit'
+        };
+      }
+
+      // Simulate transfer to Pi Wallet
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const context = this.walletContexts.get(identityId);
+      const result: TransferResult = {
+        success: true,
+        transactionHash: this.generateTransactionHash({ amount, token, to: piData.piWalletAddress }),
+        amount,
+        token,
+        fromAddress: context?.walletAddress || '',
+        toAddress: piData.piWalletAddress,
+        timestamp: new Date().toISOString(),
+        fees: 0.001
+      };
+
+      console.log(`[IdentityQwalletService] Transferred ${amount} ${token} to Pi Wallet for identity: ${identityId}`);
+      return result;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error transferring to Pi Wallet:', error);
+      return {
+        success: false,
+        amount,
+        token,
+        fromAddress: '',
+        toAddress: '',
+        timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : 'Transfer failed'
+      };
+    }
+  }
+
+  /**
+   * Transfer from Pi Wallet
+   */
+  async transferFromPiWallet(identityId: string, amount: number, token: string): Promise<TransferResult> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      const piData = this.piWalletData.get(identityId);
+      
+      if (!config.piWalletConfig?.enabled || !piData) {
+        return {
+          success: false,
+          amount,
+          token,
+          fromAddress: '',
+          toAddress: '',
+          timestamp: new Date().toISOString(),
+          error: 'Pi Wallet not linked or enabled'
+        };
+      }
+
+      // Simulate transfer from Pi Wallet
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const context = this.walletContexts.get(identityId);
+      const result: TransferResult = {
+        success: true,
+        transactionHash: this.generateTransactionHash({ amount, token, from: piData.piWalletAddress }),
+        amount,
+        token,
+        fromAddress: piData.piWalletAddress,
+        toAddress: context?.walletAddress || '',
+        timestamp: new Date().toISOString(),
+        fees: 0.001
+      };
+
+      console.log(`[IdentityQwalletService] Transferred ${amount} ${token} from Pi Wallet for identity: ${identityId}`);
+      return result;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error transferring from Pi Wallet:', error);
+      return {
+        success: false,
+        amount,
+        token,
+        fromAddress: '',
+        toAddress: '',
+        timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : 'Transfer failed'
+      };
+    }
+  }
+
+  /**
+   * Get Pi Wallet status
+   */
+  async getPiWalletStatus(identityId: string): Promise<PiWalletStatus | null> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      const piData = this.piWalletData.get(identityId);
+      
+      if (!config.piWalletConfig?.enabled || !piData) {
+        return null;
+      }
+
+      // Simulate fetching Pi Wallet status
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      return {
+        connected: true,
+        balance: Math.random() * 1000, // Simulated balance
+        lastSync: piData.lastSync,
+        supportedOperations: piData.permissions
+      };
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error getting Pi Wallet status:', error);
+      return {
+        connected: false,
+        balance: 0,
+        lastSync: '',
+        connectionError: error instanceof Error ? error.message : 'Connection failed',
+        supportedOperations: []
+      };
+    }
+  }
+
+  // Private helper methods
+
+  private getDefaultPermissions(identityType: IdentityType): WalletPermissions {
+    switch (identityType) {
+      case IdentityType.ROOT:
+        return {
+          canTransfer: true,
+          canReceive: true,
+          canMintNFT: true,
+          canSignTransactions: true,
+          canAccessDeFi: true,
+          canCreateDAO: true,
+          maxTransactionAmount: 1000000,
+          allowedTokens: ['ETH', 'QToken', 'PI', 'USDC', 'DAI'],
+          restrictedOperations: [],
+          governanceLevel: 'FULL'
+        };
+      
+      case IdentityType.DAO:
+        return {
+          canTransfer: true,
+          canReceive: true,
+          canMintNFT: true,
+          canSignTransactions: true,
+          canAccessDeFi: true,
+          canCreateDAO: false,
+          maxTransactionAmount: 100000,
+          allowedTokens: ['ETH', 'QToken', 'PI'],
+          restrictedOperations: [],
+          governanceLevel: 'LIMITED'
+        };
+      
+      case IdentityType.ENTERPRISE:
+        return {
+          canTransfer: true,
+          canReceive: true,
+          canMintNFT: true,
+          canSignTransactions: true,
+          canAccessDeFi: false,
+          canCreateDAO: false,
+          maxTransactionAmount: 50000,
+          allowedTokens: ['ETH', 'QToken'],
+          restrictedOperations: ['DEFI'],
+          governanceLevel: 'LIMITED'
+        };
+      
+      case IdentityType.CONSENTIDA:
+        return {
+          canTransfer: false,
+          canReceive: true,
+          canMintNFT: false,
+          canSignTransactions: false,
+          canAccessDeFi: false,
+          canCreateDAO: false,
+          maxTransactionAmount: 100,
+          allowedTokens: ['QToken'],
+          restrictedOperations: ['TRANSFER', 'MINT', 'SIGN', 'DEFI', 'DAO_CREATE'],
+          governanceLevel: 'READ_ONLY'
+        };
+      
+      case IdentityType.AID:
+        return {
+          canTransfer: true,
+          canReceive: true,
+          canMintNFT: false,
+          canSignTransactions: true,
+          canAccessDeFi: false,
+          canCreateDAO: false,
+          maxTransactionAmount: 1000,
+          allowedTokens: ['ETH'],
+          restrictedOperations: ['MINT', 'DEFI', 'DAO_CREATE'],
+          governanceLevel: 'LIMITED'
+        };
+      
+      default:
+        return {
+          canTransfer: false,
+          canReceive: false,
+          canMintNFT: false,
+          canSignTransactions: false,
+          canAccessDeFi: false,
+          canCreateDAO: false,
+          maxTransactionAmount: 0,
+          allowedTokens: [],
+          restrictedOperations: ['TRANSFER', 'MINT', 'SIGN', 'DEFI', 'DAO_CREATE'],
+          governanceLevel: 'READ_ONLY'
+        };
+    }
+  }
+
+  private generateWalletAddress(did: string): string {
+    // Simulate wallet address generation
+    const hash = this.simpleHash(did + Date.now().toString());
+    // Ensure we have a 40-character hex string
+    const paddedHash = hash.padStart(8, '0').repeat(5).substring(0, 40);
+    return '0x' + paddedHash;
+  }
+
+  private async generateKeyPair(): Promise<{ publicKey: string; privateKey: string }> {
+    // Simulate key pair generation
+    const privateKey = this.generateRandomHex(64);
+    const publicKey = this.generateRandomHex(128);
+    
+    return { publicKey, privateKey };
+  }
+
+  private async encryptPrivateKey(privateKey: string): Promise<string> {
+    // Simulate encryption (in production, use proper encryption)
+    return 'encrypted_' + privateKey;
+  }
+
+  private async getNonce(walletAddress: string): Promise<number> {
+    // Simulate getting nonce from blockchain
+    return Math.floor(Math.random() * 1000);
+  }
+
+  private async signTransaction(transaction: any, privateKey: string): Promise<string> {
+    // Simulate transaction signing
+    const txData = JSON.stringify(transaction);
+    return this.simpleHash(txData + privateKey);
+  }
+
+  private generateTransactionHash(transaction: any): string {
+    // Simulate transaction hash generation
+    const txData = JSON.stringify(transaction);
+    return '0x' + this.simpleHash(txData + Date.now().toString());
+  }
+
+  private async fetchBalances(walletAddress: string): Promise<TokenBalance[]> {
+    // Simulate fetching balances from blockchain
+    return [
+      {
+        token: 'ETH',
+        symbol: 'ETH',
+        balance: Math.random() * 10,
+        decimals: 18,
+        valueUSD: Math.random() * 20000
+      },
+      {
+        token: 'QToken',
+        symbol: 'QTK',
+        balance: Math.random() * 1000,
+        decimals: 18,
+        valueUSD: Math.random() * 5000,
+        contractAddress: '0x1234567890123456789012345678901234567890'
+      },
+      {
+        token: 'PI',
+        symbol: 'PI',
+        balance: Math.random() * 100,
+        decimals: 18,
+        valueUSD: Math.random() * 1000,
+        contractAddress: '0x0987654321098765432109876543210987654321'
+      }
+    ];
+  }
+
+  private simpleHash(input: string): string {
+    let hash = 0;
+    for (let i = 0; i < input.length; i++) {
+      const char = input.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(16).padStart(8, '0');
+  }
+
+  private generateRandomHex(length: number): string {
+    const chars = '0123456789abcdef';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return result;
+  }
+
+  private async loadDataFromStorage(): Promise<void> {
+    try {
+      const contextData = localStorage.getItem('identity_qwallet_contexts');
+      if (contextData) {
+        const parsed = JSON.parse(contextData);
+        this.walletContexts = new Map(Object.entries(parsed.contexts || {}));
+        this.walletPermissions = new Map(Object.entries(parsed.permissions || {}));
+        console.log(`[IdentityQwalletService] Loaded ${this.walletContexts.size} wallet contexts from storage`);
+      }
+
+      // Load active context from session storage
+      this.activeWalletContext = sessionStorage.getItem('active_wallet_context');
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error loading data from storage:', error);
+    }
+  }
+
+  private async saveDataToStorage(): Promise<void> {
+    try {
+      const data = {
+        contexts: Object.fromEntries(this.walletContexts),
+        permissions: Object.fromEntries(this.walletPermissions)
+      };
+      localStorage.setItem('identity_qwallet_contexts', JSON.stringify(data));
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error saving data to storage:', error);
+    }
+  }
+}
+
+// Singleton instance
+export const identityQwalletService = new IdentityQwalletService(););rvice(letSeentityQwalId new Service =Qwalletntityconst idet 
+expornce insta/ Singleton
+}
+
+/lt;
+  }turn resu  re
+    }
+  th)];rs.leng* cha() omth.randth.floor(Ma chars[Ma +=result {
+      ngth; i++)= 0; i < lei for (let  '';
+    et result =    l';
+def9abc45678= '0123 chars {
+    conststring umber): (length: nHexRandome generate
+
+  privat);
+  }8, '0'rt((16).padStatring.toSh.abs(hash)eturn Mat
+    r    }t integer
+to 32biConvert h; //  hassh = hash &
+      hahar; - hash) + chash << 5) = ((hash
+      At(i);t.charCodeinpuonst char =       c++) {
+ngth; i.le i < inputi = 0;t le    for (ash = 0;
+let h    : string {
+ing)t: strHash(inpusimple  private }
+
+
+    ];
+     }321'
+   54321098765409876765432187654321098s: '0x09tractAddres con0,
+       00m() * 1th.randoD: Ma   valueUS   ,
+   18s:   decimal     * 100,
+om() th.rand balance: Ma      ,
+ bol: 'PI'  sym      'PI',
+ token:       {
+     
+  '
+      },345678904567890121238909012345670x12345678: 'tractAddress        con 5000,
+ndom() *USD: Math.ra      value18,
+  cimals:       de000,
+  m() * 1do: Math.rananceal
+        b'QTK',ol:         symboken',
+QT: '  token {
+      
+     ,
+      } 20000ndom() *th.ralueUSD: Ma
+        vas: 18,  decimal
+      ndom() * 10, Math.ra   balance:     'ETH',
+  symbol:     TH',
+   'E token:        {
+    eturn [
+ ain
+    rm blockchfrong balances te fetchilaSimu    // ]> {
+kenBalance[se<Toomig): Prress: strinddtAces(wallechBalannc fetivate asy  }
+
+  prString());
+te.now().toxData + DaleHash(this.simp + t'0x' return tion);
+   ransacngify(t JSON.strita = const txDa
+   ioneneratash gion hte transact// Simula   
+ { string y):nsaction: antionHash(trarateTransacivate gene
+  }
+
+  prvateKey);priData + (txHashsimplern this.);
+    retuactionfy(transgiN.strinata = JSOt txDns    cogning
+ansaction silate tr  // Simuing> {
+  Promise<strtring): : svateKey any, prisaction:n(trannTransactiote async sig priva);
+  }
+
+ om() * 1000ath.rand.floor(M return Math
+    blockchainomonce frgetting nmulate 
+    // Sir> {mbe: Promise<nug)trinetAddress: s(wallgetNoncec rivate asyn
+
+  peKey;
+  }privatcrypted_' + urn 'en
+    ret)tioncryp proper enuse, ionproduct (in ryption encimulate // Sng> {
+   romise<stri string): Py:y(privateKeteKeryptPrivac encyn private as
+  }
+
+ vateKey }; pri{ publicKey,turn 
+    re
+    mHex(128);ndogenerateRay = this.cKeliub
+    const px(64);omHegenerateRandthis.ateKey = onst priv  con
+  generatir aimulate key p// Si> {
+    g } strinteKey:tring; priva sy: publicKe: Promise<{eyPair()nerateKte async ge
+
+  priva }dedHash;
+ padx' + rn '0etu;
+    r40)bstring(0, sueat(5).rep(8, '0').h.padStartasdHash = hnst paddeco
+    ing hex straracter-chwe have a 40// Ensure 
+    ing());toStrw()..no + DateleHash(dids.simph = thionst hasation
+    cgenerss  addreetate wall // Simulring {
+   ): stngs(did: striAddreserateWalletvate gen
+  pri }
+  }
+
+       };
+    ONLY'EAD_: 'RnceLevelverna     go],
+     O_CREATE'I', 'DA'DEF, 'SIGN', 'MINT'NSFER', ons: ['TRAtedOperati restric
+         Tokens: [],   allowed
+       ,ionAmount: 0 maxTransact     lse,
+     faAO:canCreateD         lse,
+ cessDeFi: fa  canAc        e,
+lsactions: fanTrans     canSige,
+     tNFT: falsMin     can   ,
+  ceive: false  canRe        
+false,sfer: Tran      can   
+ turn {  re  lt:
+    defau   
+          };
+   D'
+    el: 'LIMITErnanceLev  gove],
+        AO_CREATE'DEFI', 'D['MINT', 'rations: rictedOperest     '],
+     s: ['ETHllowedToken      a    ,
+00 10ount:nAmxTransactio ma      alse,
+   eDAO: f  canCreat,
+        : falseAccessDeFi       canrue,
+   ons: tnsactiTracanSign           false,
+ canMintNFT:         ive: true,
+nRece        ca: true,
+  anTransfer        c
+  rn {      retuD:
+  ype.AIentityT    case Id 
+  ;
+     
+        }_ONLY'el: 'READnanceLev  gover
+        AO_CREATE'],DEFI', 'D', 'NT', 'SIGN'MINSFER', s: ['TRAperationstrictedO    ren'],
+      Tokeens: ['QwedTok   allo  100,
+     tionAmount:  maxTransac        se,
+ AO: falanCreateD        clse,
+  i: faDeFccess     canAalse,
+     ons: fgnTransactinSi         calse,
+ ntNFT: fa  canMi      ,
+   truee:   canReceiv,
+       r: falsensfera      canT {
+      return     NSENTIDA:
+ Type.COse Identity
+      ca      };
+   '
+     TEDel: 'LIMInceLev    governa],
+      : ['DEFI'edOperationsrict rest      oken'],
+   ', 'QT ['ETHowedTokens:       all
+    50000,ount:actionAmaxTrans         me,
+ ateDAO: fals    canCre    se,
+  : faleFissDanAcce    ce,
+      ruions: tnTransact      canSigrue,
+     tNFT:canMint
+          ue,: tr  canReceive
+        er: true,nTransf          caeturn {
+       r:
+ PRISEpe.ENTERtyTyntiIde case      
+      
+  };
+      : 'LIMITED'evelrnanceL       gove[],
+   rations: dOpete   restric      
+ en', 'PI'],Tok['ETH', 'Qokens: wedT    allo
+      0,: 10000ctionAmount maxTransa
+         e,alseateDAO: f    canCr
+      DeFi: true,Access      can  s: true,
+  Transaction    canSign    ,
+  intNFT: true      canM,
+     trueve:ecei        canRtrue,
+  Transfer:        can {
+        returnpe.DAO:
+   ntityTy  case Ide  
+        };
+    ULL'
+    : 'FernanceLevel         gov],
+ ions: [edOperat restrict         , 'DAI'],
+DC''PI', 'USken', TH', 'QTos: ['EenllowedTok      a00000,
+     10tionAmount:xTransac          matrue,
+ateDAO: nCre    ca   true,
+    sDeFi:esAcc      canue,
+    actions: trnSignTrans  ca
+        ue,tNFT: tr     canMin    ve: true,
+ ei    canRec      er: true,
+nsf canTra        turn {
+       re:
+  e.ROOTTypitye Ident   cas) {
+   yTypedentit   switch (i
+  {rmissionsletPee): WalityTypdentype: ItyTentiissions(idPermgetDefault
+  private anged)
+nchin unes remaing ohods (existper metate hel
+  // Priv
+  }
+    }, error);
+m storage:'ata froing dror load] EricealletServ'[IdentityQwe.error(onsol  c) {
+    errorh ( catct');
+    }t_contexive_walle'act.getItem(sionStorageext = seseWalletConttiv   this.acstorage
+   n  from sessiontextd active co   // Loa    }
+
+   ;
+  m storage`)texts fro conze} wallet.sitContextslleis.waLoaded ${the] ervicwalletS[IdentityQe.log(`      consol  || {}));
+okens upportedT.sarsedt.entries(pap(Objecnew Mkens = Totedorhis.supp     t
+    || {}));estsequernanceRparsed.goves(entriap(Object. M= newsts uenceReqverna  this.go
+      || {}));Assessments parsed.risks(ect.entrie Map(Obj = newssmentsiskAsse      this.r;
+  gs || {}))auditLoarsed.es(pt.entriew Map(ObjecLogs = nthis.audit    ));
+    Data || {}sed.piWalletentries(parect. new Map(ObjData =iWallethis.p   t
+     {}));igs || parsed.confes(riObject.entnew Map( = alletConfigs  this.w;
+       || {}))ermissions.psedpars(rieObject.entnew Map(= Permissions allet  this.w    {}));
+  ts || ed.contexies(parsbject.entr= new Map(OtContexts  this.walle       tData);
+(contexON.parse = JSsedarnst p   co     tData) {
+ex   if (cont);
+   s'ontexty_qwallet_cem('identit.getItalStorageta = loct contextDa  consy {
+    tr     {
+void>se<omi): Prorage(StaFromsync loadDat private aa
+  datlude newo incd te methoStoragloadDataFromsting  exi theateUpd  }
+
+  //   }
+error);
+  e:', o storagata t dingav Error svice]tyQwalletSer[Identisole.error('on      c {
+atch (error)));
+    } cfy(dataringi', JSON.st_contextsallety_qwtittItem('idenge.selocalStora        };
+  okens)
+  upportedTes(this.st.fromEntrins: ObjecortedToke    supp,
+    ts)nanceReques.goverEntries(thisfromct. Objes:equesteR  governanc),
+      essments.riskAsss(thismEntrieject.froents: ObriskAssessm     
+   gs),auditLothis.Entries(ect.fromObjitLogs:        aud,
+ alletData)s.piW(thi.fromEntriesbjectalletData: O      piW),
+  nfigs.walletCories(thisfromEntigs: Object.    conf    
+missions),etPerhis.walls(tmEntrie.froObjections: rmiss        pes),
+textletConalhis.wes(tmEntrifroject.texts: Ob     conata = {
+   onst d  c     try {
+  
+ ise<void> {rom): Porage(veDataToStsavate async a
+  priw datnclude neethod to ioStorage mng saveDataT the existiUpdate
+  // }
+  erateId();
+ this.genession_' +rn 'setu{
+    r(): string IdSessionteivate genera  pr
+  }
+
+6);).toString(3w(e.no2, 9) + Datubstr(g(36).srin().toStrandomth. return Ma   : string {
+ateId()rivate gener
+  }
+
+  pessment);t.nextAssssmenew Date(assew Date() > n  return ne {
+  ): booleanentsessmiskAsnt: RsmessesentStale(assmserivate isAs }
+
+  p
+    };
+ ED'RESTRICTL' : 'UTRAUM' ? 'NE=== 'MEDIsk llRiera' : ovSTED'LOW' ? 'TRUk ===  overallRisTier:tion  reputa
+    th * 10),ctors.lengiskFa rax(0, 100 -ath.monScore: M  reputati   ions: [],
+     autoActtring(),
+  SOS* 1000).toI 60 * 60 24 *te.now() + new Date(Dasessment: nextAs    ing(),
+  .toISOStr new Date()ssessment:   lastAtions,
+   enda   recommctors,
+   riskFask,
+      llRiera  ovyId,
+        identiteturn {
+   }
+
+    rns');
+   ion patternt transactview receRes.push('ndation  recomme
+    asures');security meal ioning additnsider enablh('Condations.pus     recommeIGH') {
+ = 'HrallRisk ==f (ove i[];
+   tring[] = : smendationsonst recom}
+
+    cIUM';
+    lRisk = 'MEDeral ov === 'LOW')overallRisk
+      if (     });amp || ''
+ est- 1]?.timLogs.length Logs[recentcentcted: retestDe      la
+  p || '',amst]?.timetLogs[0: recenctedrstDete     fi0000,
+   reshold: 10      thunt,
+  totalAmoue:        vald',
+ cteeteounts dnsaction am'Large tra:  description',
+       ity: 'MEDIUMver      seMOUNT',
+     type: 'A
+     sh({.pursto     riskFac
+  100000) {mount >talA (to
+    if|| 0), 0);nt log.amou=> sum + (m, log) sugs.reduce((ntLont = recemoust totalA
+    conon amountsactize trans   // Analy
+  }
+GH';
+   isk = 'HI overallR });
+     || ''
+     mp ]?.timesta.length - 1ecentLogstLogs[rected: recenet   lastD    || '',
+  ?.timestamptLogs[0]ected: recentDet      firs0,
+  reshold: 5      thth,
+  engecentLogs.le: r     valud',
+   etectety dtion velociansach trn: 'Higiptio      descr 'HIGH',
+    severity:Y',
+      ELOCITpe: 'V ty      push({
+ rs.cto   riskFa
+   th > 50) {ogs.lengf (recentLcity
+    ition velotransacAnalyze  // 
+   OW';
+' = 'LITICALIGH' | 'CR| 'H'MEDIUM' OW' | isk: 'LerallRet ov;
+    l[]tor[] = s: RiskFact riskFactor  cons);
+
+  ours
+    // Last 24 h0 * 1000) 0 * 6 * 6now() - 24e.new Date(Dat > mestamp)ate(log.ti      new Dg => 
+ilter(lo = logs.fogstLst recen    conId) || [];
+ntityogs.get(ideis.auditLst logs = th
+    conssment> {Assemise<Riskstring): ProentityId: t(idsessmeneRiskAsneratasync gete riva  }
+
+  p
+    }
+ return [];    lt:
+      defau     ];
+   }
+         h.png'
+    tokens/etconUrl: '/       i   als: 18,
+  cim      de    'ETH',
+  ain:       ch     ,
+ ol: 'ETH'    symb  ,
+       'Ethereum'  name:
+           'eth',tokenId:                {
+     return [
+      AID:
+   tyType. Identi case;
+           ]
+  }      
+    png'token.s/qtoken '/ iconUrl:     ,
+      s: 18    decimal       ',
+  'ANARQ   chain:        QTK',
+  'ol:ymb          soken',
+  name: 'Q T            ',
+en'qtokenId:        tok{
+              eturn [
+     r  ENTIDA:
+  NSCOpe.e IdentityTy      casns;
+Tokern base retu      E:
+ RPRISENTEdentityType.   case I  ];
+   
+       }    
+     s/pi.png'tokenUrl: '/    icon  ,
+      : 18als  decim      
+    hain: 'PI',          c
+  'PI',    symbol: ',
+         Network'Pi:  name        'pi',
+   kenId:       to
+              {eTokens,
+  as.b          ..n [
+retur     O:
+   e.DAdentityTypase I ];
+      c
+              }271d0F'
+   eAC4958b954Eed9094C44Da90x6B175474E8ctAddress: 'ntra   co    : 18,
+        decimals,
+          'ETH' chain:           'DAI',
+mbol:        sy,
+      Stablecoin'ai name: 'D   ,
+        ai'kenId: 'd     to  {
+              },
+          
+ 9c7e2b6b8e'2303c0f4741b8435b666a33E64A0b8 '0xctAddress:  contra
+           6,cimals:       deETH',
+        chain: '
+         DC','US symbol:   
+         n', 'USD Coi name:       dc',
+    nId: 'us       toke  {
+   
+                  },ng'
+  /tokens/pi.pl: 'iconUr       8,
+     : 1imalsdec            'PI',
+ n:    chai        : 'PI',
+ymbol           s',
+ rketwoPi N  name: '         
+  'pi',Id:     token
+               {kens,
+   ...baseTo     [
+       return OOT:
+     ype.RtityTase Iden     cType) {
+ identitytch (
+
+    swi }
+    ];   
+  png'ens/qtoken.onUrl: '/tok
+        icecimals: 18,
+        d 'ANARQ',     chain:,
+   TK'l: 'Qboym    s   ken',
+  Toname: 'Q       ,
+ token' tokenId: 'q  {
+            },
+  '
+   pngtokens/eth.'/  iconUrl: 8,
+      ecimals: 1     d
+   TH',chain: 'E      TH',
+  ol: 'E      symbum',
+  re'Etheme:   nath',
+      Id: 'e token
+           {[] = [
+  s: TokenInfoTokense banst
+    cofo[] {Ine): TokenityTyp: IdentidentityTypetedTokens(ultSupporte getDefa  priva
+  }
+
+  };
+    }
+      ion: falseatIntegrerberos q       false,
+  ting: eporanceR      compli   0,
+  nPeriod:   retentio     
+  evel: 'LOW',   logL
+       : false,ngitLoggiableAud  en {
+        rn        retult:
+defau       };
+   
+    ation: falseerosIntegr  qerb,
+        : falseportingomplianceRe    c     
+ : 1,iodtionPer      reten,
+    Level: 'LOW'      log   lse,
+  faitLogging:nableAud  e       urn {
+ 
+        ret.AID:Typedentity    case I      };
+  e
+  lsfategration: rberosIn        qe false,
+  eReporting:   complianc
+       * 2,riod: 365 entionPe   retM',
+       EDIULevel: 'M         logng: true,
+ AuditLoggible         ena {
+      return   SENTIDA:
+CONityType.ent     case Id       };
+ rue
+ ration: tntegosI    qerber   : true,
+   ngianceReporti compl      * 3,
+   iod: 365 ntionPer        reteIUM',
+  MED logLevel: '      true,
+   ogging: AuditL   enable   {
+      returnE:
+       PRISERtyType.ENTticase Iden    ;
+        }e
+  ion: truosIntegrat qerber         rue,
+ tporting:lianceRe       comp * 5,
+   d: 365tionPerio      retenGH',
+    : 'HI    logLevel
+      e, truuditLogging:nableA       e  eturn {
+       r:
+  tityType.DAO case Iden   };
+  
+        ueon: trrosIntegrati      qerbeue,
+    orting: trRep  compliance     
+    7,5 *eriod: 36tionP reten   
+       'HIGH',Level:  log       
+ ing: true,oggAuditL      enable  return {
+    OOT:
+      pe.RentityTy     case Idype) {
+ identityT  switch (s {
+  ingettditSpe): AuIdentityTy: entityTypetSettings(idudigetDefaultA private 
+  }
+
+    };
+    }     d: 0
+nPerioataRetentio   d    
+   rage: true,phemeralSto         e
+ ata: true,eMetadmiz       anonyse,
+   falytics: ithAnal      shareW  lse,
+   faons:acti logTrans
+         rn {        retuault:
+ def;
+             }/ 1 day
+od: 1 /tionPeridataReten    
+      e,torage: truphemeralS      e
+    ue,ata: tradymizeMeton         an
+ alse,alytics: fWithAnhare       s false,
+   s:nsactionra  logT
+          return {ID:
+      ntityType.A    case Ide   };
+  ears
+     2 // 2 yiod: 365 * onPerRetenti   data,
+       orage: falseemeralStph         eta: true,
+ etadaeM anonymiz   
+      ,tics: falsehAnalyeWit     shar    ,
+ : trueTransactionslog     {
+      urn  ret      
+CONSENTIDA:e.ypentityT Id
+      case};rs
+        // 3 yea* 3 riod: 365 tionPe   dataReten    alse,
+   Storage: f ephemeral     
+    ue,ata: trtadMe anonymize        e,
+ lytics: falsWithAna     sharee,
+     : tructions   logTransa      rn {
+   retu  SE:
+    RIRPype.ENTEtyTntide case I
+           };
+  ears 5 // 5 y5 *: 36odntionPeriataRete         d
+ e: false,ragto  ephemeralS   alse,
+     : fadatanymizeMetno    a,
+      tics: truethAnaly shareWi
+         ns: true,gTransactiolo          
+return {       ype.DAO:
+ ntityTse Ide   ca};
+          ears
+ // 7 y5 * 7  36onPeriod: dataRetenti        false,
+  age:alStor   ephemer    ,
+   : falseeMetadata   anonymiz    true,
+    ytics:areWithAnal       sh
+   ue, transactions:    logTr   eturn {
+           rOOT:
+e.RentityTyp   case Idype) {
+   h (identityT switcngs {
+   acySettie): PrivityTypdentType: Iitygs(identvacySettinfaultPrietDete g
+
+  priva
+    }
+  }ngs;seSettin baretur        lt:
+   defause };
+   : falonatificeriviceVsDe require00,imeout: 18sionTsesngs, .baseSetti ..   return {
+     pe.AID:e IdentityTy     cas 0.3 };
+ ld:ivityThreshoousActsuspici: 1, ionsntSess maxConcurreimeout: 900, sessionTseSettings,{ ...ba    return   :
+  .CONSENTIDApe IdentityTy
+      case };Sessions: 1oncurrent800, maxConTimeout: 1tings, sessi.baseSet{ ..   return ISE:
+     TERPRENtityType. Iden case;
+     ut: 7200 }Timeo, session: trueresMultiSigtings, requi ...baseSet {      return:
+  pe.DAOntityTyIdease ;
+      cvity: true }iciousActiSuspreezeOnoF auttrue,Sig: uiresMultieq, raseSettings...beturn { 
+        r.ROOT:entityType Id   case
+    {ype)ityTwitch (ident   s
+ se
+    };
+vity: falousActiciezeOnSuspi autoFre0.7,
+     hold: ityThresiciousActiv     susp3,
+ ns: tSessioConcurren max
+     1 hour/ out: 3600, /ime sessionTlse,
+     tiSig: fa requiresMulue,
+     tron: VerificatiiceuiresDevreq {
+      gs =baseSettin
+    const ettings {urityStyType): Sec Identiype:yTtitdentySettings(iricuaultSeetDef
+  private g}
+  };
+    }
+e
+        led: truControlgovernance      se,
+    ed: falitsEnablamicLim      dyn: 0,
+    boveesApprovalA      requir    : [],
+dressesAdctedrestri        ns: [],
+  allowedToke
+          ur: 0,sPerHoTransaction  max  ,
+      Amount: 0ransactionaxT    m
+      t: 0,ansferLimihlyTr     montt: 0,
+     ansferLimiyTr     dailrn {
+          retu  
+    default: };
+   
+       lled: falseceContro    governan      
+led: false,sEnabnamicLimitdy         
+ 0,: 10rovalAbovepprequiresA
+          ses: [],resdAddestricte         rH'],
+ ens: ['ET allowedTok,
+         : 10tionsPerHourxTransac  ma
+        t: 500,unmoonAsactimaxTran
+          00,Limit: 100ansferTr   monthly  000,
+     t: 1Liminsfer dailyTra       urn {
+   retD:
+       Type.AIntityase Ide};
+      c    : true
+    ollednceContr  governa     
+   lse,bled: famicLimitsEna      dyna10,
+    ove: rovalAbsApp  require      
+  ses: [],ictedAddres  restr        
+oken'],s: ['QTwedToken  allo5,
+        onsPerHour: actins    maxTra   
+   : 50,actionAmountns    maxTra   
+   00,it: 10yTransferLim     monthl
+     100,mit: rLifensdailyTra     
+     urn {
+        retDA:pe.CONSENTIIdentityTy     case ;
+   }   d: true
+   Controllernance gove    se,
+     d: falEnabletsdynamicLimi          00,
+ve: 25alAboresApprov      requi
+    resses: [],Addtrictedres       ken'],
+   'QToTH', s: ['Eoken    allowedT    
+  ur: 25,tionsPerHoransacmaxT        00,
+   100nt:sactionAmou   maxTran       00,
+Limit: 2500ransfer  monthlyT
+        t: 25000,nsferLimira  dailyT   rn {
+     retu    
+    RPRISE:ityType.ENTEIdent
+      case 
+        };d: truerollentnanceCoover       grue,
+   d: tbleicLimitsEna dynam         : 5000,
+ovepprovalAbiresAequ          r],
+sses: [tedAddre  restric      'PI'],
+   en','QTok'ETH', ns: [edTokellow    a  50,
+    our: sPerHctionxTransa    ma    
+  00,: 250actionAmountansmaxTr       0,
+   000erLimit: 50ransfyT   monthl0,
+       it: 5000ferLimlyTrans   dai{
+          return   .DAO:
+   ntityType  case Ide    };
+    false
+    ontrolled: governanceC     ,
+     : trueimitsEnabledynamicL     d0,
+     Above: 1000valroquiresApp         re[],
+ Addresses: tedstric  re      '],
+  DC', 'DAI 'PI', 'USoken',H', 'QTns: ['ETedToke    allow      100,
+onsPerHour: axTransacti
+          m50000,nt: nsactionAmou     maxTra0000,
+     it: 100ansferLimTr    monthly
+       100000,nsferLimit:   dailyTra
+         return {      ROOT:
+ityType.se Ident
+      ca) {tyTypech (identi    swittLimits {
+lleWape): ntityTye: IdeTypits(identityLimDefaultrivate get  p
+  }
+
+e
+    };zen: falsfro,
+      : []okensmT      custoityType),
+tings(identultAuditSets.getDefangs: thiSetti    audit
+  ityType),dents(iySettingultPrivac.getDefags: thisinySett      privac
+),entityTypetings(idtySetecuri.getDefaultSttings: thisritySe secupe),
+     ntityTytLimits(idegetDefaulhis.mits: t
+      lis,permission   tyType,
+         identid,
+entityI  id{
+       return 
+ pe);
+    Tyentitys(idtPermissionefauls.getDssions = thi const permi   onfig {
+yWalletCpe): IdentitityTyype: IdentidentityT string, tityId:ig(idenonfaultWalletCteDefcreae privat
+    }
+D;
+tityType.AIturn Idenre    IDA;
+SENTityType.CONn Ident) returnsentida')('codestityId.includenf (i   iRPRISE;
+ NTE.EentityTypeturn Id')) repriseerent.includes('dentityId  if (iDAO;
+  tyType.tiIden return 'dao'))ludes(.incityId(identOT;
+    if ype.ROityTrn Identoot')) retu.includes('rtityIddenif (ice
+     servititye idenquery th would is thion,atal implement/ In re
+    /termination type deityified identimpl
+    // S {entityType string): IdntityId:pe(ideyTyrmineIdentitate deteiv
+  prty
+onalinced functienhar s foelper methodrivate h P  // }
+  }
+
+   false;
+   return ;
+   ror)ercision:', ernance delying govpprror a] ErvicewalletSeIdentityQe.error('[sol     con{
+ r) (erroh tc   } cae;
+   return tru}`);
+    ed ${approv, approved:Id}equestt: ${rr requesion fonance decisgover Applied vice]lletSerQwaIdentityg(`[ console.lo    });
+
+   
+    d
+        }    approve     Id,
+  request     
+    ),Id(essionrateShis.genenId: t      sessio {
+    data:  meta,
+       0.2riskScore:e,
+        ccess: tru      su(),
+  OStringte().toISnew Datimestamp:       CHANGE',
+  G_NFI: 'COperationType      oSION',
+  ECINCE_Dn: 'GOVERNA    operatioyId,
+    uest.identit reqyId:ntit  ide     teId(),
+ enera id: this.g     {
+  ation(letOperis.logWalit th
+      awaisiondecce vernanog go // L);
+
+     oStorage(ataT.saveD await this   equest);
+  stId, rrequequests.set(nanceRe.gover   this   EJECTED';
+: 'RROVED' ved ? 'APPs = approtust.stareque     
+
+ 
+      }n false;  retur`);
+      estId}ound: ${requt not fequesernance rGovvice] tSertyQwalletierror(`[Idenonsole.  c{
+      st) reque
+      if (!Id);ests.get(requceRequestvernanst = this.go reque    const  try {
+  {
+  oolean> mise<broean): Pd: boolng, approve: striequestIdecision(reDplyGovernancap
+  async */ision
+   ance decApply govern * 
+  /**
+     }
+  }
+);
+ tId}` ${requesuest:tus for reqernance sta check gov toed(`Failnew Error   throw 
+   ', error);us:ance statvernchecking goError ce] alletServidentityQwerror('[Ionsole.  c {
+    or)} catch (errtatus;
+     s  return
+     };
+ng()
+     SOStrie().toI Datpdated: newstU      laprovals
+  om actual apopulated frbe p Would als: [], //pprov
+        ast.status,s: requestatu   tId,
+     reques
+        tatus = { GovernanceSnst status:      co  }
+
+  ;
+  rage()ataToStot this.saveD     awaiest);
+   , requtId.set(requesRequestsnce.governa  this  ';
+    EXPIREDtatus = '  request.s') {
+      === 'PENDINGtus stat.ues& reqresAt) &uest.expieqw Date(r) > nenew Date(
+      if ( has expiredquestf reck i Che //}
+
+       }`);
+    estId${requund: ot foquest ne rer(`Governancow new Erro        thr {
+ (!request)
+      if);uestIdests.get(reqanceRequ.govern= thisuest const reqy {
+       {
+    trceStatus>e<Governanromisstring): PquestId: eStatus(reancGovernckc che  asyn
+   */
+statusernance Check gov
+   * 
+
+  /**
+  }
+    }tyId}`);identiity: ${r ident approval fo governanceo requestailed tnew Error(`F   throw or);
+   :', errpprovalvernance ag goestinr requ] ErrotServiceQwalleIdentity.error('[   console{
+   error)  (atch
+    } cst;requeeturn   r
+    yId}`);: ${identit identity for{requestId}uest: $reqovernance ] Created gerviceetSwallityQg(`[Identle.lo    conso();
+
+  ataToStoragehis.saveD t      await;
+quest), re(requestId.setequests.governanceR
+      this };
+       }
+ 
+     ion.typee: operatyp operationT       ,
+  identityIdedBy:     request: {
+       metadatas
+        hour, // 24ng()ritoISOSt60 * 1000). * 60 * .now() + 24ate(Dateew DAt: n   expires    als: 0,
+ urrentApprov
+        cementult requir // Defaovals: 2,iredAppr   requnce
+     O governafrom DAopulated uld be p: [], // Woers      approvING',
+  : 'PENDstatus       ing(),
+ .toISOStre()t: new Dat requestedA    on,
+   perati,
+        otyId      identi  uestId,
+req        t = {
+anceReques Governt request:
+      conseId();neratthis.geId = uestreqonst  {
+      c
+    tryeRequest> {rnance<Gove: PromisetOperation)tion: Wallperad: string, ontityIApproval(idetGovernancesync reques
+  a/
+   *nce approvalst governa
+   * Requeods
+
+  /** Methlsance Contro/ Govern
+  }
+
+  /;
+    }eturn falser);
+      r erro:',e statusreez wallet fngError checkiervice] walletSityQentIdr('[nsole.erro     co
+ ch (error) {
+    } catig.frozen;eturn conf
+      rityId);onfig(identWalletCtIdentityt this.geig = awaist conf      con try {
+n> {
+   se<booleag): Promi strinId:ntityidezen(alletFro
+  async isW   */ozen
+ is frllet if wack Che
+   *
+  /**}
+  }
+
+    eturn false;   rror);
+    er',t:g walleunfreezinor ervice] ErrlletStityQwaIdenerror('[ole. cons
+     ) {(errorcatch    } rue;
+ turn t
+      re);dentityId}`ty: ${iti idenor fetoze wallUnfrice] walletServentityQle.log(`[Idconso    );
+
+    }
+      }   onId()
+   Sessienerated: this.gsionI      ses: {
+    metadata
+        ore: 0.5, riskSc     true,
+   cess:uc
+        sing(),OStr.toISew Date()mestamp: n    ti,
+    MERGENCY'ionType: 'Eerat        opZE',
+EEALLET_UNFReration: 'W
+        opityId,nt        ide,
+rateId()genethis.id:         {
+n(ratioletOpe this.logWal     await
+ action emergency  // Log
+     rage();
+toToSsaveDataawait this.     
+ fig);Id, condentityt(i.sealletConfigs  this.w  
+      
+  ined;defunozenAt = fig.fr   con
+   ined;ason = undefenReconfig.froze;
+      ls= faig.frozen  conf    
+     yId);
+  identitig(ConfWalletntitygetIdeait this. awconfig =     const  try {
+ n> {
+   mise<boolearing): Pro: sttyIdllet(identi unfreezeWa
+  async
+   */e walletUnfreez
+   * 
+  /**
+
+  }
+    }se; falurnet ror);
+     allet:', errr freezing wice] ErroletServQwal('[Identityore.errconsol {
+      error) } catch (   urn true;
+ret
+      n}`);aso: ${re reasonntityId},ty: ${identi idefore wallet ice] FrozQwalletServg(`[Identity console.lo;
+
+           })
+n
+        }    reaso),
+      onId(erateSessigenthis.ssionId:          se{
+ tadata:         me0,
+e: 1.iskScor      r true,
+  success:),
+        String(ISO).tote(Danew tamp:   times      MERGENCY',
+onType: 'Erati        opeEZE',
+LLET_FREration: 'WA  ope      ityId,
+     ident),
+   erateId(id: this.gen     ion({
+   alletOperatis.logW await th    tion
+ ncy acerge  // Log em
+
+    );taToStorage(saveDaawait this.    ;
+   config)(identityId,figs.setwalletConhis.   
+      tg();
+   ).toISOStrin Date( = newenAtg.froz     confison;
+ eason = rea.frozenR      confign = true;
+fig.froze 
+      con  
+   tyId);ig(identiWalletConftygetIdenti this.aitg = awnst confi {
+      co{
+    tryean> e<boolng): Promisason: striing, reyId: strllet(identitreezeWaync f */
+  aslet
+  ze wal  * Free
+  /**
+ Methods
+cy Controls enrg/ Eme}
+
+  / }
+  
+   urn false;    retr);
+  :', erro supportenng tok validatiErrorService] alletQwr('[Identityerronsole.
+      co (error) {atch} c    Supported;
+   return is
+   ed}`);isSupport}: ${tyIdty ${identintiort for ided} suppn ${tokenIrvice] TokelletSetyQwantilog(`[Ide  console.
+         okenId);
+ d === tken.tokenI> toe(token =ns.somTokeedpport= supported nst isSu
+      coId);ityidentrtedTokens(getSuppo this.s = awaitpportedToken  const su{
+     try  {
+   oolean>e<bing): Promis: strIdentoktring, tityId: sdenort(ieTokenSuppalidatync v
+   */
+  asity identt forn supporkeValidate to /**
+   * }
+
+     }
+   false;
+rn      returror);
+, em token:'ng custovi] Error remoletServiceQwal('[Identityror.er   console   ror) {
+catch (er    } urn true;
+
+      ret}`);tyIdidentity: ${identinId} for oke${tken custom toved emoetService] RalltyQwenti(`[Idog   console.l  
+
+ age();oStorveDataTsaawait this. 
+          );
+ dentityIdete(iokens.delsupportedT this.
+     orce refresh tokens to fpportedsucached    // Clear  
+   g);
+     , confi(identityIdConfigs.setthis.wallet
+      ;
+      }
+n false    retur}`);
+    ${tokenIdfound: ken not ce] ToServialletntityQw(`[Ide.erroronsole
+        cngth) {nitialLeth === iTokens.lengstomfig.cu(con    if     
+  Id);
+  Id !== tokenoken => t.t.filter(tTokensom.custfig conmTokens =g.custo    confi  .length;
+nsomTokeg.cust confiength = initialLconst
+          ityId);
+  onfig(identyWalletCentitthis.getIdit = awaonfig      const c  try {
+ n> {
+  omise<booleang): PrenId: stristring, tokityId: n(identomToke removeCustnc asy*/
+    ken
+ toe custom
+   * Remov }
+
+  /**
+    }
+ eturn false; ror);
+     ', errstom token: cu adding ErrorlletService]waentityQrror('[Id console.er) {
+     tch (erro } catrue;
+   n etur  r`);
+    identityId}dentity: ${or i fsymbol}kenConfig.{tooken $m tAdded custoe] rvicQwalletSeity(`[Identlogole.ns
+      co();
+torageaveDataToSis.s await th
+          ;
+ ntityId)elete(idertedTokens.dhis.suppo
+      tefreshforce rto okens orted tched supp Clear ca     //
+      
+  config);(identityId,Configs.setwallet    this.nfig);
+  kenCo.push(tostomTokens.cuonfig      com tokens
+to cust     // Add 
+
+      }rn false;
+ etu;
+        r`)kenId}kenConfig.to{toxists: $dy ereaToken ale] lletServic[IdentityQwale.error(`onso    c   
+ ken) {xistingTo  if (eenId);
+    .tokokenConfigkenId === td(t => t.tos.finenig.customToknfen = co existingTok    constts
+  eady exisen alrheck if tok// C  
+         tityId);
+ g(idenlletConfiWatydentigetI this. awaitt config =ns
+      co
+    try {olean> {<bo): PromisekenConfigig: CustomTo tokenConf string,Id:ken(identitytomToc addCus asyn
+ 
+   */custom tokenAdd   /**
+   *   }
+
+ }
+
+   rn [];   retu);
+   , errorns:'d tokeing supporteror gettice] ErlletServwatyQntirror('[Idele.e     consoror) {
+ ch (er catns;
+    }n toke      retur
+      
+);
+      }aToStorage(atveDait this.sa     awkens);
+   to, entityIdset(idens.Tokpported  this.su      Tokens];
+.custom, ....tokensokens = [.      t        
+       }));
+y }
+   dedBstom.ad addedBy: cum: true,custoa: {  metadat        
+ ed,eApprov.governanc!customquired: nceRevernago          ctAddress,
+ntracom.ustoctAddress: c   contra
+       iconUrl,rl: custom.iconU        
+  m.decimals,stoimals: cu  dec  ,
+      in as anycustom.chain:         chaymbol,
+  : custom.s      symbol   
+ om.name, cust      name:kenId,
+    toId: custom.     token=> ({
+     tom .map(cuskensg.customTo= confiTokens omnst cust   co   s
+  om tokenst // Add cu       
+ e);
+       identityTypig.kens(confportedToaultSuphis.getDefs = ten tokd);
+       identityIletConfig(altyWntitIdeit this.gewaonfig = aconst c   
+     typeentity on idsed ed tokens baortuppault s defGenerate/  /
+       s) {token    if (! 
+  Id);
+     (identitydTokens.getsupportethis.= okens 
+      let t  try {
+  Info[]> {mise<Token ProId: string):(identitykensedTortgetSupposync /
+  aentity
+   *or idns f tokertedpo   * Get sup /**
+
+
+ nt MethodsManagemen hain Toke-c// Multi
+
+  
+  };
+    }`)tityId}${idenentity: ort for idepce riante complraed to geneilew Error(`Fa   throw nr);
+   , erroort:'nce repcompliagenerating ror  ErlletService]dentityQwale.error('[I
+      consoor) {atch (err } creport;
+    return    tyId}`);
+  denti${ir identity:  report foplianceerated comService] GenetallIdentityQw.log(`[    console
+
+  ()
+      };enerateIdId: this.g     report  
+ SOString(),ate().toI: new DgeneratedAts,
+        Logeriod pditTrail:      au
+  ations,anceViol   compli  ts,
+   en     riskEv,
+   metalVolu to  ,
+     onsansactilTrta      tod,
+         perio
+ entityId,
+        ideport = {mplianceR: Coconst report  );
+
+          }}
+
+        mp}`);{log.timestaration} at $n: ${log.ope transactioigh riskh(`Hs.pustioniolaplianceV     com {
+     8)e > 0.g.riskScorlo (        ifh(log => {
+s.forEac periodLog
+      = [];g[]: strinolationsmplianceVinst co
+      coe violationsmpliancentify co Id  //  
+      ngth;
+  e > 0.5).lelog.riskScorog => ogs.filter(liodLvents = pernst riskE     co, 0);
+ ount || 0)log.am sum + (og) =>((sum, lreducedLogs. perioolume =lVotanst tco   gth;
+   s.len = periodLognsactionstalTra    const to );
+
+  ate
+      period.endD <=ampmestlog.ti&  &ateeriod.startD= pp >.timestam  log   g => 
+   gs.filter(los = lodLogperionst   co   [];
+ ) || dentityIdt(is.geuditLogis.ags = th  const lo     try {
+  eport> {
+ eRe<Complianc): Promis: DateRange periodyId: string,identitanceReport(plirateComasync gene  */
+  port
+ ance re compli  * Generate*
+ 
+
+  /*
+  }  }Id}`);
+  ${identitydentity: ssment for ik asseto get rised ror(`Failow new Er     thr;
+ rror), eassessment:'ing risk r gette] ErrowalletServicyQentite.error('[Idol  cons  ror) {
+  catch (er
+    } essment; assrn
+      retu     
+      }
+ e();ToStoragatat this.saveD      awaissment);
+  Id, assety.set(identisessments.riskAs  this    
+  identityId);t(ssmenateRiskAsseis.gener = await thassessment
+         assessmentew riskenerate n    // G
+    nt)) {ssmeStale(asseentsm.isAssesment || this if (!assess     ;
+      
+entityId)et(idessments.g.riskAssisent = thsessm aslet
+       { {
+    trysment>se<RiskAsses): PromitringId: sidentityment(sessskAsetRi
+  async g
+   */entityt for idk assessment ris  * Ge
+  }
+
+  /**
+ 
+    }, error);ion:'peratng wallet orror loggie] ElletServicwa[IdentityQe.error('   consolor) {
+   } catch (err    tyId}`);
+n.identiiorattity: ${ope for idenn}ioation.operattion: ${operllet operagged wavice] LoyQwalletSerentitle.log(`[Id   conso
+   torage();.saveDataToShis  await t
+
+    
+      }d();enerateI= this.gId erosLog.qerbtion      operaging
+  s logate Qerbero// Simul
+        tion) {grasInteings.qerbero.auditSettnfig     if (co;
+ yId).identit(operationiglletConfIdentityWaetthis.git ig = awaconst confbled
+      if enaerberos to Qsending / Simulate      /  
+ 
+    yId, logs);ion.identitoperatt(.setLogsis.audi  th   ation);
+ push(oper   logs.    [];
+yId) ||n.identittiogs.get(operais.auditLogs = thst lo      con try {
+d> {
+   ise<voitLog): Prom WalletAudioperation:tOperation(ogWallec l*/
+  asynt trail
+   on for audiperati wallet o* Log  /**
+   ethods
+
+pliance MComnd nced Audit a // Enha
+ overnan
+ce approval
+      }
+
+      config.limits = { ...config.limits, ...limits };
+      this.walletConfigs.set(identityId, config);
+      
+      await this.saveEnhancedDataToStorage();
+
+      console.log(`[IdentityQwalletService] Updated wallet limits for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error updating wallet limits:', error);
+      return false;
+    }
+  }
+
+  // Pi Wallet Integration Methods
+
+  /**
+   * Link Pi Wallet to identity
+   */
+  async linkPiWallet(identityId: string, piWalletData: PiWalletData): Promise<boolean> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      
+      // Check if identity type allows Pi Wallet linking
+      if (config.identityType === IdentityType.AID || config.identityType === IdentityType.CONSENTIDA) {
+        console.error(`[IdentityQwalletService] Pi Wallet linking not allowed for identity type: ${config.identityType}`);
+        return false;
+      }
+
+      // Store Pi Wallet data
+      this.piWalletData.set(identityId, piWalletData);
+      
+      // Update wallet config
+      config.piWalletConfig = {
+        enabled: true,
+        piUserId: piWalletData.piUserId,
+        piWalletAddress: piWalletData.piWalletAddress,
+        linkedAt: piWalletData.linkedAt,
+        permissions: piWalletData.permissions,
+        transferLimits: {
+          dailyLimit: 1000, // Default limits
+          maxTransactionAmount: 500
+        }
+      };
+      
+      this.walletConfigs.set(identityId, config);
+      await this.saveEnhancedDataToStorage();
+
+      console.log(`[IdentityQwalletService] Linked Pi Wallet for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error linking Pi Wallet:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Unlink Pi Wallet from identity
+   */
+  async unlinkPiWallet(identityId: string): Promise<boolean> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      
+      // Remove Pi Wallet data
+      this.piWalletData.delete(identityId);
+      
+      // Update wallet config
+      config.piWalletConfig = {
+        enabled: false,
+        permissions: [],
+        transferLimits: {
+          dailyLimit: 0,
+          maxTransactionAmount: 0
+        }
+      };
+      
+      this.walletConfigs.set(identityId, config);
+      await this.saveEnhancedDataToStorage();
+
+      console.log(`[IdentityQwalletService] Unlinked Pi Wallet for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error unlinking Pi Wallet:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Transfer to Pi Wallet
+   */
+  async transferToPiWallet(identityId: string, amount: number, token: string): Promise<TransferResult> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      const piData = this.piWalletData.get(identityId);
+      
+      if (!config.piWalletConfig?.enabled || !piData) {
+        return {
+          success: false,
+          amount,
+          token,
+          fromAddress: '',
+          toAddress: '',
+          timestamp: new Date().toISOString(),
+          error: 'Pi Wallet not linked or enabled'
+        };
+      }
+
+      // Validate transfer limits
+      if (amount > config.piWalletConfig.transferLimits.maxTransactionAmount) {
+        return {
+          success: false,
+          amount,
+          token,
+          fromAddress: '',
+          toAddress: piData.piWalletAddress,
+          timestamp: new Date().toISOString(),
+          error: 'Amount exceeds Pi Wallet transfer limit'
+        };
+      }
+
+      // Simulate transfer to Pi Wallet
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const walletAddress = await this.getWalletAddressForIdentity(identityId);
+      const result: TransferResult = {
+        success: true,
+        transactionHash: this.generateTransactionHash({ amount, token, to: piData.piWalletAddress }),
+        amount,
+        token,
+        fromAddress: walletAddress || '',
+        toAddress: piData.piWalletAddress,
+        timestamp: new Date().toISOString(),
+        fees: 0.001
+      };
+
+      console.log(`[IdentityQwalletService] Transferred ${amount} ${token} to Pi Wallet for identity: ${identityId}`);
+      return result;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error transferring to Pi Wallet:', error);
+      return {
+        success: false,
+        amount,
+        token,
+        fromAddress: '',
+        toAddress: '',
+        timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : 'Transfer failed'
+      };
+    }
+  }
+
+  /**
+   * Transfer from Pi Wallet
+   */
+  async transferFromPiWallet(identityId: string, amount: number, token: string): Promise<TransferResult> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      const piData = this.piWalletData.get(identityId);
+      
+      if (!config.piWalletConfig?.enabled || !piData) {
+        return {
+          success: false,
+          amount,
+          token,
+          fromAddress: '',
+          toAddress: '',
+          timestamp: new Date().toISOString(),
+          error: 'Pi Wallet not linked or enabled'
+        };
+      }
+
+      // Simulate transfer from Pi Wallet
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const walletAddress = await this.getWalletAddressForIdentity(identityId);
+      const result: TransferResult = {
+        success: true,
+        transactionHash: this.generateTransactionHash({ amount, token, from: piData.piWalletAddress }),
+        amount,
+        token,
+        fromAddress: piData.piWalletAddress,
+        toAddress: walletAddress || '',
+        timestamp: new Date().toISOString(),
+        fees: 0.001
+      };
+
+      console.log(`[IdentityQwalletService] Transferred ${amount} ${token} from Pi Wallet for identity: ${identityId}`);
+      return result;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error transferring from Pi Wallet:', error);
+      return {
+        success: false,
+        amount,
+        token,
+        fromAddress: '',
+        toAddress: '',
+        timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : 'Transfer failed'
+      };
+    }
+  }
+
+  /**
+   * Get Pi Wallet status
+   */
+  async getPiWalletStatus(identityId: string): Promise<PiWalletStatus | null> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      const piData = this.piWalletData.get(identityId);
+      
+      if (!config.piWalletConfig?.enabled || !piData) {
+        return null;
+      }
+
+      // Simulate fetching Pi Wallet status
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      return {
+        connected: true,
+        balance: Math.random() * 1000, // Simulated balance
+        lastSync: piData.lastSync,
+        supportedOperations: piData.permissions
+      };
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error getting Pi Wallet status:', error);
+      return {
+        connected: false,
+        balance: 0,
+        lastSync: '',
+        connectionError: error instanceof Error ? error.message : 'Connection failed',
+        supportedOperations: []
+      };
+    }
+  }
+
+  // Enhanced Audit and Compliance Methods
+
+  /**
+   * Log wallet operation for audit trail
+   */
+  async logWalletOperation(operation: WalletAuditLog): Promise<void> {
+    try {
+      const logs = this.auditLogs.get(operation.identityId) || [];
+      logs.push(operation);
+      this.auditLogs.set(operation.identityId, logs);
+      
+      // Simulate sending to Qerberos if enabled
+      const config = await this.getIdentityWalletConfig(operation.identityId);
+      if (config.auditSettings.qerberosIntegration) {
+        // Simulate Qerberos logging
+        operation.qerberosLogId = this.generateId();
+      }
+
+      await this.saveEnhancedDataToStorage();
+      console.log(`[IdentityQwalletService] Logged wallet operation: ${operation.operation} for identity: ${operation.identityId}`);
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error logging wallet operation:', error);
+    }
+  }
+
+  /**
+   * Get risk assessment for identity
+   */
+  async getRiskAssessment(identityId: string): Promise<RiskAssessment> {
+    try {
+      let assessment = this.riskAssessments.get(identityId);
+      
+      if (!assessment || this.isAssessmentStale(assessment)) {
+        // Generate new risk assessment
+        assessment = await this.generateRiskAssessment(identityId);
+        this.riskAssessments.set(identityId, assessment);
+        await this.saveEnhancedDataToStorage();
+      }
+      
+      return assessment;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error getting risk assessment:', error);
+      throw new Error(`Failed to get risk assessment for identity: ${identityId}`);
+    }
+  }
+
+  /**
+   * Generate compliance report
+   */
+  async generateComplianceReport(identityId: string, period: DateRange): Promise<ComplianceReport> {
+    try {
+      const logs = this.auditLogs.get(identityId) || [];
+      const periodLogs = logs.filter(log => 
+        log.timestamp >= period.startDate && log.timestamp <= period.endDate
+      );
+
+      const totalTransactions = periodLogs.length;
+      const totalVolume = periodLogs.reduce((sum, log) => sum + (log.amount || 0), 0);
+      const riskEvents = periodLogs.filter(log => log.riskScore > 0.5).length;
+      
+      // Identify compliance violations
+      const complianceViolations: string[] = [];
+      periodLogs.forEach(log => {
+        if (log.riskScore > 0.8) {
+          complianceViolations.push(`High risk transaction: ${log.operation} at ${log.timestamp}`);
+        }
+      });
+
+      const report: ComplianceReport = {
+        identityId,
+        period,
+        totalTransactions,
+        totalVolume,
+        riskEvents,
+        complianceViolations,
+        auditTrail: periodLogs,
+        generatedAt: new Date().toISOString(),
+        reportId: this.generateId()
+      };
+
+      console.log(`[IdentityQwalletService] Generated compliance report for identity: ${identityId}`);
+      return report;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error generating compliance report:', error);
+      throw new Error(`Failed to generate compliance report for identity: ${identityId}`);
+    }
+  }
+
+  // Multi-chain Token Management Methods
+
+  /**
+   * Get supported tokens for identity
+   */
+  async getSupportedTokens(identityId: string): Promise<TokenInfo[]> {
+    try {
+      let tokens = this.supportedTokens.get(identityId);
+      
+      if (!tokens) {
+        // Generate default supported tokens based on identity type
+        const config = await this.getIdentityWalletConfig(identityId);
+        tokens = this.getDefaultSupportedTokens(config.identityType);
+        
+        // Add custom tokens
+        const customTokens = config.customTokens.map(custom => ({
+          tokenId: custom.tokenId,
+          name: custom.name,
+          symbol: custom.symbol,
+          chain: custom.chain as any,
+          decimals: custom.decimals,
+          iconUrl: custom.iconUrl,
+          contractAddress: custom.contractAddress,
+          governanceRequired: !custom.governanceApproved,
+          metadata: { custom: true, addedBy: custom.addedBy }
+        }));
+        
+        tokens = [...tokens, ...customTokens];
+        this.supportedTokens.set(identityId, tokens);
+        await this.saveEnhancedDataToStorage();
+      }
+      
+      return tokens;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error getting supported tokens:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Add custom token
+   */
+  async addCustomToken(identityId: string, tokenConfig: CustomTokenConfig): Promise<boolean> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      
+      // Check if token already exists
+      const existingToken = config.customTokens.find(t => t.tokenId === tokenConfig.tokenId);
+      if (existingToken) {
+        console.error(`[IdentityQwalletService] Token already exists: ${tokenConfig.tokenId}`);
+        return false;
+      }
+
+      // Add to custom tokens
+      config.customTokens.push(tokenConfig);
+      this.walletConfigs.set(identityId, config);
+      
+      // Clear cached supported tokens to force refresh
+      this.supportedTokens.delete(identityId);
+      
+      await this.saveEnhancedDataToStorage();
+
+      console.log(`[IdentityQwalletService] Added custom token ${tokenConfig.symbol} for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error adding custom token:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Remove custom token
+   */
+  async removeCustomToken(identityId: string, tokenId: string): Promise<boolean> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      
+      const initialLength = config.customTokens.length;
+      config.customTokens = config.customTokens.filter(t => t.tokenId !== tokenId);
+      
+      if (config.customTokens.length === initialLength) {
+        console.error(`[IdentityQwalletService] Token not found: ${tokenId}`);
+        return false;
+      }
+
+      this.walletConfigs.set(identityId, config);
+      
+      // Clear cached supported tokens to force refresh
+      this.supportedTokens.delete(identityId);
+      
+      await this.saveEnhancedDataToStorage();
+
+      console.log(`[IdentityQwalletService] Removed custom token ${tokenId} for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error removing custom token:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Validate token support for identity
+   */
+  async validateTokenSupport(identityId: string, tokenId: string): Promise<boolean> {
+    try {
+      const supportedTokens = await this.getSupportedTokens(identityId);
+      const isSupported = supportedTokens.some(token => token.tokenId === tokenId);
+      
+      console.log(`[IdentityQwalletService] Token ${tokenId} support for identity ${identityId}: ${isSupported}`);
+      return isSupported;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error validating token support:', error);
+      return false;
+    }
+  }
+
+  // Emergency Controls Methods
+
+  /**
+   * Freeze wallet
+   */
+  async freezeWallet(identityId: string, reason: string): Promise<boolean> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      
+      config.frozen = true;
+      config.frozenReason = reason;
+      config.frozenAt = new Date().toISOString();
+      
+      this.walletConfigs.set(identityId, config);
+      await this.saveEnhancedDataToStorage();
+
+      // Log emergency action
+      await this.logWalletOperation({
+        id: this.generateId(),
+        identityId,
+        operation: 'WALLET_FREEZE',
+        operationType: 'EMERGENCY',
+        timestamp: new Date().toISOString(),
+        success: true,
+        riskScore: 1.0,
+        metadata: {
+          sessionId: this.generateSessionId(),
+          reason
+        }
+      });
+
+      console.log(`[IdentityQwalletService] Froze wallet for identity: ${identityId}, reason: ${reason}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error freezing wallet:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Unfreeze wallet
+   */
+  async unfreezeWallet(identityId: string): Promise<boolean> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      
+      config.frozen = false;
+      config.frozenReason = undefined;
+      config.frozenAt = undefined;
+      
+      this.walletConfigs.set(identityId, config);
+      await this.saveEnhancedDataToStorage();
+
+      // Log emergency action
+      await this.logWalletOperation({
+        id: this.generateId(),
+        identityId,
+        operation: 'WALLET_UNFREEZE',
+        operationType: 'EMERGENCY',
+        timestamp: new Date().toISOString(),
+        success: true,
+        riskScore: 0.5,
+        metadata: {
+          sessionId: this.generateSessionId()
+        }
+      });
+
+      console.log(`[IdentityQwalletService] Unfroze wallet for identity: ${identityId}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error unfreezing wallet:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Check if wallet is frozen
+   */
+  async isWalletFrozen(identityId: string): Promise<boolean> {
+    try {
+      const config = await this.getIdentityWalletConfig(identityId);
+      return config.frozen;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error checking wallet freeze status:', error);
+      return false;
+    }
+  }
+
+  // Governance Controls Methods
+
+  /**
+   * Request governance approval
+   */
+  async requestGovernanceApproval(identityId: string, operation: WalletOperation): Promise<GovernanceRequest> {
+    try {
+      const requestId = this.generateId();
+      const request: GovernanceRequest = {
+        requestId,
+        identityId,
+        operation,
+        requestedAt: new Date().toISOString(),
+        status: 'PENDING',
+        approvers: [], // Would be populated from DAO governance
+        requiredApprovals: 2, // Default requirement
+        currentApprovals: 0,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
+        metadata: {
+          requestedBy: identityId,
+          operationType: operation.type
+        }
+      };
+
+      this.governanceRequests.set(requestId, request);
+      await this.saveEnhancedDataToStorage();
+
+      console.log(`[IdentityQwalletService] Created governance request: ${requestId} for identity: ${identityId}`);
+      return request;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error requesting governance approval:', error);
+      throw new Error(`Failed to request governance approval for identity: ${identityId}`);
+    }
+  }
+
+  /**
+   * Check governance status
+   */
+  async checkGovernanceStatus(requestId: string): Promise<GovernanceStatus> {
+    try {
+      const request = this.governanceRequests.get(requestId);
+      if (!request) {
+        throw new Error(`Governance request not found: ${requestId}`);
+      }
+
+      // Check if request has expired
+      if (new Date() > new Date(request.expiresAt) && request.status === 'PENDING') {
+        request.status = 'EXPIRED';
+        this.governanceRequests.set(requestId, request);
+        await this.saveEnhancedDataToStorage();
+      }
+
+      const status: GovernanceStatus = {
+        requestId,
+        status: request.status,
+        approvals: [], // Would be populated from actual approvals
+        lastUpdated: new Date().toISOString()
+      };
+
+      return status;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error checking governance status:', error);
+      throw new Error(`Failed to check governance status for request: ${requestId}`);
+    }
+  }
+
+  /**
+   * Apply governance decision
+   */
+  async applyGovernanceDecision(requestId: string, approved: boolean): Promise<boolean> {
+    try {
+      const request = this.governanceRequests.get(requestId);
+      if (!request) {
+        console.error(`[IdentityQwalletService] Governance request not found: ${requestId}`);
+        return false;
+      }
+
+      request.status = approved ? 'APPROVED' : 'REJECTED';
+      this.governanceRequests.set(requestId, request);
+      await this.saveEnhancedDataToStorage();
+
+      // Log governance decision
+      await this.logWalletOperation({
+        id: this.generateId(),
+        identityId: request.identityId,
+        operation: 'GOVERNANCE_DECISION',
+        operationType: 'CONFIG_CHANGE',
+        timestamp: new Date().toISOString(),
+        success: true,
+        riskScore: 0.2,
+        metadata: {
+          sessionId: this.generateSessionId(),
+          requestId,
+          approved
+        }
+      });
+
+      console.log(`[IdentityQwalletService] Applied governance decision for request: ${requestId}, approved: ${approved}`);
+      return true;
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error applying governance decision:', error);
+      return false;
+    }
+  }
+
+  // Private helper methods for enhanced functionality
+
+  private determineIdentityType(identityId: string): IdentityType {
+    // Simplified identity type determination
+    // In real implementation, this would query the identity service
+    if (identityId.includes('root')) return IdentityType.ROOT;
+    if (identityId.includes('dao')) return IdentityType.DAO;
+    if (identityId.includes('enterprise')) return IdentityType.ENTERPRISE;
+    if (identityId.includes('consentida')) return IdentityType.CONSENTIDA;
+    return IdentityType.AID;
+  }
+
+  private createDefaultWalletConfig(identityId: string, identityType: IdentityType): IdentityWalletConfig {
+    return {
+      identityId,
+      identityType,
+      permissions: this.getDefaultPermissions(identityType),
+      limits: this.getDefaultLimits(identityType),
+      securitySettings: this.getDefaultSecuritySettings(identityType),
+      privacySettings: this.getDefaultPrivacySettings(identityType),
+      auditSettings: this.getDefaultAuditSettings(identityType),
+      customTokens: [],
+      frozen: false
+    };
+  }
+
+  private getDefaultLimits(identityType: IdentityType): WalletLimits {
+    switch (identityType) {
+      case IdentityType.ROOT:
+        return {
+          dailyTransferLimit: 100000,
+          monthlyTransferLimit: 1000000,
+          maxTransactionAmount: 50000,
+          maxTransactionsPerHour: 100,
+          allowedTokens: ['ETH', 'QToken', 'PI', 'USDC', 'DAI'],
+          restrictedAddresses: [],
+          requiresApprovalAbove: 10000,
+          dynamicLimitsEnabled: true,
+          governanceControlled: false
+        };
+      case IdentityType.DAO:
+        return {
+          dailyTransferLimit: 50000,
+          monthlyTransferLimit: 500000,
+          maxTransactionAmount: 25000,
+          maxTransactionsPerHour: 50,
+          allowedTokens: ['ETH', 'QToken', 'PI'],
+          restrictedAddresses: [],
+          requiresApprovalAbove: 5000,
+          dynamicLimitsEnabled: true,
+          governanceControlled: true
+        };
+      case IdentityType.ENTERPRISE:
+        return {
+          dailyTransferLimit: 25000,
+          monthlyTransferLimit: 250000,
+          maxTransactionAmount: 10000,
+          maxTransactionsPerHour: 25,
+          allowedTokens: ['ETH', 'QToken'],
+          restrictedAddresses: [],
+          requiresApprovalAbove: 2500,
+          dynamicLimitsEnabled: false,
+          governanceControlled: true
+        };
+      case IdentityType.CONSENTIDA:
+        return {
+          dailyTransferLimit: 100,
+          monthlyTransferLimit: 1000,
+          maxTransactionAmount: 50,
+          maxTransactionsPerHour: 5,
+          allowedTokens: ['QToken'],
+          restrictedAddresses: [],
+          requiresApprovalAbove: 10,
+          dynamicLimitsEnabled: false,
+          governanceControlled: true
+        };
+      case IdentityType.AID:
+        return {
+          dailyTransferLimit: 1000,
+          monthlyTransferLimit: 10000,
+          maxTransactionAmount: 500,
+          maxTransactionsPerHour: 10,
+          allowedTokens: ['ETH'],
+          restrictedAddresses: [],
+          requiresApprovalAbove: 100,
+          dynamicLimitsEnabled: false,
+          governanceControlled: false
+        };
+      default:
+        return {
+          dailyTransferLimit: 0,
+          monthlyTransferLimit: 0,
+          maxTransactionAmount: 0,
+          maxTransactionsPerHour: 0,
+          allowedTokens: [],
+          restrictedAddresses: [],
+          requiresApprovalAbove: 0,
+          dynamicLimitsEnabled: false,
+          governanceControlled: true
+        };
+    }
+  }
+
+  private getDefaultSecuritySettings(identityType: IdentityType): SecuritySettings {
+    const baseSettings = {
+      requiresDeviceVerification: true,
+      requiresMultiSig: false,
+      sessionTimeout: 3600, // 1 hour
+      maxConcurrentSessions: 3,
+      suspiciousActivityThreshold: 0.7,
+      autoFreezeOnSuspiciousActivity: false
+    };
+
+    switch (identityType) {
+      case IdentityType.ROOT:
+        return { ...baseSettings, requiresMultiSig: true, autoFreezeOnSuspiciousActivity: true };
+      case IdentityType.DAO:
+        return { ...baseSettings, requiresMultiSig: true, sessionTimeout: 7200 };
+      case IdentityType.ENTERPRISE:
+        return { ...baseSettings, sessionTimeout: 1800, maxConcurrentSessions: 1 };
+      case IdentityType.CONSENTIDA:
+        return { ...baseSettings, sessionTimeout: 900, maxConcurrentSessions: 1, suspiciousActivityThreshold: 0.3 };
+      case IdentityType.AID:
+        return { ...baseSettings, sessionTimeout: 1800, requiresDeviceVerification: false };
+      default:
+        return baseSettings;
+    }
+  }
+
+  private getDefaultPrivacySettings(identityType: IdentityType): PrivacySettings {
+    switch (identityType) {
+      case IdentityType.ROOT:
+        return {
+          logTransactions: true,
+          shareWithAnalytics: true,
+          anonymizeMetadata: false,
+          ephemeralStorage: false,
+          dataRetentionPeriod: 365 * 7 // 7 years
+        };
+      case IdentityType.DAO:
+        return {
+          logTransactions: true,
+          shareWithAnalytics: true,
+          anonymizeMetadata: false,
+          ephemeralStorage: false,
+          dataRetentionPeriod: 365 * 5 // 5 years
+        };
+      case IdentityType.ENTERPRISE:
+        return {
+          logTransactions: true,
+          shareWithAnalytics: false,
+          anonymizeMetadata: true,
+          ephemeralStorage: false,
+          dataRetentionPeriod: 365 * 3 // 3 years
+        };
+      case IdentityType.CONSENTIDA:
+        return {
+          logTransactions: true,
+          shareWithAnalytics: false,
+          anonymizeMetadata: true,
+          ephemeralStorage: false,
+          dataRetentionPeriod: 365 * 2 // 2 years
+        };
+      case IdentityType.AID:
+        return {
+          logTransactions: false,
+          shareWithAnalytics: false,
+          anonymizeMetadata: true,
+          ephemeralStorage: true,
+          dataRetentionPeriod: 1 // 1 day
+        };
+      default:
+        return {
+          logTransactions: false,
+          shareWithAnalytics: false,
+          anonymizeMetadata: true,
+          ephemeralStorage: true,
+          dataRetentionPeriod: 0
+        };
+    }
+  }
+
+  private getDefaultAuditSettings(identityType: IdentityType): AuditSettings {
+    switch (identityType) {
+      case IdentityType.ROOT:
+        return {
+          enableAuditLogging: true,
+          logLevel: 'HIGH',
+          retentionPeriod: 365 * 7,
+          complianceReporting: true,
+          qerberosIntegration: true
+        };
+      case IdentityType.DAO:
+        return {
+          enableAuditLogging: true,
+          logLevel: 'HIGH',
+          retentionPeriod: 365 * 5,
+          complianceReporting: true,
+          qerberosIntegration: true
+        };
+      case IdentityType.ENTERPRISE:
+        return {
+          enableAuditLogging: true,
+          logLevel: 'MEDIUM',
+          retentionPeriod: 365 * 3,
+          complianceReporting: true,
+          qerberosIntegration: true
+        };
+      case IdentityType.CONSENTIDA:
+        return {
+          enableAuditLogging: true,
+          logLevel: 'MEDIUM',
+          retentionPeriod: 365 * 2,
+          complianceReporting: false,
+          qerberosIntegration: false
+        };
+      case IdentityType.AID:
+        return {
+          enableAuditLogging: false,
+          logLevel: 'LOW',
+          retentionPeriod: 1,
+          complianceReporting: false,
+          qerberosIntegration: false
+        };
+      default:
+        return {
+          enableAuditLogging: false,
+          logLevel: 'LOW',
+          retentionPeriod: 0,
+          complianceReporting: false,
+          qerberosIntegration: false
+        };
+    }
+  }
+
+  private getDefaultSupportedTokens(identityType: IdentityType): TokenInfo[] {
+    const baseTokens: TokenInfo[] = [
+      {
+        tokenId: 'eth',
+        name: 'Ethereum',
+        symbol: 'ETH',
+        chain: 'ETH',
+        decimals: 18,
+        iconUrl: '/tokens/eth.png'
+      },
+      {
+        tokenId: 'qtoken',
+        name: 'Q Token',
+        symbol: 'QTK',
+        chain: 'ANARQ',
+        decimals: 18,
+        iconUrl: '/tokens/qtoken.png'
+      }
+    ];
+
+    switch (identityType) {
+      case IdentityType.ROOT:
+        return [
+          ...baseTokens,
+          {
+            tokenId: 'pi',
+            name: 'Pi Network',
+            symbol: 'PI',
+            chain: 'PI',
+            decimals: 18,
+            iconUrl: '/tokens/pi.png'
+          },
+          {
+            tokenId: 'usdc',
+            name: 'USD Coin',
+            symbol: 'USDC',
+            chain: 'ETH',
+            decimals: 6,
+            contractAddress: '0xA0b86a33E6441b8435b662303c0f479c7e2b6b8e'
+          },
+          {
+            tokenId: 'dai',
+            name: 'Dai Stablecoin',
+            symbol: 'DAI',
+            chain: 'ETH',
+            decimals: 18,
+            contractAddress: '0x6B175474E89094C44Da98b954EedeAC495271d0F'
+          }
+        ];
+      case IdentityType.DAO:
+        return [
+          ...baseTokens,
+          {
+            tokenId: 'pi',
+            name: 'Pi Network',
+            symbol: 'PI',
+            chain: 'PI',
+            decimals: 18,
+            iconUrl: '/tokens/pi.png'
+          }
+        ];
+      case IdentityType.ENTERPRISE:
+        return baseTokens;
+      case IdentityType.CONSENTIDA:
+        return [
+          {
+            tokenId: 'qtoken',
+            name: 'Q Token',
+            symbol: 'QTK',
+            chain: 'ANARQ',
+            decimals: 18,
+            iconUrl: '/tokens/qtoken.png'
+          }
+        ];
+      case IdentityType.AID:
+        return [
+          {
+            tokenId: 'eth',
+            name: 'Ethereum',
+            symbol: 'ETH',
+            chain: 'ETH',
+            decimals: 18,
+            iconUrl: '/tokens/eth.png'
+          }
+        ];
+      default:
+        return [];
+    }
+  }
+
+  private async generateRiskAssessment(identityId: string): Promise<RiskAssessment> {
+    const logs = this.auditLogs.get(identityId) || [];
+    const recentLogs = logs.filter(log => 
+      new Date(log.timestamp) > new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
+    );
+
+    const riskFactors: RiskFactor[] = [];
+    let overallRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'LOW';
+
+    // Analyze transaction velocity
+    if (recentLogs.length > 50) {
+      riskFactors.push({
+        type: 'VELOCITY',
+        severity: 'HIGH',
+        description: 'High transaction velocity detected',
+        value: recentLogs.length,
+        threshold: 50,
+        firstDetected: recentLogs[0]?.timestamp || '',
+        lastDetected: recentLogs[recentLogs.length - 1]?.timestamp || ''
+      });
+      overallRisk = 'HIGH';
+    }
+
+    // Analyze transaction amounts
+    const totalAmount = recentLogs.reduce((sum, log) => sum + (log.amount || 0), 0);
+    if (totalAmount > 100000) {
+      riskFactors.push({
+        type: 'AMOUNT',
+        severity: 'MEDIUM',
+        description: 'Large transaction amounts detected',
+        value: totalAmount,
+        threshold: 100000,
+        firstDetected: recentLogs[0]?.timestamp || '',
+        lastDetected: recentLogs[recentLogs.length - 1]?.timestamp || ''
+      });
+      if (overallRisk === 'LOW') overallRisk = 'MEDIUM';
+    }
+
+    const recommendations: string[] = [];
+    if (overallRisk === 'HIGH') {
+      recommendations.push('Consider enabling additional security measures');
+      recommendations.push('Review recent transaction patterns');
+    }
+
+    return {
+      identityId,
+      overallRisk,
+      riskFactors,
+      recommendations,
+      lastAssessment: new Date().toISOString(),
+      nextAssessment: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      autoActions: [],
+      reputationScore: Math.max(0, 100 - riskFactors.length * 10),
+      reputationTier: overallRisk === 'LOW' ? 'TRUSTED' : overallRisk === 'MEDIUM' ? 'NEUTRAL' : 'RESTRICTED'
+    };
+  }
+
+  private isAssessmentStale(assessment: RiskAssessment): boolean {
+    return new Date() > new Date(assessment.nextAssessment);
+  }
+
+  private generateId(): string {
+    return Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+  }
+
+  private generateSessionId(): string {
+    return 'session_' + this.generateId();
+  }
+
+  // Enhanced storage methods
+  private async loadEnhancedDataFromStorage(): Promise<void> {
+    try {
+      const enhancedData = localStorage.getItem('enhanced_identity_qwallet_data');
+      if (enhancedData) {
+        const parsed = JSON.parse(enhancedData);
+        this.walletConfigs = new Map(Object.entries(parsed.configs || {}));
+        this.piWalletData = new Map(Object.entries(parsed.piWalletData || {}));
+        this.auditLogs = new Map(Object.entries(parsed.auditLogs || {}));
+        this.riskAssessments = new Map(Object.entries(parsed.riskAssessments || {}));
+        this.governanceRequests = new Map(Object.entries(parsed.governanceRequests || {}));
+        this.supportedTokens = new Map(Object.entries(parsed.supportedTokens || {}));
+        console.log(`[IdentityQwalletService] Loaded enhanced data from storage`);
+      }
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error loading enhanced data from storage:', error);
+    }
+  }
+
+  private async saveEnhancedDataToStorage(): Promise<void> {
+    try {
+      const data = {
+        configs: Object.fromEntries(this.walletConfigs),
+        piWalletData: Object.fromEntries(this.piWalletData),
+        auditLogs: Object.fromEntries(this.auditLogs),
+        riskAssessments: Object.fromEntries(this.riskAssessments),
+        governanceRequests: Object.fromEntries(this.governanceRequests),
+        supportedTokens: Object.fromEntries(this.supportedTokens)
+      };
+      localStorage.setItem('enhanced_identity_qwallet_data', JSON.stringify(data));
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error saving enhanced data to storage:', error);
+    }
+  }
+
+  // Update the existing saveDataToStorage method to include enhanced data
+  private async saveDataToStorage(): Promise<void> {
+    try {
+      const data = {
+        contexts: Object.fromEntries(this.walletContexts),
+        permissions: Object.fromEntries(this.walletPermissions)
+      };
+      localStorage.setItem('identity_qwallet_contexts', JSON.stringify(data));
+      
+      // Also save enhanced data
+      await this.saveEnhancedDataToStorage();
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error saving data to storage:', error);
+    }
+  }
+
+  // Private helper methods (existing ones remain unchanged)
+
+  private getDefaultPermissions(identityType: IdentityType): WalletPermissions {
+    switch (identityType) {
+      case IdentityType.ROOT:
+        return {
+          canTransfer: true,
+          canReceive: true,
+          canMintNFT: true,
+          canSignTransactions: true,
+          canAccessDeFi: true,
+          canCreateDAO: true,
+          maxTransactionAmount: 1000000,
+          allowedTokens: ['ETH', 'QToken', 'PI', 'USDC', 'DAI'],
+          restrictedOperations: [],
+          governanceLevel: 'FULL'
+        };
+      
+      case IdentityType.DAO:
+        return {
+          canTransfer: true,
+          canReceive: true,
+          canMintNFT: true,
+          canSignTransactions: true,
+          canAccessDeFi: true,
+          canCreateDAO: false,
+          maxTransactionAmount: 100000,
+          allowedTokens: ['ETH', 'QToken', 'PI'],
+          restrictedOperations: [],
+          governanceLevel: 'LIMITED'
+        };
+      
+      case IdentityType.ENTERPRISE:
+        return {
+          canTransfer: true,
+          canReceive: true,
+          canMintNFT: true,
+          canSignTransactions: true,
+          canAccessDeFi: false,
+          canCreateDAO: false,
+          maxTransactionAmount: 50000,
+          allowedTokens: ['ETH', 'QToken'],
+          restrictedOperations: ['DEFI'],
+          governanceLevel: 'LIMITED'
+        };
+      
+      case IdentityType.CONSENTIDA:
+        return {
+          canTransfer: false,
+          canReceive: true,
+          canMintNFT: false,
+          canSignTransactions: false,
+          canAccessDeFi: false,
+          canCreateDAO: false,
+          maxTransactionAmount: 100,
+          allowedTokens: ['QToken'],
+          restrictedOperations: ['TRANSFER', 'MINT', 'SIGN', 'DEFI', 'DAO_CREATE'],
+          governanceLevel: 'READ_ONLY'
+        };
+      
+      case IdentityType.AID:
+        return {
+          canTransfer: true,
+          canReceive: true,
+          canMintNFT: false,
+          canSignTransactions: true,
+          canAccessDeFi: false,
+          canCreateDAO: false,
+          maxTransactionAmount: 1000,
+          allowedTokens: ['ETH'],
+          restrictedOperations: ['MINT', 'DEFI', 'DAO_CREATE'],
+          governanceLevel: 'LIMITED'
+        };
+      
+      default:
+        return {
+          canTransfer: false,
+          canReceive: false,
+          canMintNFT: false,
+          canSignTransactions: false,
+          canAccessDeFi: false,
+          canCreateDAO: false,
+          maxTransactionAmount: 0,
+          allowedTokens: [],
+          restrictedOperations: ['TRANSFER', 'MINT', 'SIGN', 'DEFI', 'DAO_CREATE'],
+          governanceLevel: 'READ_ONLY'
+        };
+    }
+  }
+
+  private generateWalletAddress(did: string): string {
+    // Simulate wallet address generation
+    const hash = this.simpleHash(did + Date.now().toString());
+    // Ensure we have a 40-character hex string
+    const paddedHash = hash.padStart(8, '0').repeat(5).substring(0, 40);
+    return '0x' + paddedHash;
+  }
+
+  private async generateKeyPair(): Promise<{ publicKey: string; privateKey: string }> {
+    // Simulate key pair generation
+    const privateKey = this.generateRandomHex(64);
+    const publicKey = this.generateRandomHex(128);
+    
+    return { publicKey, privateKey };
+  }
+
+  private async encryptPrivateKey(privateKey: string): Promise<string> {
+    // Simulate encryption (in production, use proper encryption)
+    return 'encrypted_' + privateKey;
+  }
+
+  private async getNonce(walletAddress: string): Promise<number> {
+    // Simulate getting nonce from blockchain
+    return Math.floor(Math.random() * 1000);
+  }
+
+  private async signTransaction(transaction: any, privateKey: string): Promise<string> {
+    // Simulate transaction signing
+    const txData = JSON.stringify(transaction);
+    return this.simpleHash(txData + privateKey);
+  }
+
+  private generateTransactionHash(transaction: any): string {
+    // Simulate transaction hash generation
+    const txData = JSON.stringify(transaction);
+    return '0x' + this.simpleHash(txData + Date.now().toString());
+  }
+
+  private async fetchBalances(walletAddress: string): Promise<TokenBalance[]> {
+    // Simulate fetching balances from blockchain
+    return [
+      {
+        token: 'ETH',
+        symbol: 'ETH',
+        balance: Math.random() * 10,
+        decimals: 18,
+        valueUSD: Math.random() * 20000
+      },
+      {
+        token: 'QToken',
+        symbol: 'QTK',
+        balance: Math.random() * 1000,
+        decimals: 18,
+        valueUSD: Math.random() * 5000,
+        contractAddress: '0x1234567890123456789012345678901234567890'
+      },
+      {
+        token: 'PI',
+        symbol: 'PI',
+        balance: Math.random() * 100,
+        decimals: 18,
+        valueUSD: Math.random() * 1000,
+        contractAddress: '0x0987654321098765432109876543210987654321'
+      }
+    ];
+  }
+
+  private simpleHash(input: string): string {
+    let hash = 0;
+    for (let i = 0; i < input.length; i++) {
+      const char = input.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(16).padStart(8, '0');
+  }
+
+  private generateRandomHex(length: number): string {
+    const chars = '0123456789abcdef';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return result;
+  }
+
+  private async loadDataFromStorage(): Promise<void> {
+    try {
+      const contextData = localStorage.getItem('identity_qwallet_contexts');
+      if (contextData) {
+        const parsed = JSON.parse(contextData);
+        this.walletContexts = new Map(Object.entries(parsed.contexts || {}));
+        this.walletPermissions = new Map(Object.entries(parsed.permissions || {}));
+        console.log(`[IdentityQwalletService] Loaded ${this.walletContexts.size} wallet contexts from storage`);
+      }
+
+      // Load active context from session storage
+      this.activeWalletContext = sessionStorage.getItem('active_wallet_context');
+    } catch (error) {
+      console.error('[IdentityQwalletService] Error loading data from storage:', error);
+    }
+  }
+}
+
+// Singleton instance
+export const identityQwalletService = new IdentityQwalletService();

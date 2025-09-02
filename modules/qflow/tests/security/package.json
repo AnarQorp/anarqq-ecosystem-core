@@ -1,0 +1,56 @@
+{
+  "name": "@qflow/security-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive security and penetration testing suite for Qflow",
+  "main": "SecurityTestSuite.ts",
+  "scripts": {
+    "test": "npm run test:security",
+    "test:security": "ts-node run-security-tests.ts",
+    "test:security:sandbox": "ts-node run-security-tests.ts sandbox",
+    "test:security:permissions": "ts-node run-security-tests.ts permissions",
+    "test:security:isolation": "ts-node run-security-tests.ts isolation",
+    "test:security:crypto": "ts-node run-security-tests.ts crypto",
+    "test:security:network": "ts-node run-security-tests.ts network",
+    "test:pentest": "ts-node run-security-tests.ts pentest",
+    "test:all": "ts-node run-security-tests.ts all",
+    "build": "tsc",
+    "clean": "rm -rf dist reports",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "prepare-reports": "mkdir -p ../../reports/security"
+  },
+  "keywords": [
+    "security",
+    "penetration-testing",
+    "vulnerability-assessment",
+    "qflow",
+    "automation",
+    "serverless"
+  ],
+  "author": "Qflow Security Team",
+  "license": "MIT",
+  "dependencies": {
+    "vitest": "^1.0.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anarq/qflow.git",
+    "directory": "modules/qflow/tests/security"
+  },
+  "bugs": {
+    "url": "https://github.com/anarq/qflow/issues"
+  },
+  "homepage": "https://github.com/anarq/qflow#readme"
+}

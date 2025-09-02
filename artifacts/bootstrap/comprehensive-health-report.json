@@ -1,0 +1,754 @@
+{
+  "reportId": "comprehensive-health-1756592488778",
+  "timestamp": "2025-08-30T22:21:28.778Z",
+  "environment": "local",
+  "healthExport": {
+    "healthSample": {
+      "timestamp": "2025-08-30T22:21:28.773Z",
+      "environment": "local",
+      "totalModules": 8,
+      "healthyModules": 0,
+      "degradedModules": 0,
+      "criticalModules": 8,
+      "modules": {
+        "squid": {
+          "status": "critical",
+          "endpointCount": 3,
+          "successfulEndpoints": 0,
+          "averageResponseTime": 1.6666666666666667
+        },
+        "qlock": {
+          "status": "critical",
+          "endpointCount": 3,
+          "successfulEndpoints": 0,
+          "averageResponseTime": 1.3333333333333333
+        },
+        "qonsent": {
+          "status": "critical",
+          "endpointCount": 3,
+          "successfulEndpoints": 0,
+          "averageResponseTime": 1
+        },
+        "qindex": {
+          "status": "critical",
+          "endpointCount": 3,
+          "successfulEndpoints": 0,
+          "averageResponseTime": 1.3333333333333333
+        },
+        "qerberos": {
+          "status": "critical",
+          "endpointCount": 3,
+          "successfulEndpoints": 0,
+          "averageResponseTime": 2.3333333333333335
+        },
+        "qflow": {
+          "status": "critical",
+          "endpointCount": 3,
+          "successfulEndpoints": 0,
+          "averageResponseTime": 1.3333333333333333
+        },
+        "qwallet": {
+          "status": "critical",
+          "endpointCount": 3,
+          "successfulEndpoints": 0,
+          "averageResponseTime": 2.3333333333333335
+        },
+        "qnet": {
+          "status": "critical",
+          "endpointCount": 3,
+          "successfulEndpoints": 0,
+          "averageResponseTime": 1.6666666666666667
+        }
+      },
+      "overallStatus": "critical",
+      "performanceGates": {
+        "averageResponseTime": 1.625,
+        "maxResponseTime": 3,
+        "minResponseTime": 1,
+        "totalEndpoints": 24,
+        "successfulEndpoints": 0,
+        "successRate": 0
+      },
+      "environmentMatrix": {
+        "current": "local",
+        "supported": [
+          "local",
+          "staging",
+          "qnet-phase2"
+        ],
+        "gateRequirement": "local / staging / QNET Phase 2"
+      },
+      "gateValidation": {
+        "moduleCountGate": {
+          "required": 8,
+          "actual": 8,
+          "passed": true
+        },
+        "healthExportGate": {
+          "description": "Health endpoints export basic metrics for 8+ modules",
+          "passed": false
+        }
+      }
+    },
+    "report": {
+      "reportId": "validation-1756592488775",
+      "timestamp": "2025-08-30T22:21:28.775Z",
+      "overallStatus": "critical",
+      "moduleResults": {
+        "squid": {
+          "moduleId": "squid",
+          "moduleName": "sQuid Identity",
+          "environment": "local",
+          "status": "critical",
+          "endpoints": [
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 2,
+              "endpoint": "/health",
+              "url": "http://localhost:3001/health"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 2,
+              "endpoint": "/identity/create",
+              "url": "http://localhost:3001/identity/create"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 1,
+              "endpoint": "/identity/verify",
+              "url": "http://localhost:3001/identity/verify"
+            }
+          ],
+          "overallHealth": false,
+          "timestamp": "2025-08-30T22:21:28.728Z"
+        },
+        "qlock": {
+          "moduleId": "qlock",
+          "moduleName": "Qlock Encryption",
+          "environment": "local",
+          "status": "critical",
+          "endpoints": [
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 2,
+              "endpoint": "/health",
+              "url": "http://localhost:3002/health"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 1,
+              "endpoint": "/encrypt",
+              "url": "http://localhost:3002/encrypt"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 1,
+              "endpoint": "/decrypt",
+              "url": "http://localhost:3002/decrypt"
+            }
+          ],
+          "overallHealth": false,
+          "timestamp": "2025-08-30T22:21:28.734Z"
+        },
+        "qonsent": {
+          "moduleId": "qonsent",
+          "moduleName": "Qonsent Permissions",
+          "environment": "local",
+          "status": "critical",
+          "endpoints": [
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 1,
+              "endpoint": "/health",
+              "url": "http://localhost:3003/health"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 1,
+              "endpoint": "/permissions/grant",
+              "url": "http://localhost:3003/permissions/grant"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 1,
+              "endpoint": "/permissions/check",
+              "url": "http://localhost:3003/permissions/check"
+            }
+          ],
+          "overallHealth": false,
+          "timestamp": "2025-08-30T22:21:28.739Z"
+        },
+        "qindex": {
+          "moduleId": "qindex",
+          "moduleName": "Qindex Metadata",
+          "environment": "local",
+          "status": "critical",
+          "endpoints": [
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 1,
+              "endpoint": "/health",
+              "url": "http://localhost:3004/health"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 1,
+              "endpoint": "/metadata/store",
+              "url": "http://localhost:3004/metadata/store"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 2,
+              "endpoint": "/metadata/query",
+              "url": "http://localhost:3004/metadata/query"
+            }
+          ],
+          "overallHealth": false,
+          "timestamp": "2025-08-30T22:21:28.743Z"
+        },
+        "qerberos": {
+          "moduleId": "qerberos",
+          "moduleName": "Qerberos Security",
+          "environment": "local",
+          "status": "critical",
+          "endpoints": [
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 2,
+              "endpoint": "/health",
+              "url": "http://localhost:3005/health"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 2,
+              "endpoint": "/audit/log",
+              "url": "http://localhost:3005/audit/log"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 3,
+              "endpoint": "/audit/query",
+              "url": "http://localhost:3005/audit/query"
+            }
+          ],
+          "overallHealth": false,
+          "timestamp": "2025-08-30T22:21:28.748Z"
+        },
+        "qflow": {
+          "moduleId": "qflow",
+          "moduleName": "Qflow Serverless",
+          "environment": "local",
+          "status": "critical",
+          "endpoints": [
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 2,
+              "endpoint": "/health",
+              "url": "http://localhost:3006/health"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 1,
+              "endpoint": "/workflow/execute",
+              "url": "http://localhost:3006/workflow/execute"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 1,
+              "endpoint": "/workflow/status",
+              "url": "http://localhost:3006/workflow/status"
+            }
+          ],
+          "overallHealth": false,
+          "timestamp": "2025-08-30T22:21:28.756Z"
+        },
+        "qwallet": {
+          "moduleId": "qwallet",
+          "moduleName": "Qwallet Payments",
+          "environment": "local",
+          "status": "critical",
+          "endpoints": [
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 2,
+              "endpoint": "/health",
+              "url": "http://localhost:3007/health"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 2,
+              "endpoint": "/wallet/balance",
+              "url": "http://localhost:3007/wallet/balance"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 3,
+              "endpoint": "/wallet/transfer",
+              "url": "http://localhost:3007/wallet/transfer"
+            }
+          ],
+          "overallHealth": false,
+          "timestamp": "2025-08-30T22:21:28.761Z"
+        },
+        "qnet": {
+          "moduleId": "qnet",
+          "moduleName": "QNET Network",
+          "environment": "local",
+          "status": "critical",
+          "endpoints": [
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 2,
+              "endpoint": "/health",
+              "url": "http://localhost:3008/health"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 1,
+              "endpoint": "/nodes/list",
+              "url": "http://localhost:3008/nodes/list"
+            },
+            {
+              "success": false,
+              "error": "fetch failed",
+              "responseTime": 2,
+              "endpoint": "/nodes/status",
+              "url": "http://localhost:3008/nodes/status"
+            }
+          ],
+          "overallHealth": false,
+          "timestamp": "2025-08-30T22:21:28.768Z"
+        }
+      },
+      "performanceGates": null,
+      "summary": {
+        "totalModules": 8,
+        "healthyModules": 0,
+        "degradedModules": 0,
+        "criticalModules": 8,
+        "totalEndpoints": 24,
+        "successfulEndpoints": 0
+      },
+      "recommendations": [
+        "Critical modules detected - immediate attention required"
+      ],
+      "artifacts": {
+        "healthSample": "artifacts/bootstrap/health-sample-local-1756592488774.json"
+      },
+      "gateValidation": {
+        "moduleCountGate": {
+          "required": 8,
+          "actual": 8,
+          "passed": true
+        },
+        "healthExportGate": {
+          "description": "Health endpoints export basic metrics for 8+ modules",
+          "passed": false
+        }
+      }
+    },
+    "moduleResults": {
+      "squid": {
+        "moduleId": "squid",
+        "moduleName": "sQuid Identity",
+        "environment": "local",
+        "status": "critical",
+        "endpoints": [
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 2,
+            "endpoint": "/health",
+            "url": "http://localhost:3001/health"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 2,
+            "endpoint": "/identity/create",
+            "url": "http://localhost:3001/identity/create"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 1,
+            "endpoint": "/identity/verify",
+            "url": "http://localhost:3001/identity/verify"
+          }
+        ],
+        "overallHealth": false,
+        "timestamp": "2025-08-30T22:21:28.728Z"
+      },
+      "qlock": {
+        "moduleId": "qlock",
+        "moduleName": "Qlock Encryption",
+        "environment": "local",
+        "status": "critical",
+        "endpoints": [
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 2,
+            "endpoint": "/health",
+            "url": "http://localhost:3002/health"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 1,
+            "endpoint": "/encrypt",
+            "url": "http://localhost:3002/encrypt"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 1,
+            "endpoint": "/decrypt",
+            "url": "http://localhost:3002/decrypt"
+          }
+        ],
+        "overallHealth": false,
+        "timestamp": "2025-08-30T22:21:28.734Z"
+      },
+      "qonsent": {
+        "moduleId": "qonsent",
+        "moduleName": "Qonsent Permissions",
+        "environment": "local",
+        "status": "critical",
+        "endpoints": [
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 1,
+            "endpoint": "/health",
+            "url": "http://localhost:3003/health"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 1,
+            "endpoint": "/permissions/grant",
+            "url": "http://localhost:3003/permissions/grant"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 1,
+            "endpoint": "/permissions/check",
+            "url": "http://localhost:3003/permissions/check"
+          }
+        ],
+        "overallHealth": false,
+        "timestamp": "2025-08-30T22:21:28.739Z"
+      },
+      "qindex": {
+        "moduleId": "qindex",
+        "moduleName": "Qindex Metadata",
+        "environment": "local",
+        "status": "critical",
+        "endpoints": [
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 1,
+            "endpoint": "/health",
+            "url": "http://localhost:3004/health"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 1,
+            "endpoint": "/metadata/store",
+            "url": "http://localhost:3004/metadata/store"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 2,
+            "endpoint": "/metadata/query",
+            "url": "http://localhost:3004/metadata/query"
+          }
+        ],
+        "overallHealth": false,
+        "timestamp": "2025-08-30T22:21:28.743Z"
+      },
+      "qerberos": {
+        "moduleId": "qerberos",
+        "moduleName": "Qerberos Security",
+        "environment": "local",
+        "status": "critical",
+        "endpoints": [
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 2,
+            "endpoint": "/health",
+            "url": "http://localhost:3005/health"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 2,
+            "endpoint": "/audit/log",
+            "url": "http://localhost:3005/audit/log"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 3,
+            "endpoint": "/audit/query",
+            "url": "http://localhost:3005/audit/query"
+          }
+        ],
+        "overallHealth": false,
+        "timestamp": "2025-08-30T22:21:28.748Z"
+      },
+      "qflow": {
+        "moduleId": "qflow",
+        "moduleName": "Qflow Serverless",
+        "environment": "local",
+        "status": "critical",
+        "endpoints": [
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 2,
+            "endpoint": "/health",
+            "url": "http://localhost:3006/health"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 1,
+            "endpoint": "/workflow/execute",
+            "url": "http://localhost:3006/workflow/execute"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 1,
+            "endpoint": "/workflow/status",
+            "url": "http://localhost:3006/workflow/status"
+          }
+        ],
+        "overallHealth": false,
+        "timestamp": "2025-08-30T22:21:28.756Z"
+      },
+      "qwallet": {
+        "moduleId": "qwallet",
+        "moduleName": "Qwallet Payments",
+        "environment": "local",
+        "status": "critical",
+        "endpoints": [
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 2,
+            "endpoint": "/health",
+            "url": "http://localhost:3007/health"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 2,
+            "endpoint": "/wallet/balance",
+            "url": "http://localhost:3007/wallet/balance"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 3,
+            "endpoint": "/wallet/transfer",
+            "url": "http://localhost:3007/wallet/transfer"
+          }
+        ],
+        "overallHealth": false,
+        "timestamp": "2025-08-30T22:21:28.761Z"
+      },
+      "qnet": {
+        "moduleId": "qnet",
+        "moduleName": "QNET Network",
+        "environment": "local",
+        "status": "critical",
+        "endpoints": [
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 2,
+            "endpoint": "/health",
+            "url": "http://localhost:3008/health"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 1,
+            "endpoint": "/nodes/list",
+            "url": "http://localhost:3008/nodes/list"
+          },
+          {
+            "success": false,
+            "error": "fetch failed",
+            "responseTime": 2,
+            "endpoint": "/nodes/status",
+            "url": "http://localhost:3008/nodes/status"
+          }
+        ],
+        "overallHealth": false,
+        "timestamp": "2025-08-30T22:21:28.768Z"
+      }
+    },
+    "artifactPath": "artifacts/bootstrap/health-sample-local-1756592488774.json",
+    "gateValidation": {
+      "moduleCountGate": {
+        "required": 8,
+        "actual": 8,
+        "passed": true
+      },
+      "healthExportGate": {
+        "description": "Health endpoints export basic metrics for 8+ modules",
+        "passed": false
+      }
+    }
+  },
+  "observabilityMetrics": {
+    "timestamp": "2025-08-30T22:21:28.776Z",
+    "validationService": {
+      "uptime": 3321,
+      "totalValidations": 3,
+      "successRate": 1,
+      "averageResponseTime": 689.3333333333334
+    },
+    "eventBus": {
+      "connected": true,
+      "stats": {
+        "totalEvents": 0,
+        "activeSubscriptions": 5,
+        "registeredSchemas": 0,
+        "topicCounts": {}
+      }
+    },
+    "observability": {
+      "healthStatus": {
+        "status": "healthy",
+        "timestamp": "2025-08-30T22:21:28.777Z",
+        "version": "1.0.0",
+        "dependencies": {},
+        "metrics": {
+          "uptime": 0,
+          "requestCount": 7,
+          "errorRate": 0,
+          "avgResponseTime": 295.42857142857144
+        },
+        "slo": {
+          "latency": {
+            "p50": 0,
+            "p95": 2020,
+            "p99": 2020,
+            "targets": {
+              "p50": 50,
+              "p95": 150,
+              "p99": 200
+            }
+          },
+          "availability": {
+            "uptime": null,
+            "errorRate": 0,
+            "targets": {
+              "uptime": 99.9,
+              "errorBudget": 0.1
+            }
+          }
+        }
+      },
+      "metrics": {
+        "timestamp": "2025-08-30T22:21:28.777Z",
+        "metrics": {
+          "uptime": 0,
+          "requestCount": 7,
+          "errorCount": 0,
+          "errorRate": 0,
+          "avgResponseTime": 295.42857142857144,
+          "p50Latency": 0,
+          "p95Latency": 2020,
+          "p99Latency": 2020,
+          "currentRPS": 0,
+          "concurrentRequests": 0,
+          "memoryUsage": 0,
+          "cpuUsage": 0
+        },
+        "sloTargets": {
+          "latency": {
+            "p50": 50,
+            "p95": 150,
+            "p99": 200
+          },
+          "availability": {
+            "uptime": 99.9,
+            "errorBudget": 0.1
+          },
+          "throughput": {
+            "rps": 1000,
+            "concurrent": 100
+          }
+        }
+      }
+    },
+    "system": {
+      "memoryUsage": {
+        "rss": 55504896,
+        "heapTotal": 12713984,
+        "heapUsed": 8975856,
+        "external": 3193427,
+        "arrayBuffers": 74898
+      },
+      "cpuUsage": {
+        "user": 229003,
+        "system": 56520
+      },
+      "nodeVersion": "v20.19.4",
+      "platform": "linux"
+    }
+  },
+  "gateValidation": {
+    "allGatesPassed": false,
+    "details": {
+      "moduleCountGate": {
+        "required": 8,
+        "actual": 8,
+        "passed": true
+      },
+      "healthExportGate": {
+        "description": "Health endpoints export basic metrics for 8+ modules",
+        "passed": false
+      }
+    }
+  },
+  "artifacts": {
+    "healthSample": "artifacts/bootstrap/health-sample-local-1756592488774.json",
+    "observabilityMetrics": "artifacts/bootstrap/observability-metrics-1756592488778.json"
+  }
+}

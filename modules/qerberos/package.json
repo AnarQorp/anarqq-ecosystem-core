@@ -1,0 +1,79 @@
+{
+  "name": "@anarq/qerberos",
+  "version": "1.0.0",
+  "description": "Qerberos - Security & Audit Module for Q Ecosystem",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc && tsc-alias",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:contract": "vitest run tests/contract",
+    "test:e2e": "vitest run tests/e2e",
+    "lint": "eslint src tests --ext .ts,.js",
+    "lint:fix": "eslint src tests --ext .ts,.js --fix",
+    "clean": "rm -rf dist",
+    "docker:build": "docker build -t qerberos .",
+    "docker:run": "docker run -p 3000:3000 qerberos"
+  },
+  "keywords": [
+    "qerberos",
+    "security",
+    "audit",
+    "anomaly-detection",
+    "risk-scoring",
+    "compliance",
+    "q-ecosystem"
+  ],
+  "author": "AnarQ Team",
+  "license": "MIT",
+  "dependencies": {
+    "@anarq/common-schemas": "workspace:*",
+    "@anarq/common-clients": "workspace:*",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4",
+    "morgan": "^1.10.0",
+    "winston": "^3.11.0",
+    "joi": "^17.11.0",
+    "uuid": "^9.0.1",
+    "ipfs-http-client": "^60.0.1",
+    "node-cron": "^3.0.3",
+    "ml-matrix": "^6.10.7",
+    "simple-statistics": "^7.8.3",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@anarq/testing": "workspace:*",
+    "@types/node": "^20.10.0",
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/compression": "^1.7.5",
+    "@types/morgan": "^1.9.9",
+    "@types/uuid": "^9.0.7",
+    "@types/node-cron": "^3.0.11",
+    "typescript": "^5.3.0",
+    "tsx": "^4.6.0",
+    "tsc-alias": "^1.8.8",
+    "vitest": "^1.0.0",
+    "eslint": "^8.55.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "supertest": "^6.3.3",
+    "@types/supertest": "^2.0.16"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anarq/q-ecosystem.git",
+    "directory": "modules/qerberos"
+  }
+}

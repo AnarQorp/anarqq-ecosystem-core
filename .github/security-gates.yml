@@ -1,0 +1,269 @@
+# Security Quality Gates Configuration
+# This file defines the security quality gates that must pass before code can be merged
+
+# Global settings
+global:
+  # Fail the build if any critical security issues are found
+  fail_on_critical: true
+  # Fail the build if high severity issues exceed threshold
+  fail_on_high_threshold: 5
+  # Allow medium/low severity issues but track them
+  track_medium_low: true
+  # Maximum allowed security debt score
+  max_security_debt: 100
+
+# SAST (Static Application Security Testing) Gates
+sast:
+  enabled: true
+  tools:
+    eslint_security:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: true
+      max_issues: 0
+    
+    semgrep:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: true
+      max_issues: 3
+      
+    codeql:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: true
+      max_issues: 0
+      
+    sonarcloud:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: false
+      max_issues: 10
+      quality_gate: true
+
+# DAST (Dynamic Application Security Testing) Gates
+dast:
+  enabled: true
+  # Only run DAST on main branch and PRs to main
+  branches: ["main", "develop"]
+  tools:
+    zap_baseline:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: true
+      max_issues: 2
+      
+    zap_full:
+      enabled: false  # Only run on scheduled scans
+      fail_on_critical: true
+      fail_on_high: true
+      max_issues: 5
+      
+    nuclei:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: false
+      max_issues: 10
+
+# Dependency Security Gates
+dependencies:
+  enabled: true
+  tools:
+    npm_audit:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: true
+      max_critical: 0
+      max_high: 3
+      
+    snyk:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: true
+      max_critical: 0
+      max_high: 5
+      
+    osv_scanner:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: false
+      max_critical: 0
+      max_high: 10
+
+# Container Security Gates
+containers:
+  enabled: true
+  tools:
+    trivy:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: true
+      max_critical: 0
+      max_high: 2
+      
+    grype:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: false
+      max_critical: 0
+      max_high: 5
+
+# Infrastructure as Code Security Gates
+iac:
+  enabled: true
+  tools:
+    checkov:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: true
+      max_critical: 0
+      max_high: 3
+      
+    kics:
+      enabled: true
+      fail_on_critical: true
+      fail_on_high: false
+      max_critical: 0
+      max_high: 5
+      
+    hadolint:
+      enabled: true
+      fail_on_critical: false
+      fail_on_high: false
+      max_issues: 10
+
+# Secrets Detection Gates
+secrets:
+  enabled: true
+  tools:
+    trufflehog:
+      enabled: true
+      fail_on_verified: true
+      fail_on_unverified: false
+      max_verified: 0
+      max_unverified: 5
+
+# Module-specific overrides
+module_overrides:
+  # Core security modules have stricter requirements
+  "modules/qlock":
+    sast:
+      max_issues: 0
+    dependencies:
+      max_high: 0
+    containers:
+      max_high: 0
+      
+  "modules/qerberos":
+    sast:
+      max_issues: 0
+    dependencies:
+      max_high: 0
+    containers:
+      max_high: 0
+      
+  "modules/squid":
+    sast:
+      max_issues: 0
+    dependencies:
+      max_high: 1
+    containers:
+      max_high: 1
+
+# Exemptions and allowlists
+exemptions:
+  # Files to exclude from security scanning
+  excluded_files:
+    - "**/*.test.js"
+    - "**/*.test.ts"
+    - "**/*.spec.js"
+    - "**/*.spec.ts"
+    - "**/mocks/**"
+    - "**/node_modules/**"
+    - "**/dist/**"
+    - "**/build/**"
+    
+  # Known false positives to ignore
+  false_positives:
+    - rule_id: "javascript:S4426"  # Cryptographic keys should not be disclosed
+      files: ["**/tests/**", "**/examples/**"]
+      reason: "Test keys and examples"
+      
+    - rule_id: "CWE-798"  # Hard-coded credentials
+      files: ["**/docker-compose*.yml"]
+      reason: "Development environment credentials"
+
+# Notification settings
+notifications:
+  slack:
+    enabled: true
+    channel: "#security-alerts"
+    webhook_url_secret: "SLACK_WEBHOOK_URL"
+    
+  email:
+    enabled: false
+    recipients: ["security@example.com"]
+    
+  github:
+    enabled: true
+    create_issues: true
+    assign_to: ["security-team"]
+
+# Security debt tracking
+security_debt:
+  enabled: true
+  # Points assigned per severity level
+  scoring:
+    critical: 50
+    high: 20
+    medium: 5
+    low: 1
+    info: 0
+  
+  # Maximum allowed debt before failing
+  max_total_debt: 100
+  max_new_debt: 20  # Maximum new debt introduced in a PR
+
+# Compliance requirements
+compliance:
+  # SOC2 compliance requirements
+  soc2:
+    enabled: true
+    require_encryption_at_rest: true
+    require_access_logging: true
+    max_data_retention_days: 2555  # 7 years
+    
+  # GDPR compliance requirements
+  gdpr:
+    enabled: true
+    require_data_classification: true
+    require_consent_tracking: true
+    max_personal_data_retention_days: 1095  # 3 years
+    
+  # PCI DSS compliance (if handling payments)
+  pci_dss:
+    enabled: true
+    require_payment_data_encryption: true
+    require_access_controls: true
+    require_audit_logging: true
+
+# Integration settings
+integrations:
+  # Security dashboard API
+  dashboard:
+    enabled: true
+    api_url_secret: "SECURITY_DASHBOARD_API"
+    api_key_secret: "SECURITY_DASHBOARD_KEY"
+    
+  # SIEM integration
+  siem:
+    enabled: false
+    endpoint_secret: "SIEM_ENDPOINT"
+    api_key_secret: "SIEM_API_KEY"
+    
+  # Vulnerability management platform
+  vuln_mgmt:
+    enabled: false
+    platform: "defectdojo"  # or "jira", "servicenow"
+    api_url_secret: "VULN_MGMT_API"
+    api_key_secret: "VULN_MGMT_KEY"

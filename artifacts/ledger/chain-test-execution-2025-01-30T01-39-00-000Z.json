@@ -1,0 +1,35 @@
+{
+  "executionId": "exec_test_123456",
+  "chainRecords": [
+    {
+      "id": "ledger_1756597000000_abc123",
+      "executionId": "exec_test_123456",
+      "timestamp": "2025-01-30T01:39:00.000Z",
+      "nodeId": "node_test123",
+      "vectorClock": {
+        "nodeId": "node_test123",
+        "clock": 1,
+        "eventId": "exec_test_123456"
+      },
+      "previousHash": null,
+      "data": {
+        "type": "input",
+        "steps": 5,
+        "validation": {
+          "hashVerification": true,
+          "signatureValidation": true,
+          "integrityCheck": true
+        },
+        "duration": 500
+      },
+      "hash": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+      "cid": "QmTestCID123456789abcdef"
+    }
+  ],
+  "chainMetadata": {
+    "totalRecords": 1,
+    "chainValid": true,
+    "firstRecord": "genesis",
+    "lastRecord": "QmTestCID123456789abcdef"
+  }
+}

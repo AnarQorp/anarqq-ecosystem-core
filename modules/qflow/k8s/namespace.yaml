@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: qflow
+  labels:
+    name: qflow
+    app.kubernetes.io/name: qflow
+    app.kubernetes.io/component: automation-engine
+    app.kubernetes.io/part-of: anarq-ecosystem

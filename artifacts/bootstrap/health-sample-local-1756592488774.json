@@ -1,0 +1,87 @@
+{
+  "timestamp": "2025-08-30T22:21:28.773Z",
+  "environment": "local",
+  "totalModules": 8,
+  "healthyModules": 0,
+  "degradedModules": 0,
+  "criticalModules": 8,
+  "modules": {
+    "squid": {
+      "status": "critical",
+      "endpointCount": 3,
+      "successfulEndpoints": 0,
+      "averageResponseTime": 1.6666666666666667
+    },
+    "qlock": {
+      "status": "critical",
+      "endpointCount": 3,
+      "successfulEndpoints": 0,
+      "averageResponseTime": 1.3333333333333333
+    },
+    "qonsent": {
+      "status": "critical",
+      "endpointCount": 3,
+      "successfulEndpoints": 0,
+      "averageResponseTime": 1
+    },
+    "qindex": {
+      "status": "critical",
+      "endpointCount": 3,
+      "successfulEndpoints": 0,
+      "averageResponseTime": 1.3333333333333333
+    },
+    "qerberos": {
+      "status": "critical",
+      "endpointCount": 3,
+      "successfulEndpoints": 0,
+      "averageResponseTime": 2.3333333333333335
+    },
+    "qflow": {
+      "status": "critical",
+      "endpointCount": 3,
+      "successfulEndpoints": 0,
+      "averageResponseTime": 1.3333333333333333
+    },
+    "qwallet": {
+      "status": "critical",
+      "endpointCount": 3,
+      "successfulEndpoints": 0,
+      "averageResponseTime": 2.3333333333333335
+    },
+    "qnet": {
+      "status": "critical",
+      "endpointCount": 3,
+      "successfulEndpoints": 0,
+      "averageResponseTime": 1.6666666666666667
+    }
+  },
+  "overallStatus": "critical",
+  "performanceGates": {
+    "averageResponseTime": 1.625,
+    "maxResponseTime": 3,
+    "minResponseTime": 1,
+    "totalEndpoints": 24,
+    "successfulEndpoints": 0,
+    "successRate": 0
+  },
+  "environmentMatrix": {
+    "current": "local",
+    "supported": [
+      "local",
+      "staging",
+      "qnet-phase2"
+    ],
+    "gateRequirement": "local / staging / QNET Phase 2"
+  },
+  "gateValidation": {
+    "moduleCountGate": {
+      "required": 8,
+      "actual": 8,
+      "passed": true
+    },
+    "healthExportGate": {
+      "description": "Health endpoints export basic metrics for 8+ modules",
+      "passed": false
+    }
+  }
+}

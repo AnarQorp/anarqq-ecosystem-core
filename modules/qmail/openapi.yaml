@@ -1,0 +1,708 @@
+openapi: 3.0.3
+info:
+  title: Qmail API
+  description: Certified Messaging Module for AnarQ&Q Ecosystem
+  version: 1.0.0
+  contact:
+    name: AnarQ&Q Team
+    url: https://github.com/anarq/qmail
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000/api/qmail
+    description: Development server
+  - url: https://api.q.network/qmail
+    description: Production server
+
+paths:
+  /send:
+    post:
+      summary: Send encrypted message
+      description: Send an encrypted message with certified delivery tracking
+      operationId: sendMessage
+      tags:
+        - Messages
+      security:
+        - squidAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+            examples:
+              basicMessage:
+                summary: Basic encrypted message
+                value:
+                  recipientId: "squid_recipient_123"
+                  subject: "Hello from Q Ecosystem"
+                  content: "This is a secure message"
+                  encryptionLevel: "STANDARD"
+                  priority: "NORMAL"
+                  certifiedDelivery: true
+      responses:
+        '200':
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendMessageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /inbox/{squidId}:
+    get:
+      summary: Get inbox messages
+      description: Retrieve messages from user's inbox with decryption
+      operationId: getInboxMessages
+      tags:
+        - Messages
+      security:
+        - squidAuth: []
+      parameters:
+        - name: squidId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: sQuid identity ID
+        - name: folder
+          in: query
+          schema:
+            type: string
+            enum: [INBOX, SENT, DRAFTS, SPAM, TRASH]
+            default: INBOX
+          description: Message folder
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Maximum messages to return
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Pagination offset
+        - name: unreadOnly
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Return only unread messages
+      responses:
+        '200':
+          description: Messages retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InboxResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /message/{messageId}:
+    get:
+      summary: Get specific message
+      description: Retrieve and decrypt a specific message
+      operationId: getMessage
+      tags:
+        - Messages
+      security:
+        - squidAuth: []
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Message ID
+      responses:
+        '200':
+          description: Message retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    
+    delete:
+      summary: Delete message
+      description: Delete message (GDPR compliance)
+      operationId: deleteMessage
+      tags:
+        - Messages
+      security:
+        - squidAuth: []
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Message ID
+      responses:
+        '200':
+          description: Message deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /receipt/{messageId}:
+    post:
+      summary: Generate delivery receipt
+      description: Generate cryptographic delivery receipt
+      operationId: generateReceipt
+      tags:
+        - Receipts
+      security:
+        - squidAuth: []
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Message ID
+      responses:
+        '200':
+          description: Receipt generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /receipts/{messageId}:
+    get:
+      summary: Get message receipts
+      description: Get all delivery receipts for a message
+      operationId: getMessageReceipts
+      tags:
+        - Receipts
+      security:
+        - squidAuth: []
+      parameters:
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Message ID
+      responses:
+        '200':
+          description: Receipts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /search:
+    post:
+      summary: Search messages
+      description: Search encrypted messages with metadata
+      operationId: searchMessages
+      tags:
+        - Messages
+      security:
+        - squidAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Search completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /health:
+    get:
+      summary: Health check
+      description: Check service health and dependencies
+      operationId: healthCheck
+      tags:
+        - System
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+components:
+  securitySchemes:
+    squidAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: sQuid identity authentication
+
+  schemas:
+    SendMessageRequest:
+      type: object
+      required:
+        - recipientId
+        - subject
+        - content
+      properties:
+        recipientId:
+          type: string
+          description: Recipient sQuid identity ID
+        subject:
+          type: string
+          maxLength: 200
+          description: Message subject
+        content:
+          type: string
+          description: Message content (will be encrypted)
+        encryptionLevel:
+          type: string
+          enum: [STANDARD, HIGH, QUANTUM]
+          default: STANDARD
+          description: Encryption level
+        priority:
+          type: string
+          enum: [LOW, NORMAL, HIGH, URGENT]
+          default: NORMAL
+          description: Message priority
+        certifiedDelivery:
+          type: boolean
+          default: true
+          description: Request certified delivery receipt
+        expiresIn:
+          type: integer
+          description: Message expiration in seconds
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+          description: File attachments
+
+    SendMessageResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            messageId:
+              type: string
+            status:
+              type: string
+              enum: [SENT, QUEUED, FAILED]
+            encryptedCid:
+              type: string
+              description: IPFS CID of encrypted message
+            deliveryTracking:
+              type: string
+              description: Delivery tracking ID
+            timestamp:
+              type: string
+              format: date-time
+            expiresAt:
+              type: string
+              format: date-time
+
+    InboxResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/Message'
+            totalCount:
+              type: integer
+            unreadCount:
+              type: integer
+            hasMore:
+              type: boolean
+
+    MessageResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Message'
+
+    Message:
+      type: object
+      properties:
+        messageId:
+          type: string
+        senderId:
+          type: string
+        recipientId:
+          type: string
+        subject:
+          type: string
+        content:
+          type: string
+          description: Decrypted content
+        encryptionLevel:
+          type: string
+        priority:
+          type: string
+        status:
+          type: string
+          enum: [UNREAD, READ, REPLIED, FORWARDED, DELETED]
+        timestamp:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        deliveryReceipt:
+          type: boolean
+        signature:
+          type: string
+          description: Message signature
+
+    Attachment:
+      type: object
+      properties:
+        name:
+          type: string
+        cid:
+          type: string
+          description: IPFS CID
+        size:
+          type: integer
+        mimeType:
+          type: string
+        encryptionKey:
+          type: string
+          description: Encrypted attachment key
+
+    ReceiptResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            receiptId:
+              type: string
+            receiptData:
+              type: string
+              description: Cryptographic receipt (base64)
+            timestamp:
+              type: string
+              format: date-time
+            signature:
+              type: string
+
+    ReceiptsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            messageId:
+              type: string
+            receipts:
+              type: array
+              items:
+                type: object
+                properties:
+                  receiptId:
+                    type: string
+                  recipientId:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status:
+                    type: string
+                    enum: [DELIVERED, READ, FAILED]
+                  signature:
+                    type: string
+
+    SearchRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: Search query
+        folder:
+          type: string
+          enum: [ALL, INBOX, SENT, DRAFTS]
+          default: ALL
+        dateRange:
+          type: object
+          properties:
+            from:
+              type: string
+              format: date-time
+            to:
+              type: string
+              format: date-time
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 10
+
+    SearchResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  messageId:
+                    type: string
+                  subject:
+                    type: string
+                  snippet:
+                    type: string
+                  senderId:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+                  relevanceScore:
+                    type: number
+            totalMatches:
+              type: integer
+            searchTime:
+              type: number
+
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        dependencies:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [up, down, degraded]
+              latency:
+                type: number
+              lastCheck:
+                type: string
+                format: date-time
+        metrics:
+          type: object
+          properties:
+            uptime:
+              type: number
+            requestCount:
+              type: number
+            errorRate:
+              type: number
+            avgResponseTime:
+              type: number
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    RateLimited:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+tags:
+  - name: Messages
+    description: Message operations
+  - name: Receipts
+    description: Delivery receipt operations
+  - name: System
+    description: System operations

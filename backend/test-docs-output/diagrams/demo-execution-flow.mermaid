@@ -1,0 +1,34 @@
+graph LR
+    subgraph "Demo Execution Pipeline"
+        Setup[Setup<br/>Time: 2.1GB RAM]
+        Identity[Identity Flow<br/>14523ms<br/>Success: 96.2%]
+        Content[Content Flow<br/>18765ms<br/>Success: 94.1%]
+        DAO[DAO Flow<br/>22341ms<br/>Success: 93.8%]
+        Pi[Pi Integration<br/>25678ms<br/>Success: 91.5%]
+        Validate[Validation<br/>Error Rate: 2%]
+        Report[Report<br/>Availability: 99.8%]
+    end
+    
+    Setup --> Identity
+    Setup --> Content
+    Setup --> DAO
+    Setup --> Pi
+    
+    Identity --> Validate
+    Content --> Validate
+    DAO --> Validate
+    Pi --> Validate
+    
+    Validate --> Report
+    
+    classDef excellent fill:#90EE90
+    classDef good fill:#98FB98
+    classDef warning fill:#FFE4B5
+    classDef critical fill:#FFB6C1
+    
+    class Setup excellent
+    class Identity excellent
+    class Content good
+    class DAO good
+    class Pi good
+    class Validate,Report good

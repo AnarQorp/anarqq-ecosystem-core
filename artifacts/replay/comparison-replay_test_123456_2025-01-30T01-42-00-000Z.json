@@ -1,0 +1,26 @@
+{
+  "replayId": "replay_test_123456_789",
+  "originalExecutionId": "flow_test_123456",
+  "deterministic": true,
+  "divergenceAnalysis": {
+    "divergenceAt": null,
+    "stepComparisons": {
+      "originalSteps": 5,
+      "replaySteps": 5,
+      "divergencePercent": 0
+    },
+    "divergencePercent": 0
+  },
+  "timingAnalysis": {
+    "originalDuration": 500.25,
+    "replayDuration": 485.75,
+    "timingDifference": 14.5,
+    "toleranceMet": true
+  },
+  "replayMetrics": {
+    "originalDuration": 500.25,
+    "replayDuration": 485.75,
+    "timingDifference": 14.5,
+    "toleranceMet": true
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.io/qnet/capabilities.json",
+  "title": "Network Capabilities",
+  "description": "Schema for QNET network capabilities",
+  "type": "object",
+  "properties": {
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "routing", "gateway", "storage", "compute", "messaging",
+          "identity", "payments", "encryption", "indexing", "audit"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "Available network services"
+    },
+    "protocols": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "https", "http", "ipfs", "libp2p", "websocket", "grpc"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "Supported network protocols"
+    },
+    "regions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "us-east-1", "us-west-1", "us-west-2",
+          "eu-west-1", "eu-central-1",
+          "ap-southeast-1", "ap-northeast-1",
+          "global", "dev"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "Available geographic regions"
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "loadBalancing": {
+          "type": "boolean",
+          "description": "Load balancing capability"
+        },
+        "healthMonitoring": {
+          "type": "boolean",
+          "description": "Health monitoring capability"
+        },
+        "autoScaling": {
+          "type": "boolean",
+          "description": "Auto-scaling capability"
+        },
+        "encryption": {
+          "type": "boolean",
+          "description": "End-to-end encryption support"
+        },
+        "caching": {
+          "type": "boolean",
+          "description": "Content caching capability"
+        },
+        "analytics": {
+          "type": "boolean",
+          "description": "Analytics and metrics capability"
+        }
+      },
+      "additionalProperties": true,
+      "description": "Feature flags and capabilities"
+    },
+    "nodeCapabilities": {
+      "type": "object",
+      "patternProperties": {
+        "^qnet-[a-z0-9-]+$": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Capabilities for specific node"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Per-node capability mapping"
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "maxConnections": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum concurrent connections"
+        },
+        "maxBandwidth": {
+          "type": "string",
+          "pattern": "^\\d+(\\.\\d+)?(Kbps|Mbps|Gbps)$",
+          "description": "Maximum bandwidth"
+        },
+        "maxRequestSize": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum request size in bytes"
+        },
+        "rateLimit": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Requests per window"
+            },
+            "window": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Time window in seconds"
+            }
+          },
+          "required": ["requests", "window"],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "description": "Network limits and constraints"
+    }
+  },
+  "required": ["services", "protocols", "regions", "features"],
+  "additionalProperties": false
+}

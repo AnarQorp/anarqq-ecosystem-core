@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.qflow.exec.completed.v1",
+  "title": "Qflow Execution Completed Event",
+  "description": "Event emitted when a flow execution is completed (success, failure, or abort)",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity executing the flow"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "executionId": {
+          "type": "string",
+          "description": "Unique identifier for the execution instance"
+        },
+        "flowId": {
+          "type": "string",
+          "description": "Identifier of the executed flow"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["completed", "failed", "aborted", "timeout"],
+          "description": "Final execution status"
+        },
+        "startTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the execution started"
+        },
+        "endTime": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the execution ended"
+        },
+        "durationMs": {
+          "type": "number",
+          "description": "Total execution duration in milliseconds"
+        },
+        "completedSteps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of successfully completed step IDs"
+        },
+        "failedSteps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of failed step IDs"
+        },
+        "finalResult": {
+          "type": "object",
+          "description": "Final result data from the execution"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "stepId": {
+              "type": "string"
+            },
+            "details": {
+              "type": "object"
+            }
+          }
+        },
+        "resourceUsage": {
+          "type": "object",
+          "properties": {
+            "totalNodes": {
+              "type": "number"
+            },
+            "totalMemoryMB": {
+              "type": "number"
+            },
+            "totalCpuTimeMs": {
+              "type": "number"
+            },
+            "networkBytesTransferred": {
+              "type": "number"
+            }
+          }
+        },
+        "auditTrail": {
+          "type": "object",
+          "properties": {
+            "ipfsCid": {
+              "type": "string",
+              "description": "IPFS CID of the complete audit trail"
+            },
+            "signature": {
+              "type": "string",
+              "description": "Cryptographic signature of the audit trail"
+            }
+          }
+        }
+      },
+      "required": ["executionId", "flowId", "status", "startTime", "endTime", "durationMs"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

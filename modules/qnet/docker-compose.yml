@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  qnet:
+    build: .
+    ports:
+      - "3014:3014"
+    environment:
+      - NODE_ENV=development
+      - QNET_PORT=3014
+      - QNET_NODE_ID=qnet-dev-node
+      - QNET_REGION=dev
+      - QNET_TIER=standard
+      - QNET_HEALTH_CHECK_INTERVAL=30000
+      - QNET_MODE=standalone
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+    networks:
+      - qnet-network
+
+  # Mock external services for standalone mode
+  mock-squid:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3001:1080"
+    environment:
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/squid-mock.json
+    volumes:
+      - ./src/mocks/squid-mock.json:/config/squid-mock.json
+    networks:
+      - qnet-network
+
+  mock-qerberos:
+    image: mockserver/mockserver:latest
+    ports:
+      - "3006:1080"
+    environment:
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/qerberos-mock.json
+    volumes:
+      - ./src/mocks/qerberos-mock.json:/config/qerberos-mock.json
+    networks:
+      - qnet-network
+
+networks:
+  qnet-network:
+    driver: bridge

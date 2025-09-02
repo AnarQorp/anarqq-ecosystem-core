@@ -1,0 +1,94 @@
+{
+  "environments": {
+    "dev": {
+      "kmsProvider": "LOCAL_DEV",
+      "keyRotationSchedule": {
+        "SIGNING": "P7D",
+        "ENCRYPTION": "P14D",
+        "KEY_DERIVATION": "P30D",
+        "AUTHENTICATION": "P7D",
+        "TRANSPORT": "P1D"
+      },
+      "backupPolicy": {
+        "enabled": true,
+        "retentionPeriod": "P30D",
+        "encryptionRequired": true
+      },
+      "auditPolicy": {
+        "enabled": true,
+        "immutableStorage": false,
+        "retentionPeriod": "P90D"
+      }
+    },
+    "staging": {
+      "kmsProvider": "HASHICORP_VAULT",
+      "keyRotationSchedule": {
+        "SIGNING": "P14D",
+        "ENCRYPTION": "P30D",
+        "KEY_DERIVATION": "P90D",
+        "AUTHENTICATION": "P14D",
+        "TRANSPORT": "P3D"
+      },
+      "backupPolicy": {
+        "enabled": true,
+        "retentionPeriod": "P90D",
+        "encryptionRequired": true
+      },
+      "auditPolicy": {
+        "enabled": true,
+        "immutableStorage": true,
+        "retentionPeriod": "P1Y"
+      }
+    },
+    "prod": {
+      "kmsProvider": "HSM",
+      "keyRotationSchedule": {
+        "SIGNING": "P30D",
+        "ENCRYPTION": "P90D",
+        "KEY_DERIVATION": "P180D",
+        "AUTHENTICATION": "P30D",
+        "TRANSPORT": "P7D"
+      },
+      "backupPolicy": {
+        "enabled": true,
+        "retentionPeriod": "P7Y",
+        "encryptionRequired": true
+      },
+      "auditPolicy": {
+        "enabled": true,
+        "immutableStorage": true,
+        "retentionPeriod": "P7Y"
+      }
+    }
+  },
+  "pqcPolicy": {
+    "enabled": true,
+    "migrationDeadline": "2030-12-31T23:59:59Z",
+    "hybridMode": true,
+    "preferredAlgorithms": {
+      "signing": ["Dilithium3", "Falcon-1024", "Ed25519"],
+      "encryption": ["Kyber768", "AES-256-GCM"]
+    }
+  },
+  "validationRules": {
+    "minimumKeyStrength": 256,
+    "allowedAlgorithms": [
+      "Ed25519",
+      "ECDSA-secp256k1",
+      "RSA-2048",
+      "RSA-4096",
+      "AES-256-GCM",
+      "ChaCha20-Poly1305",
+      "Dilithium2",
+      "Dilithium3",
+      "Dilithium5",
+      "Falcon-512",
+      "Falcon-1024",
+      "Kyber512",
+      "Kyber768",
+      "Kyber1024"
+    ],
+    "maxKeyAge": "P1Y",
+    "requireHSM": false
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.qflow.exec.step.completed.v1",
+  "title": "Qflow Execution Step Completed Event",
+  "description": "Event emitted when a flow step execution is completed",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity executing the flow"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "executionId": {
+          "type": "string",
+          "description": "Unique identifier for the execution instance"
+        },
+        "stepId": {
+          "type": "string",
+          "description": "Unique identifier for the completed step"
+        },
+        "nodeId": {
+          "type": "string",
+          "description": "QNET node ID where the step was executed"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["success", "failure", "timeout", "cancelled"],
+          "description": "Execution status of the step"
+        },
+        "result": {
+          "type": "object",
+          "description": "Result data from the step execution"
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "details": {
+              "type": "object"
+            },
+            "retryable": {
+              "type": "boolean"
+            }
+          }
+        },
+        "executionMetrics": {
+          "type": "object",
+          "properties": {
+            "startTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "endTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "durationMs": {
+              "type": "number"
+            },
+            "memoryUsedMB": {
+              "type": "number"
+            },
+            "cpuUsagePercent": {
+              "type": "number"
+            }
+          }
+        },
+        "qerberosStamp": {
+          "type": "object",
+          "properties": {
+            "signature": {
+              "type": "string"
+            },
+            "integrityHash": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "description": "Qerberos integrity stamp for the completed step"
+        }
+      },
+      "required": ["executionId", "stepId", "nodeId", "status"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

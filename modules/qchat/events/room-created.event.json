@@ -1,0 +1,182 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qchat/events/room-created.v1.json",
+  "title": "Room Created Event",
+  "description": "Event published when a new chat room is created",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "pattern": "^qchat_event_[a-zA-Z0-9_-]+$",
+      "description": "Unique event identifier"
+    },
+    "topic": {
+      "type": "string",
+      "const": "q.qchat.room.created.v1",
+      "description": "Event topic"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp"
+    },
+    "source": {
+      "type": "string",
+      "const": "qchat",
+      "description": "Event source module"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Event schema version"
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "pattern": "^squid_[a-zA-Z0-9_-]+$",
+          "description": "Creator sQuid identity ID"
+        },
+        "subId": {
+          "type": "string",
+          "pattern": "^sub_[a-zA-Z0-9_-]+$",
+          "description": "Creator subidentity ID"
+        },
+        "daoId": {
+          "type": "string",
+          "pattern": "^dao_[a-zA-Z0-9_-]+$",
+          "description": "Creator DAO ID"
+        }
+      },
+      "required": ["squidId"],
+      "additionalProperties": false
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "roomId": {
+          "type": "string",
+          "pattern": "^qchat_room_[a-zA-Z0-9_-]+$",
+          "description": "Room identifier"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Room name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["PUBLIC", "PRIVATE", "DAO", "REPUTATION"],
+          "description": "Room access type"
+        },
+        "maxMembers": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 10000,
+          "description": "Maximum allowed members"
+        },
+        "encryptionLevel": {
+          "type": "string",
+          "enum": ["STANDARD", "HIGH", "QUANTUM"],
+          "description": "Room encryption level"
+        },
+        "moderationLevel": {
+          "type": "string",
+          "enum": ["NONE", "BASIC", "STRICT", "AI_ASSISTED"],
+          "description": "Automatic moderation level"
+        },
+        "minReputation": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Minimum reputation required"
+        },
+        "daoId": {
+          "type": "string",
+          "pattern": "^dao_[a-zA-Z0-9_-]+$",
+          "description": "Associated DAO ID"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "maxItems": 10,
+          "description": "Room tags"
+        },
+        "ephemeral": {
+          "type": "boolean",
+          "description": "Room disappears when empty"
+        },
+        "messageRetention": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3650,
+          "description": "Message retention period in days"
+        },
+        "hasInviteCode": {
+          "type": "boolean",
+          "description": "Whether room has invite code"
+        }
+      },
+      "required": [
+        "roomId",
+        "name",
+        "type",
+        "maxMembers",
+        "encryptionLevel",
+        "moderationLevel"
+      ],
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "correlationId": {
+          "type": "string",
+          "description": "Correlation ID for request tracing"
+        },
+        "causationId": {
+          "type": "string",
+          "description": "ID of the event that caused this event"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Cryptographic signature of event data"
+        },
+        "cid": {
+          "type": "string",
+          "pattern": "^Qm[a-zA-Z0-9]{44}$",
+          "description": "IPFS CID of event data"
+        },
+        "indexCid": {
+          "type": "string",
+          "pattern": "^Qm[a-zA-Z0-9]{44}$",
+          "description": "IPFS CID of room index record"
+        },
+        "qerberosRisk": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Risk score from Qerberos analysis"
+        }
+      },
+      "required": ["correlationId", "signature", "cid"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "eventId",
+    "topic",
+    "timestamp",
+    "source",
+    "version",
+    "actor",
+    "data",
+    "metadata"
+  ],
+  "additionalProperties": false
+}

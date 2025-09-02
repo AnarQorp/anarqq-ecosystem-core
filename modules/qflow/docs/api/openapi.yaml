@@ -1,0 +1,1348 @@
+openapi: 3.0.3
+info:
+  title: Qflow Serverless Automation Engine API
+  description: |
+    Qflow is the serverless, distributed automation engine that serves as the universal coherence motor 
+    for the entire AnarQ & Q ecosystem. This API provides comprehensive access to flow management, 
+    execution control, monitoring, and ecosystem integration capabilities.
+    
+    ## Key Features
+    - Serverless distributed execution on QNET nodes
+    - Universal validation pipeline (Qlock → Qonsent → Qindex → Qerberos)
+    - Multi-tenant DAO governance and subnet isolation
+    - Byzantine fault tolerance and chaos engineering
+    - Real-time monitoring and adaptive performance
+    
+    ## Authentication
+    All API endpoints require valid sQuid identity authentication tokens.
+    
+    ## Rate Limiting
+    API requests are rate-limited per identity and DAO subnet.
+  version: 1.0.0
+  contact:
+    name: Qflow API Support
+    url: https://github.com/anarq/qflow
+    email: support@anarq.org
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.qflow.anarq.org/v1
+    description: Production server
+  - url: https://staging-api.qflow.anarq.org/v1
+    description: Staging server
+  - url: http://localhost:8080/v1
+    description: Local development server
+
+security:
+  - squidAuth: []
+
+paths:
+  # Flow Management Endpoints
+  /flows:
+    get:
+      summary: List flows
+      description: Retrieve a list of flows accessible to the authenticated user
+      operationId: listFlows
+      tags:
+        - Flow Management
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of flows to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Number of flows to skip
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: daoSubnet
+          in: query
+          description: Filter flows by DAO subnet
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter flows by status
+          schema:
+            type: string
+            enum: [active, inactive, archived]
+        - name: tags
+          in: query
+          description: Filter flows by tags (comma-separated)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of flows
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  flows:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FlowSummary'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create flow
+      description: Create a new flow definition
+      operationId: createFlow
+      tags:
+        - Flow Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowDefinition'
+      responses:
+        '201':
+          description: Flow created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flow'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /flows/{flowId}:
+    get:
+      summary: Get flow
+      description: Retrieve a specific flow definition by ID
+      operationId: getFlow
+      tags:
+        - Flow Management
+      parameters:
+        - name: flowId
+          in: path
+          required: true
+          description: Unique identifier of the flow
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Flow definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flow'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update flow
+      description: Update an existing flow definition
+      operationId: updateFlow
+      tags:
+        - Flow Management
+      parameters:
+        - name: flowId
+          in: path
+          required: true
+          description: Unique identifier of the flow
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowDefinition'
+      responses:
+        '200':
+          description: Flow updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flow'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete flow
+      description: Delete a flow definition
+      operationId: deleteFlow
+      tags:
+        - Flow Management
+      parameters:
+        - name: flowId
+          in: path
+          required: true
+          description: Unique identifier of the flow
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Flow deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /flows/{flowId}/start:
+    post:
+      summary: Start flow execution
+      description: Start execution of a flow with optional input context
+      operationId: startFlowExecution
+      tags:
+        - Execution Management
+      parameters:
+        - name: flowId
+          in: path
+          required: true
+          description: Unique identifier of the flow
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutionRequest'
+      responses:
+        '201':
+          description: Flow execution started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /flows/{flowId}/trigger:
+    post:
+      summary: Trigger flow from external event
+      description: Trigger flow execution from external webhook or event
+      operationId: triggerFlow
+      tags:
+        - Execution Management
+      parameters:
+        - name: flowId
+          in: path
+          required: true
+          description: Unique identifier of the flow
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExternalTriggerRequest'
+      responses:
+        '201':
+          description: Flow triggered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /executions/{executionId}:
+    get:
+      summary: Get execution status
+      description: Retrieve the current status and details of a flow execution
+      operationId: getExecutionStatus
+      tags:
+        - Execution Management
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          description: Unique identifier of the execution
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Execution status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionStatus'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /executions/{executionId}/pause:
+    post:
+      summary: Pause execution
+      description: Pause a running flow execution
+      operationId: pauseExecution
+      tags:
+        - Execution Management
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          description: Unique identifier of the execution
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Execution paused successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionStatus'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /executions/{executionId}/resume:
+    post:
+      summary: Resume execution
+      description: Resume a paused flow execution
+      operationId: resumeExecution
+      tags:
+        - Execution Management
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          description: Unique identifier of the execution
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Execution resumed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionStatus'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /executions/{executionId}/abort:
+    post:
+      summary: Abort execution
+      description: Abort a running or paused flow execution
+      operationId: abortExecution
+      tags:
+        - Execution Management
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          description: Unique identifier of the execution
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Execution aborted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionStatus'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /executions/{executionId}/logs:
+    get:
+      summary: Get execution logs
+      description: Retrieve logs for a specific execution
+      operationId: getExecutionLogs
+      tags:
+        - Monitoring
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          description: Unique identifier of the execution
+          schema:
+            type: string
+        - name: level
+          in: query
+          description: Filter logs by level
+          schema:
+            type: string
+            enum: [debug, info, warn, error]
+        - name: limit
+          in: query
+          description: Maximum number of log entries to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+        - name: offset
+          in: query
+          description: Number of log entries to skip
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Execution logs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LogEntry'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /executions/{executionId}/metrics:
+    get:
+      summary: Get execution metrics
+      description: Retrieve performance metrics for a specific execution
+      operationId: getExecutionMetrics
+      tags:
+        - Monitoring
+      parameters:
+        - name: executionId
+          in: path
+          required: true
+          description: Unique identifier of the execution
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Execution metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionMetrics'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /system/health:
+    get:
+      summary: System health check
+      description: Get overall system health status
+      operationId: getSystemHealth
+      tags:
+        - System
+      responses:
+        '200':
+          description: System health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: System unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+
+  /system/metrics:
+    get:
+      summary: Get system metrics
+      description: Retrieve system-wide performance metrics
+      operationId: getSystemMetrics
+      tags:
+        - System
+      responses:
+        '200':
+          description: System metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemMetrics'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /webhooks/{flowId}:
+    post:
+      summary: Webhook endpoint
+      description: Receive external webhook events to trigger flows
+      operationId: receiveWebhook
+      tags:
+        - External Integration
+      parameters:
+        - name: flowId
+          in: path
+          required: true
+          description: Unique identifier of the flow to trigger
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Webhook processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /schemas:
+    get:
+      summary: Get supported event schemas
+      description: Retrieve list of supported event schemas for external integration
+      operationId: getEventSchemas
+      tags:
+        - External Integration
+      responses:
+        '200':
+          description: List of supported schemas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  schemas:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventSchema'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    squidAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: sQuid identity authentication token
+
+  schemas:
+    FlowDefinition:
+      type: object
+      required:
+        - name
+        - steps
+      properties:
+        name:
+          type: string
+          description: Human-readable name of the flow
+          example: "User Registration Workflow"
+        description:
+          type: string
+          description: Detailed description of the flow
+          example: "Automated user registration with email verification and welcome message"
+        version:
+          type: string
+          description: Semantic version of the flow
+          example: "1.2.0"
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlowStep'
+          description: Ordered list of steps in the flow
+        metadata:
+          $ref: '#/components/schemas/FlowMetadata'
+        daoPolicy:
+          type: string
+          description: DAO policy identifier for governance
+          example: "dao-policy-v1.0"
+
+    FlowStep:
+      type: object
+      required:
+        - id
+        - type
+        - action
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the step
+          example: "validate-email"
+        type:
+          type: string
+          enum: [task, condition, parallel, event-trigger, module-call]
+          description: Type of step
+        action:
+          type: string
+          description: Action to perform
+          example: "validate-email-format"
+        params:
+          type: object
+          additionalProperties: true
+          description: Parameters for the step action
+        onSuccess:
+          type: string
+          description: Next step ID on success
+          example: "send-verification"
+        onFailure:
+          type: string
+          description: Next step ID on failure
+          example: "log-error"
+        timeout:
+          type: integer
+          description: Timeout in milliseconds
+          example: 30000
+        retryPolicy:
+          $ref: '#/components/schemas/RetryPolicy'
+        resourceLimits:
+          $ref: '#/components/schemas/ResourceLimits'
+
+    FlowMetadata:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags for categorization
+          example: ["user-management", "email", "automation"]
+        category:
+          type: string
+          description: Flow category
+          example: "user-management"
+        visibility:
+          type: string
+          enum: [public, dao-only, private]
+          description: Visibility level
+          default: private
+        daoSubnet:
+          type: string
+          description: DAO subnet identifier
+          example: "dao-subnet-123"
+        requiredPermissions:
+          type: array
+          items:
+            type: string
+          description: Required permissions to execute
+          example: ["user.create", "email.send"]
+        estimatedDuration:
+          type: integer
+          description: Estimated execution duration in milliseconds
+          example: 120000
+        resourceRequirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+
+    RetryPolicy:
+      type: object
+      properties:
+        maxAttempts:
+          type: integer
+          minimum: 1
+          maximum: 10
+          description: Maximum retry attempts
+          example: 3
+        backoffStrategy:
+          type: string
+          enum: [fixed, exponential, linear]
+          description: Backoff strategy
+          default: exponential
+        initialDelay:
+          type: integer
+          description: Initial delay in milliseconds
+          example: 1000
+        maxDelay:
+          type: integer
+          description: Maximum delay in milliseconds
+          example: 30000
+
+    ResourceLimits:
+      type: object
+      properties:
+        maxMemoryMB:
+          type: integer
+          description: Maximum memory in MB
+          example: 128
+        maxCpuPercent:
+          type: integer
+          description: Maximum CPU percentage
+          example: 50
+        maxExecutionTimeMs:
+          type: integer
+          description: Maximum execution time in milliseconds
+          example: 60000
+
+    ResourceRequirements:
+      type: object
+      properties:
+        minMemoryMB:
+          type: integer
+          description: Minimum memory in MB
+          example: 64
+        minCpuCores:
+          type: number
+          description: Minimum CPU cores
+          example: 0.5
+        networkAccess:
+          type: boolean
+          description: Requires network access
+          default: false
+        storageAccess:
+          type: boolean
+          description: Requires storage access
+          default: false
+
+    Flow:
+      allOf:
+        - $ref: '#/components/schemas/FlowDefinition'
+        - type: object
+          required:
+            - id
+            - owner
+            - createdAt
+            - updatedAt
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the flow
+              example: "flow-123e4567-e89b-12d3-a456-426614174000"
+            owner:
+              type: string
+              description: sQuid identity of the flow owner
+              example: "squid:did:example:123456789abcdefghi"
+            createdAt:
+              type: string
+              format: date-time
+              description: Creation timestamp
+              example: "2024-01-15T10:30:00Z"
+            updatedAt:
+              type: string
+              format: date-time
+              description: Last update timestamp
+              example: "2024-01-15T14:45:00Z"
+
+    FlowSummary:
+      type: object
+      required:
+        - id
+        - name
+        - owner
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the flow
+          example: "flow-123e4567-e89b-12d3-a456-426614174000"
+        name:
+          type: string
+          description: Human-readable name of the flow
+          example: "User Registration Workflow"
+        owner:
+          type: string
+          description: sQuid identity of the flow owner
+          example: "squid:did:example:123456789abcdefghi"
+        status:
+          type: string
+          enum: [active, inactive, archived]
+          description: Current status of the flow
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags for categorization
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        lastExecuted:
+          type: string
+          format: date-time
+          description: Last execution timestamp
+
+    ExecutionRequest:
+      type: object
+      properties:
+        inputData:
+          type: object
+          additionalProperties: true
+          description: Input data for the flow execution
+        variables:
+          type: object
+          additionalProperties: true
+          description: Variables to set for the execution
+        daoSubnet:
+          type: string
+          description: DAO subnet for execution
+        priority:
+          type: string
+          enum: [low, normal, high, urgent]
+          description: Execution priority
+          default: normal
+
+    ExternalTriggerRequest:
+      type: object
+      required:
+        - eventType
+        - payload
+      properties:
+        eventType:
+          type: string
+          description: Type of external event
+          example: "webhook.github.push"
+        payload:
+          type: object
+          additionalProperties: true
+          description: Event payload data
+        source:
+          type: string
+          description: Source system identifier
+          example: "github.com"
+        signature:
+          type: string
+          description: Cryptographic signature for verification
+
+    ExecutionResponse:
+      type: object
+      required:
+        - executionId
+        - flowId
+        - status
+        - startTime
+      properties:
+        executionId:
+          type: string
+          description: Unique identifier of the execution
+          example: "exec-123e4567-e89b-12d3-a456-426614174000"
+        flowId:
+          type: string
+          description: Identifier of the executed flow
+          example: "flow-123e4567-e89b-12d3-a456-426614174000"
+        status:
+          type: string
+          enum: [pending, running, paused, completed, failed, aborted]
+          description: Current execution status
+        startTime:
+          type: string
+          format: date-time
+          description: Execution start time
+        estimatedCompletion:
+          type: string
+          format: date-time
+          description: Estimated completion time
+
+    ExecutionStatus:
+      type: object
+      required:
+        - executionId
+        - flowId
+        - status
+        - startTime
+      properties:
+        executionId:
+          type: string
+          description: Unique identifier of the execution
+        flowId:
+          type: string
+          description: Identifier of the executed flow
+        status:
+          type: string
+          enum: [pending, running, paused, completed, failed, aborted]
+          description: Current execution status
+        currentStep:
+          type: string
+          description: Currently executing step ID
+        completedSteps:
+          type: array
+          items:
+            type: string
+          description: List of completed step IDs
+        failedSteps:
+          type: array
+          items:
+            type: string
+          description: List of failed step IDs
+        startTime:
+          type: string
+          format: date-time
+          description: Execution start time
+        endTime:
+          type: string
+          format: date-time
+          description: Execution end time (if completed)
+        progress:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Execution progress percentage
+        error:
+          $ref: '#/components/schemas/ExecutionError'
+        nodeAssignments:
+          type: object
+          additionalProperties:
+            type: string
+          description: Mapping of step IDs to assigned node IDs
+
+    ExecutionError:
+      type: object
+      required:
+        - type
+        - message
+        - timestamp
+      properties:
+        type:
+          type: string
+          enum: [validation_error, execution_error, node_failure, network_error, permission_denied, resource_exhausted, timeout_error, dao_policy_violation]
+          description: Error type
+        message:
+          type: string
+          description: Human-readable error message
+        stepId:
+          type: string
+          description: Step ID where error occurred
+        nodeId:
+          type: string
+          description: Node ID where error occurred
+        retryable:
+          type: boolean
+          description: Whether the error is retryable
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error details
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+
+    LogEntry:
+      type: object
+      required:
+        - timestamp
+        - level
+        - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Log entry timestamp
+        level:
+          type: string
+          enum: [debug, info, warn, error]
+          description: Log level
+        message:
+          type: string
+          description: Log message
+        stepId:
+          type: string
+          description: Step ID associated with the log entry
+        nodeId:
+          type: string
+          description: Node ID that generated the log entry
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Additional log metadata
+
+    ExecutionMetrics:
+      type: object
+      properties:
+        executionId:
+          type: string
+          description: Execution identifier
+        duration:
+          type: integer
+          description: Total execution duration in milliseconds
+        stepMetrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/StepMetrics'
+        resourceUsage:
+          $ref: '#/components/schemas/ResourceUsage'
+        performanceScore:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Overall performance score
+
+    StepMetrics:
+      type: object
+      properties:
+        stepId:
+          type: string
+          description: Step identifier
+        duration:
+          type: integer
+          description: Step execution duration in milliseconds
+        retryCount:
+          type: integer
+          description: Number of retries
+        nodeId:
+          type: string
+          description: Node that executed the step
+        resourceUsage:
+          $ref: '#/components/schemas/ResourceUsage'
+
+    ResourceUsage:
+      type: object
+      properties:
+        cpuUsagePercent:
+          type: number
+          description: CPU usage percentage
+        memoryUsageMB:
+          type: number
+          description: Memory usage in MB
+        networkBytesIn:
+          type: integer
+          description: Network bytes received
+        networkBytesOut:
+          type: integer
+          description: Network bytes sent
+        storageReads:
+          type: integer
+          description: Storage read operations
+        storageWrites:
+          type: integer
+          description: Storage write operations
+
+    HealthStatus:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+          description: Overall system health status
+        timestamp:
+          type: string
+          format: date-time
+          description: Health check timestamp
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComponentHealth'
+        version:
+          type: string
+          description: System version
+        uptime:
+          type: integer
+          description: System uptime in seconds
+
+    ComponentHealth:
+      type: object
+      required:
+        - component
+        - status
+      properties:
+        component:
+          type: string
+          description: Component name
+          example: "execution-engine"
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+          description: Component health status
+        lastCheck:
+          type: string
+          format: date-time
+          description: Last health check timestamp
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional health details
+
+    SystemMetrics:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Metrics timestamp
+        activeExecutions:
+          type: integer
+          description: Number of active executions
+        totalExecutions:
+          type: integer
+          description: Total executions since startup
+        averageExecutionTime:
+          type: number
+          description: Average execution time in milliseconds
+        successRate:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Success rate percentage
+        errorRate:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Error rate percentage
+        nodeMetrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/NodeMetrics'
+        resourceUtilization:
+          $ref: '#/components/schemas/ResourceUsage'
+
+    NodeMetrics:
+      type: object
+      properties:
+        nodeId:
+          type: string
+          description: Node identifier
+        status:
+          type: string
+          enum: [online, offline, degraded]
+          description: Node status
+        load:
+          type: number
+          description: Current load percentage
+        latency:
+          type: number
+          description: Average latency in milliseconds
+        activeExecutions:
+          type: integer
+          description: Number of active executions on this node
+        totalExecutions:
+          type: integer
+          description: Total executions on this node
+        lastSeen:
+          type: string
+          format: date-time
+          description: Last seen timestamp
+
+    WebhookResponse:
+      type: object
+      required:
+        - received
+        - executionId
+      properties:
+        received:
+          type: boolean
+          description: Whether webhook was received successfully
+        executionId:
+          type: string
+          description: Execution ID if flow was triggered
+        message:
+          type: string
+          description: Response message
+        timestamp:
+          type: string
+          format: date-time
+          description: Processing timestamp
+
+    EventSchema:
+      type: object
+      required:
+        - name
+        - version
+        - schema
+      properties:
+        name:
+          type: string
+          description: Schema name
+          example: "github.push.v1"
+        version:
+          type: string
+          description: Schema version
+          example: "1.0.0"
+        description:
+          type: string
+          description: Schema description
+        schema:
+          type: object
+          description: JSON Schema definition
+        examples:
+          type: array
+          items:
+            type: object
+          description: Example payloads
+
+    Pagination:
+      type: object
+      properties:
+        limit:
+          type: integer
+          description: Number of items per page
+        offset:
+          type: integer
+          description: Number of items skipped
+        total:
+          type: integer
+          description: Total number of items
+        hasMore:
+          type: boolean
+          description: Whether there are more items
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid parameters or request body
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Invalid request parameters"
+              details:
+                type: object
+                additionalProperties: true
+
+    Unauthorized:
+      description: Unauthorized - invalid or missing authentication
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Invalid or missing authentication token"
+
+    Forbidden:
+      description: Forbidden - insufficient permissions
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Insufficient permissions to access this resource"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Resource not found"
+
+    Conflict:
+      description: Conflict - resource already exists or conflicting state
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Resource already exists"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal server error"
+              requestId:
+                type: string
+                description: Request ID for debugging

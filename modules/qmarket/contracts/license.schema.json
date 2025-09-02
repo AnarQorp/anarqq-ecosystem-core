@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.com/qmarket/license.json",
+  "title": "Qmarket License Schema",
+  "description": "Schema for digital content licenses",
+  "type": "object",
+  "properties": {
+    "licenseId": {
+      "type": "string",
+      "pattern": "^license_[a-f0-9]{32}$",
+      "description": "Unique license identifier"
+    },
+    "purchaseId": {
+      "type": "string",
+      "pattern": "^purchase_[a-f0-9]{32}$",
+      "description": "Associated purchase ID"
+    },
+    "listingId": {
+      "type": "string",
+      "pattern": "^listing_[a-f0-9]{24}$",
+      "description": "Associated listing ID"
+    },
+    "holderId": {
+      "type": "string",
+      "description": "sQuid identity of the license holder"
+    },
+    "originalBuyerId": {
+      "type": "string",
+      "description": "sQuid identity of the original buyer"
+    },
+    "licenseType": {
+      "type": "string",
+      "enum": ["personal", "commercial", "resale", "derivative"],
+      "description": "Type of license granted"
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "read",
+          "download",
+          "print",
+          "share",
+          "modify",
+          "distribute",
+          "resell",
+          "create_derivatives",
+          "commercial_use",
+          "public_display",
+          "public_performance"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "Permissions granted by this license"
+    },
+    "restrictions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "no_redistribution",
+          "no_modification",
+          "no_commercial_use",
+          "attribution_required",
+          "share_alike",
+          "no_derivatives",
+          "personal_use_only",
+          "single_user",
+          "geographic_restriction",
+          "time_limited"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "Restrictions on license usage"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "expired", "revoked", "transferred", "suspended"],
+      "description": "Current license status"
+    },
+    "transferHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fromId": {
+            "type": "string"
+          },
+          "toId": {
+            "type": "string"
+          },
+          "transferredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": ["fromId", "toId", "transferredAt"]
+      },
+      "description": "History of license transfers"
+    },
+    "usageTracking": {
+      "type": "object",
+      "properties": {
+        "accessCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "downloadCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lastAccessedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "accessLocations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the license was created"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the license expires (null for permanent)"
+    },
+    "revokedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the license was revoked"
+    },
+    "revokedBy": {
+      "type": "string",
+      "description": "sQuid identity of who revoked the license"
+    },
+    "revokeReason": {
+      "type": "string",
+      "description": "Reason for license revocation"
+    }
+  },
+  "required": [
+    "licenseId",
+    "purchaseId",
+    "listingId",
+    "holderId",
+    "originalBuyerId",
+    "licenseType",
+    "permissions",
+    "status",
+    "createdAt"
+  ],
+  "additionalProperties": false
+}

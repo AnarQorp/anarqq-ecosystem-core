@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.io/qnet/events/topology-changed.json",
+  "title": "Topology Changed Event",
+  "description": "Event published when network topology changes significantly",
+  "type": "object",
+  "properties": {
+    "eventType": {
+      "type": "string",
+      "const": "q.qnet.topology.changed.v1"
+    },
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event identifier"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp"
+    },
+    "changeType": {
+      "type": "string",
+      "enum": [
+        "node_added", "node_removed", "connection_added",
+        "connection_removed", "region_added", "region_removed",
+        "cluster_formed", "cluster_split", "failover"
+      ],
+      "description": "Type of topology change"
+    },
+    "affectedRegions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "us-east-1", "us-west-1", "us-west-2",
+          "eu-west-1", "eu-central-1",
+          "ap-southeast-1", "ap-northeast-1",
+          "global", "dev"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "Regions affected by the change"
+    },
+    "affectedNodes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^qnet-[a-z0-9-]+$"
+      },
+      "uniqueItems": true,
+      "description": "Nodes affected by the change"
+    },
+    "nodeCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of nodes after change"
+    },
+    "connectionCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of connections after change"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Human-readable summary of the change"
+    },
+    "impact": {
+      "type": "object",
+      "properties": {
+        "performance": {
+          "type": "string",
+          "enum": ["improved", "degraded", "unchanged"],
+          "description": "Performance impact"
+        },
+        "reliability": {
+          "type": "string",
+          "enum": ["improved", "degraded", "unchanged"],
+          "description": "Reliability impact"
+        },
+        "capacity": {
+          "type": "string",
+          "enum": ["increased", "decreased", "unchanged"],
+          "description": "Capacity impact"
+        }
+      },
+      "description": "Impact assessment of the change"
+    },
+    "before": {
+      "type": "object",
+      "properties": {
+        "nodeCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "connectionCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Topology state before change"
+    },
+    "after": {
+      "type": "object",
+      "properties": {
+        "nodeCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "connectionCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Topology state after change"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Additional topology change metadata"
+    }
+  },
+  "required": [
+    "eventType", "eventId", "timestamp", "changeType",
+    "affectedRegions", "nodeCount", "summary"
+  ],
+  "additionalProperties": false
+}

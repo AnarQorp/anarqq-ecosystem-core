@@ -1,0 +1,146 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qchat/moderation.schema.json",
+  "title": "Moderation Action Schema",
+  "description": "Schema for moderation action data structure",
+  "type": "object",
+  "properties": {
+    "actionId": {
+      "type": "string",
+      "pattern": "^qchat_mod_[a-zA-Z0-9_-]+$",
+      "description": "Unique moderation action identifier"
+    },
+    "roomId": {
+      "type": "string",
+      "pattern": "^qchat_room_[a-zA-Z0-9_-]+$",
+      "description": "Room identifier"
+    },
+    "moderatorId": {
+      "type": "string",
+      "pattern": "^squid_[a-zA-Z0-9_-]+$",
+      "description": "Moderator sQuid identity ID"
+    },
+    "targetId": {
+      "type": "string",
+      "description": "Target sQuid ID or message ID"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "MUTE",
+        "UNMUTE",
+        "KICK",
+        "BAN",
+        "UNBAN",
+        "DELETE_MESSAGE",
+        "PIN_MESSAGE",
+        "UNPIN_MESSAGE",
+        "WARN"
+      ],
+      "description": "Moderation action type"
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "description": "Reason for moderation action"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+      "description": "Severity level of the violation"
+    },
+    "duration": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 31536000,
+      "description": "Duration in seconds for temporary actions"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Action timestamp"
+    },
+    "effectiveUntil": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When temporary action expires"
+    },
+    "notifyUser": {
+      "type": "boolean",
+      "description": "Whether to notify the user"
+    },
+    "escalateToQerberos": {
+      "type": "boolean",
+      "description": "Whether to report to Qerberos"
+    },
+    "auditCid": {
+      "type": "string",
+      "pattern": "^Qm[a-zA-Z0-9]{44}$",
+      "description": "IPFS CID of audit record"
+    },
+    "reputationImpact": {
+      "type": "object",
+      "properties": {
+        "targetId": {
+          "type": "string",
+          "pattern": "^squid_[a-zA-Z0-9_-]+$"
+        },
+        "previousScore": {
+          "type": "number"
+        },
+        "newScore": {
+          "type": "number"
+        },
+        "change": {
+          "type": "number"
+        }
+      },
+      "required": ["targetId", "previousScore", "newScore", "change"],
+      "description": "Impact on user reputation"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["MESSAGE", "SCREENSHOT", "LOG", "REPORT"]
+          },
+          "cid": {
+            "type": "string",
+            "pattern": "^Qm[a-zA-Z0-9]{44}$"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "required": ["type", "cid"]
+      },
+      "maxItems": 10,
+      "description": "Evidence supporting the moderation action"
+    },
+    "appealable": {
+      "type": "boolean",
+      "description": "Whether the action can be appealed"
+    },
+    "appealDeadline": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Deadline for appeals"
+    }
+  },
+  "required": [
+    "actionId",
+    "roomId",
+    "moderatorId",
+    "targetId",
+    "action",
+    "reason",
+    "severity",
+    "timestamp"
+  ],
+  "additionalProperties": false
+}

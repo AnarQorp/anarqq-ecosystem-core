@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.com/qwallet/events/tx-signed.json",
+  "title": "Transaction Signed Event",
+  "description": "Event published when a transaction is cryptographically signed",
+  "type": "object",
+  "properties": {
+    "topic": {
+      "type": "string",
+      "const": "q.qwallet.tx.signed.v1"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "$ref": "https://schemas.anarq.com/common/identity-ref.json"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "transactionId": {
+          "type": "string",
+          "pattern": "^tx_[a-f0-9]{32}$"
+        },
+        "intentId": {
+          "type": "string",
+          "pattern": "^intent_[a-f0-9]{32}$"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Cryptographic signature of the transaction"
+        },
+        "gasEstimate": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nonce": {
+          "type": "string"
+        },
+        "walletAddress": {
+          "type": "string",
+          "pattern": "^0x[a-fA-F0-9]{40}$"
+        }
+      },
+      "required": ["transactionId", "intentId", "signature", "gasEstimate", "walletAddress"]
+    },
+    "signature": {
+      "$ref": "https://schemas.anarq.com/common/lock-sig.json"
+    },
+    "cid": {
+      "type": "string",
+      "description": "IPFS content identifier for event data"
+    }
+  },
+  "required": ["topic", "timestamp", "actor", "data", "signature"],
+  "additionalProperties": false
+}

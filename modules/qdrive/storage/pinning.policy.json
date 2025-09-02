@@ -1,0 +1,274 @@
+{
+  "version": "1.0",
+  "description": "IPFS pinning policies for Qdrive file storage",
+  "lastUpdated": "2024-01-15T00:00:00Z",
+  "policies": {
+    "default": {
+      "name": "Default Pinning Policy",
+      "description": "Standard pinning for regular files",
+      "minReplicas": 2,
+      "maxReplicas": 5,
+      "geoDistribution": ["us-east-1", "eu-west-1"],
+      "priority": "normal",
+      "ttl": 2592000,
+      "conditions": {
+        "fileSize": {
+          "min": 0,
+          "max": 104857600
+        },
+        "privacy": ["public", "private", "dao-only"]
+      }
+    },
+    "public": {
+      "name": "Public File Pinning",
+      "description": "Enhanced pinning for public files",
+      "minReplicas": 3,
+      "maxReplicas": 10,
+      "geoDistribution": ["us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"],
+      "priority": "high",
+      "ttl": 7776000,
+      "cachingStrategy": "aggressive",
+      "conditions": {
+        "privacy": ["public"],
+        "accessCount": {
+          "min": 0
+        }
+      }
+    },
+    "private": {
+      "name": "Private File Pinning",
+      "description": "Secure pinning for private files",
+      "minReplicas": 2,
+      "maxReplicas": 3,
+      "geoDistribution": ["us-east-1", "eu-west-1"],
+      "priority": "high",
+      "ttl": 2592000,
+      "encryption": "required",
+      "accessControl": "strict",
+      "conditions": {
+        "privacy": ["private"],
+        "encrypted": true
+      }
+    },
+    "dao-only": {
+      "name": "DAO File Pinning",
+      "description": "Community-based pinning for DAO files",
+      "minReplicas": 2,
+      "maxReplicas": 4,
+      "geoDistribution": "dao-preference",
+      "priority": "normal",
+      "ttl": 5184000,
+      "communityPinning": true,
+      "conditions": {
+        "privacy": ["dao-only"],
+        "daoId": {
+          "required": true
+        }
+      }
+    },
+    "hot": {
+      "name": "Hot File Pinning",
+      "description": "High-performance pinning for frequently accessed files",
+      "minReplicas": 5,
+      "maxReplicas": 15,
+      "geoDistribution": ["us-east-1", "us-west-2", "eu-west-1", "eu-central-1", "ap-southeast-1", "ap-northeast-1"],
+      "priority": "critical",
+      "ttl": 15552000,
+      "cachingStrategy": "edge",
+      "cdnIntegration": true,
+      "conditions": {
+        "accessCount": {
+          "min": 100
+        },
+        "accessFrequency": {
+          "period": "24h",
+          "min": 10
+        }
+      }
+    },
+    "cold": {
+      "name": "Cold Storage Pinning",
+      "description": "Minimal pinning for rarely accessed files",
+      "minReplicas": 1,
+      "maxReplicas": 2,
+      "geoDistribution": ["us-east-1"],
+      "priority": "low",
+      "ttl": 1296000,
+      "archivalStorage": true,
+      "conditions": {
+        "lastAccessed": {
+          "olderThan": "90d"
+        },
+        "accessCount": {
+          "max": 5
+        }
+      }
+    },
+    "large": {
+      "name": "Large File Pinning",
+      "description": "Specialized pinning for large files",
+      "minReplicas": 2,
+      "maxReplicas": 3,
+      "geoDistribution": ["us-east-1", "eu-west-1"],
+      "priority": "normal",
+      "ttl": 2592000,
+      "chunkingStrategy": "balanced",
+      "compressionEnabled": true,
+      "conditions": {
+        "fileSize": {
+          "min": 104857600,
+          "max": 1073741824
+        }
+      }
+    },
+    "temporary": {
+      "name": "Temporary File Pinning",
+      "description": "Short-term pinning for temporary files",
+      "minReplicas": 1,
+      "maxReplicas": 2,
+      "geoDistribution": ["us-east-1"],
+      "priority": "low",
+      "ttl": 604800,
+      "autoUnpin": true,
+      "conditions": {
+        "tags": ["temp", "temporary", "cache"],
+        "retentionDays": {
+          "max": 30
+        }
+      }
+    },
+    "premium": {
+      "name": "Premium User Pinning",
+      "description": "Enhanced pinning for premium subscribers",
+      "minReplicas": 4,
+      "maxReplicas": 8,
+      "geoDistribution": ["us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"],
+      "priority": "high",
+      "ttl": 15552000,
+      "slaGuarantee": "99.9%",
+      "prioritySupport": true,
+      "conditions": {
+        "subscriptionTier": ["premium", "enterprise"],
+        "userType": "paid"
+      }
+    }
+  },
+  "geoRegions": {
+    "us-east-1": {
+      "name": "US East (Virginia)",
+      "provider": "aws",
+      "latency": "low",
+      "cost": "standard"
+    },
+    "us-west-2": {
+      "name": "US West (Oregon)",
+      "provider": "aws",
+      "latency": "low",
+      "cost": "standard"
+    },
+    "eu-west-1": {
+      "name": "Europe (Ireland)",
+      "provider": "aws",
+      "latency": "medium",
+      "cost": "standard"
+    },
+    "eu-central-1": {
+      "name": "Europe (Frankfurt)",
+      "provider": "aws",
+      "latency": "medium",
+      "cost": "standard"
+    },
+    "ap-southeast-1": {
+      "name": "Asia Pacific (Singapore)",
+      "provider": "aws",
+      "latency": "high",
+      "cost": "premium"
+    },
+    "ap-northeast-1": {
+      "name": "Asia Pacific (Tokyo)",
+      "provider": "aws",
+      "latency": "high",
+      "cost": "premium"
+    }
+  },
+  "priorityLevels": {
+    "critical": {
+      "weight": 100,
+      "maxLatency": "50ms",
+      "sla": "99.99%"
+    },
+    "high": {
+      "weight": 75,
+      "maxLatency": "100ms",
+      "sla": "99.9%"
+    },
+    "normal": {
+      "weight": 50,
+      "maxLatency": "200ms",
+      "sla": "99.5%"
+    },
+    "low": {
+      "weight": 25,
+      "maxLatency": "500ms",
+      "sla": "99.0%"
+    }
+  },
+  "retentionPolicies": {
+    "delete": {
+      "action": "remove",
+      "description": "Permanently delete file and all replicas"
+    },
+    "archive": {
+      "action": "migrate",
+      "destination": "cold-storage",
+      "description": "Move to archival storage with reduced replicas"
+    },
+    "anonymize": {
+      "action": "sanitize",
+      "description": "Remove identifying metadata while keeping file"
+    }
+  },
+  "costOptimization": {
+    "enabled": true,
+    "strategies": {
+      "replicationReduction": {
+        "enabled": true,
+        "threshold": "90d",
+        "minReplicas": 1
+      },
+      "geoConsolidation": {
+        "enabled": true,
+        "threshold": "180d",
+        "preferredRegions": ["us-east-1"]
+      },
+      "compressionUpgrade": {
+        "enabled": true,
+        "threshold": "30d",
+        "algorithm": "zstd"
+      }
+    }
+  },
+  "monitoring": {
+    "metrics": [
+      "replication_factor",
+      "pin_success_rate",
+      "retrieval_latency",
+      "storage_cost",
+      "bandwidth_usage"
+    ],
+    "alerts": {
+      "replication_below_minimum": {
+        "threshold": "min_replicas",
+        "severity": "critical"
+      },
+      "pin_failure_rate": {
+        "threshold": "5%",
+        "severity": "high"
+      },
+      "retrieval_latency": {
+        "threshold": "1s",
+        "severity": "medium"
+      }
+    }
+  }
+}

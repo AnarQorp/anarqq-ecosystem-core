@@ -1,0 +1,3668 @@
+{
+  "version": "1.0.0",
+  "generated": "2025-08-30T20:36:58.044Z",
+  "accessLevels": {
+    "PUBLIC": {
+      "level": 0,
+      "description": "Publicly accessible content",
+      "restrictions": [],
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ]
+    },
+    "PARTNER": {
+      "level": 1,
+      "description": "Partner-only content",
+      "restrictions": [
+        "requires_partner_access"
+      ],
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ]
+    },
+    "INTERNAL": {
+      "level": 2,
+      "description": "Internal team only",
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ],
+      "allowedAudiences": [
+        "internal"
+      ]
+    }
+  },
+  "rules": {
+    "public": [
+      "docs/API-CHANGES.md",
+      "docs/CONTRIBUTING.md",
+      "docs/DAO-DASHBOARD-ARCHITECTURE.md",
+      "docs/INDEX.md",
+      "docs/IPFS-INTEGRATION.md",
+      "docs/MONITORING-SYSTEM.md",
+      "docs/QFLOW-DOCUMENTATION-PIPELINE.md",
+      "docs/QSOCIAL-COMPLETE-INTEGRATION.md",
+      "docs/SECURITY/security-scan-report.md",
+      "docs/STORJ-INTEGRATION.md",
+      "docs/STYLEGUIDE.md",
+      "docs/VERSION.json",
+      "docs/api/module-registry/README.md",
+      "docs/api/module-registry/discovery-api.md",
+      "docs/api/module-registry/examples/README.md",
+      "docs/api/module-registry/examples/basic-registration.js",
+      "docs/api/module-registry/getting-started.md",
+      "docs/api/module-registry/registration-api.md",
+      "docs/artifacts/documentation-coverage.json",
+      "docs/assets/IMPLEMENTATION_SUMMARY.md",
+      "docs/assets/design-tokens.json",
+      "docs/assets/visual-library.json",
+      "docs/cicd-status.json",
+      "docs/disaster-recovery-procedures.md",
+      "docs/enhanced-monitoring-report.md",
+      "docs/global/integrations/pi/README.md",
+      "docs/global/technical-analysis/performance-optimizations.md",
+      "docs/integration-summary.json",
+      "docs/ipfs-integration.md",
+      "docs/migration/module-specific/qwallet-migration-guide.md",
+      "docs/migration/module-specific/squid-migration-guide.md",
+      "docs/modules/README.md",
+      "docs/modules/dao/README.md",
+      "docs/modules/dao/api-reference.md",
+      "docs/modules/dao/api.md",
+      "docs/modules/dao/examples.md",
+      "docs/modules/dao/integration-guide.md",
+      "docs/modules/dao/mcp-tools.md",
+      "docs/modules/dao/mcp.md",
+      "docs/modules/dao/troubleshooting.md",
+      "docs/modules/qchat/README.md",
+      "docs/modules/qchat/api-reference.md",
+      "docs/modules/qchat/api.md",
+      "docs/modules/qchat/examples.md",
+      "docs/modules/qchat/integration-guide.md",
+      "docs/modules/qchat/mcp-tools.md",
+      "docs/modules/qchat/mcp.md",
+      "docs/modules/qchat/troubleshooting.md",
+      "docs/modules/qdrive/README.md",
+      "docs/modules/qdrive/api-reference.md",
+      "docs/modules/qdrive/api.md",
+      "docs/modules/qdrive/examples.md",
+      "docs/modules/qdrive/integration-guide.md",
+      "docs/modules/qdrive/mcp-tools.md",
+      "docs/modules/qdrive/mcp.md",
+      "docs/modules/qdrive/troubleshooting.md",
+      "docs/modules/qerberos/README.md",
+      "docs/modules/qerberos/api-reference.md",
+      "docs/modules/qerberos/api.md",
+      "docs/modules/qerberos/examples.md",
+      "docs/modules/qerberos/integration-guide.md",
+      "docs/modules/qerberos/mcp-tools.md",
+      "docs/modules/qerberos/mcp.md",
+      "docs/modules/qerberos/troubleshooting.md",
+      "docs/modules/qindex/README.md",
+      "docs/modules/qindex/api-reference.md",
+      "docs/modules/qindex/api.md",
+      "docs/modules/qindex/examples.md",
+      "docs/modules/qindex/integration-guide.md",
+      "docs/modules/qindex/mcp-tools.md",
+      "docs/modules/qindex/mcp.md",
+      "docs/modules/qindex/troubleshooting.md",
+      "docs/modules/qlock/README.md",
+      "docs/modules/qlock/api-reference.md",
+      "docs/modules/qlock/examples.md",
+      "docs/modules/qlock/integration-guide.md",
+      "docs/modules/qlock/troubleshooting.md",
+      "docs/modules/qmail/README.md",
+      "docs/modules/qmail/api-reference.md",
+      "docs/modules/qmail/api.md",
+      "docs/modules/qmail/examples.md",
+      "docs/modules/qmail/integration-guide.md",
+      "docs/modules/qmail/mcp-tools.md",
+      "docs/modules/qmail/mcp.md",
+      "docs/modules/qmail/troubleshooting.md",
+      "docs/modules/qmarket/README.md",
+      "docs/modules/qmarket/api-reference.md",
+      "docs/modules/qmarket/api.md",
+      "docs/modules/qmarket/examples.md",
+      "docs/modules/qmarket/integration-guide.md",
+      "docs/modules/qmarket/mcp-tools.md",
+      "docs/modules/qmarket/mcp.md",
+      "docs/modules/qmarket/troubleshooting.md",
+      "docs/modules/qmask/README.md",
+      "docs/modules/qmask/api-reference.md",
+      "docs/modules/qmask/api.md",
+      "docs/modules/qmask/examples.md",
+      "docs/modules/qmask/integration-guide.md",
+      "docs/modules/qmask/mcp-tools.md",
+      "docs/modules/qmask/mcp.md",
+      "docs/modules/qmask/troubleshooting.md",
+      "docs/modules/qnet/README.md",
+      "docs/modules/qnet/api-reference.md",
+      "docs/modules/qnet/api.md",
+      "docs/modules/qnet/examples.md",
+      "docs/modules/qnet/integration-guide.md",
+      "docs/modules/qnet/mcp-tools.md",
+      "docs/modules/qnet/mcp.md",
+      "docs/modules/qnet/troubleshooting.md",
+      "docs/modules/qonsent/README.md",
+      "docs/modules/qonsent/api-reference.md",
+      "docs/modules/qonsent/api.md",
+      "docs/modules/qonsent/examples.md",
+      "docs/modules/qonsent/integration-guide.md",
+      "docs/modules/qonsent/mcp-tools.md",
+      "docs/modules/qonsent/mcp.md",
+      "docs/modules/qonsent/troubleshooting.md",
+      "docs/modules/qpic/README.md",
+      "docs/modules/qpic/api-reference.md",
+      "docs/modules/qpic/api.md",
+      "docs/modules/qpic/examples.md",
+      "docs/modules/qpic/integration-guide.md",
+      "docs/modules/qpic/mcp-tools.md",
+      "docs/modules/qpic/mcp.md",
+      "docs/modules/qpic/troubleshooting.md",
+      "docs/modules/qwallet/README.md",
+      "docs/modules/qwallet/api-reference.md",
+      "docs/modules/qwallet/api.md",
+      "docs/modules/qwallet/examples.md",
+      "docs/modules/qwallet/integration-guide.md",
+      "docs/modules/qwallet/mcp-tools.md",
+      "docs/modules/qwallet/mcp.md",
+      "docs/modules/qwallet/troubleshooting.md",
+      "docs/modules/squid/README.md",
+      "docs/modules/squid/api-reference.md",
+      "docs/modules/squid/api.md",
+      "docs/modules/squid/examples.md",
+      "docs/modules/squid/integration-guide.md",
+      "docs/modules/squid/mcp-tools.md",
+      "docs/modules/squid/mcp.md",
+      "docs/modules/squid/troubleshooting.md",
+      "docs/monitoring-alerts.json",
+      "docs/qwallet-identity-expansion/README.md",
+      "docs/qwallet-identity-expansion/components/README.md",
+      "docs/qwallet-identity-expansion/examples/README.md",
+      "docs/qwallet-identity-expansion/examples/components/README.md",
+      "docs/qwallet-identity-expansion/integration/overview.md",
+      "docs/qwallet-identity-expansion/troubleshooting.md",
+      "docs/qwallet-identity-expansion/user-guides/root-identity.md",
+      "docs/reports/2025-08-30/monitoring-report.md",
+      "docs/runbooks/README.md",
+      "docs/video-scripts/IMPLEMENTATION_SUMMARY.md",
+      "docs/video-scripts/README.md",
+      "docs/video-scripts/TASK_6_COMPLETION_SUMMARY.md",
+      "docs/video-scripts/global/ecosystem-overview-en.md",
+      "docs/video-scripts/global/ecosystem-overview-es.md",
+      "docs/video-scripts/modules/dao-en.md",
+      "docs/video-scripts/modules/dao-es.md",
+      "docs/video-scripts/modules/qchat-en.md",
+      "docs/video-scripts/modules/qchat-es.md",
+      "docs/video-scripts/modules/qdrive-en.md",
+      "docs/video-scripts/modules/qdrive-es.md",
+      "docs/video-scripts/modules/qerberos-en.md",
+      "docs/video-scripts/modules/qerberos-es.md",
+      "docs/video-scripts/modules/qindex-en.md",
+      "docs/video-scripts/modules/qindex-es.md",
+      "docs/video-scripts/modules/qlock-en.md",
+      "docs/video-scripts/modules/qlock-es.md",
+      "docs/video-scripts/modules/qmail-en.md",
+      "docs/video-scripts/modules/qmail-es.md",
+      "docs/video-scripts/modules/qmarket-en.md",
+      "docs/video-scripts/modules/qmarket-es.md",
+      "docs/video-scripts/modules/qmask-en.md",
+      "docs/video-scripts/modules/qmask-es.md",
+      "docs/video-scripts/modules/qnet-en.md",
+      "docs/video-scripts/modules/qnet-es.md",
+      "docs/video-scripts/modules/qonsent-en.md",
+      "docs/video-scripts/modules/qonsent-es.md",
+      "docs/video-scripts/modules/qpic-en.md",
+      "docs/video-scripts/modules/qpic-es.md",
+      "docs/video-scripts/modules/qwallet-en.md",
+      "docs/video-scripts/modules/qwallet-es.md",
+      "docs/video-scripts/modules/squid-en.md",
+      "docs/video-scripts/modules/squid-es.md",
+      "docs/video-scripts/validate-scripts.mjs"
+    ],
+    "partner": [
+      "docs/API-CHANGES.md",
+      "docs/CONTRIBUTING.md",
+      "docs/CROSS-REFERENCES.md",
+      "docs/DAO-DASHBOARD-ARCHITECTURE.md",
+      "docs/INDEX.md",
+      "docs/IPFS-INTEGRATION.md",
+      "docs/MONITORING-SYSTEM.md",
+      "docs/NAVIGATION.md",
+      "docs/QFLOW-DOCUMENTATION-PIPELINE.md",
+      "docs/QSOCIAL-COMPLETE-INTEGRATION.md",
+      "docs/QSOCIAL-ECOSYSTEM-INTEGRATION.md",
+      "docs/SECURITY/security-scan-report.md",
+      "docs/STORJ-INTEGRATION.md",
+      "docs/STYLEGUIDE.md",
+      "docs/VERSION.json",
+      "docs/api/module-registry/README.md",
+      "docs/api/module-registry/discovery-api.md",
+      "docs/api/module-registry/examples/README.md",
+      "docs/api/module-registry/examples/basic-registration.js",
+      "docs/api/module-registry/getting-started.md",
+      "docs/api/module-registry/registration-api.md",
+      "docs/artifacts/documentation-coverage.json",
+      "docs/assets/IMPLEMENTATION_SUMMARY.md",
+      "docs/assets/README.md",
+      "docs/assets/design-tokens.json",
+      "docs/assets/visual-library.json",
+      "docs/cicd-status.json",
+      "docs/disaster-recovery-procedures.md",
+      "docs/enhanced-monitoring-report.json",
+      "docs/enhanced-monitoring-report.md",
+      "docs/global/architecture/q-infinity-architecture.md",
+      "docs/global/integrations/pi/README.md",
+      "docs/global/technical-analysis/performance-optimizations.md",
+      "docs/global/whitepapers/README.md",
+      "docs/integration/integration-matrix.md",
+      "docs/integration-summary.json",
+      "docs/ipfs-integration.md",
+      "docs/metadata-system-implementation-summary.md",
+      "docs/migration/module-specific/qwallet-migration-guide.md",
+      "docs/migration/module-specific/squid-migration-guide.md",
+      "docs/modules/README.md",
+      "docs/modules/dao/README.md",
+      "docs/modules/dao/api-reference.md",
+      "docs/modules/dao/api.md",
+      "docs/modules/dao/examples.md",
+      "docs/modules/dao/integration-guide.md",
+      "docs/modules/dao/mcp-tools.md",
+      "docs/modules/dao/mcp.md",
+      "docs/modules/dao/troubleshooting.md",
+      "docs/modules/qchat/README.md",
+      "docs/modules/qchat/api-reference.md",
+      "docs/modules/qchat/api.md",
+      "docs/modules/qchat/examples.md",
+      "docs/modules/qchat/integration-guide.md",
+      "docs/modules/qchat/mcp-tools.md",
+      "docs/modules/qchat/mcp.md",
+      "docs/modules/qchat/troubleshooting.md",
+      "docs/modules/qdrive/README.md",
+      "docs/modules/qdrive/api-reference.md",
+      "docs/modules/qdrive/api.md",
+      "docs/modules/qdrive/examples.md",
+      "docs/modules/qdrive/integration-guide.md",
+      "docs/modules/qdrive/mcp-tools.md",
+      "docs/modules/qdrive/mcp.md",
+      "docs/modules/qdrive/troubleshooting.md",
+      "docs/modules/qerberos/README.md",
+      "docs/modules/qerberos/api-reference.md",
+      "docs/modules/qerberos/api.md",
+      "docs/modules/qerberos/examples.md",
+      "docs/modules/qerberos/integration-guide.md",
+      "docs/modules/qerberos/mcp-tools.md",
+      "docs/modules/qerberos/mcp.md",
+      "docs/modules/qerberos/troubleshooting.md",
+      "docs/modules/qindex/README.md",
+      "docs/modules/qindex/api-reference.md",
+      "docs/modules/qindex/api.md",
+      "docs/modules/qindex/examples.md",
+      "docs/modules/qindex/integration-guide.md",
+      "docs/modules/qindex/mcp-tools.md",
+      "docs/modules/qindex/mcp.md",
+      "docs/modules/qindex/troubleshooting.md",
+      "docs/modules/qlock/README.md",
+      "docs/modules/qlock/api-reference.md",
+      "docs/modules/qlock/examples.md",
+      "docs/modules/qlock/integration-guide.md",
+      "docs/modules/qlock/troubleshooting.md",
+      "docs/modules/qmail/README.md",
+      "docs/modules/qmail/api-reference.md",
+      "docs/modules/qmail/api.md",
+      "docs/modules/qmail/examples.md",
+      "docs/modules/qmail/integration-guide.md",
+      "docs/modules/qmail/mcp-tools.md",
+      "docs/modules/qmail/mcp.md",
+      "docs/modules/qmail/troubleshooting.md",
+      "docs/modules/qmarket/README.md",
+      "docs/modules/qmarket/api-reference.md",
+      "docs/modules/qmarket/api.md",
+      "docs/modules/qmarket/examples.md",
+      "docs/modules/qmarket/integration-guide.md",
+      "docs/modules/qmarket/mcp-tools.md",
+      "docs/modules/qmarket/mcp.md",
+      "docs/modules/qmarket/troubleshooting.md",
+      "docs/modules/qmask/README.md",
+      "docs/modules/qmask/api-reference.md",
+      "docs/modules/qmask/api.md",
+      "docs/modules/qmask/examples.md",
+      "docs/modules/qmask/integration-guide.md",
+      "docs/modules/qmask/mcp-tools.md",
+      "docs/modules/qmask/mcp.md",
+      "docs/modules/qmask/troubleshooting.md",
+      "docs/modules/qnet/README.md",
+      "docs/modules/qnet/api-reference.md",
+      "docs/modules/qnet/api.md",
+      "docs/modules/qnet/examples.md",
+      "docs/modules/qnet/integration-guide.md",
+      "docs/modules/qnet/mcp-tools.md",
+      "docs/modules/qnet/mcp.md",
+      "docs/modules/qnet/troubleshooting.md",
+      "docs/modules/qonsent/README.md",
+      "docs/modules/qonsent/api-reference.md",
+      "docs/modules/qonsent/api.md",
+      "docs/modules/qonsent/examples.md",
+      "docs/modules/qonsent/integration-guide.md",
+      "docs/modules/qonsent/mcp-tools.md",
+      "docs/modules/qonsent/mcp.md",
+      "docs/modules/qonsent/troubleshooting.md",
+      "docs/modules/qpic/README.md",
+      "docs/modules/qpic/api-reference.md",
+      "docs/modules/qpic/api.md",
+      "docs/modules/qpic/examples.md",
+      "docs/modules/qpic/integration-guide.md",
+      "docs/modules/qpic/mcp-tools.md",
+      "docs/modules/qpic/mcp.md",
+      "docs/modules/qpic/troubleshooting.md",
+      "docs/modules/qwallet/README.md",
+      "docs/modules/qwallet/api-reference.md",
+      "docs/modules/qwallet/api.md",
+      "docs/modules/qwallet/examples.md",
+      "docs/modules/qwallet/integration-guide.md",
+      "docs/modules/qwallet/mcp-tools.md",
+      "docs/modules/qwallet/mcp.md",
+      "docs/modules/qwallet/troubleshooting.md",
+      "docs/modules/squid/README.md",
+      "docs/modules/squid/api-reference.md",
+      "docs/modules/squid/api.md",
+      "docs/modules/squid/examples.md",
+      "docs/modules/squid/integration-guide.md",
+      "docs/modules/squid/mcp-tools.md",
+      "docs/modules/squid/mcp.md",
+      "docs/modules/squid/troubleshooting.md",
+      "docs/monitoring-alerts.json",
+      "docs/monitoring-history.json",
+      "docs/qwallet-identity-expansion/README.md",
+      "docs/qwallet-identity-expansion/components/README.md",
+      "docs/qwallet-identity-expansion/components/WalletDashboard.md",
+      "docs/qwallet-identity-expansion/examples/README.md",
+      "docs/qwallet-identity-expansion/examples/components/README.md",
+      "docs/qwallet-identity-expansion/integration/advanced-patterns.md",
+      "docs/qwallet-identity-expansion/integration/overview.md",
+      "docs/qwallet-identity-expansion/troubleshooting.md",
+      "docs/qwallet-identity-expansion/user-guides/README.md",
+      "docs/qwallet-identity-expansion/user-guides/root-identity.md",
+      "docs/reports/2025-08-30/monitoring-report.json",
+      "docs/reports/2025-08-30/monitoring-report.md",
+      "docs/runbooks/README.md",
+      "docs/video-scripts/IMPLEMENTATION_SUMMARY.md",
+      "docs/video-scripts/README.md",
+      "docs/video-scripts/TASK_6_COMPLETION_SUMMARY.md",
+      "docs/video-scripts/global/TASK_COMPLETION_SUMMARY.md",
+      "docs/video-scripts/global/ecosystem-overview-en.md",
+      "docs/video-scripts/global/ecosystem-overview-es.md",
+      "docs/video-scripts/modules/dao-en.md",
+      "docs/video-scripts/modules/dao-es.md",
+      "docs/video-scripts/modules/qchat-en.md",
+      "docs/video-scripts/modules/qchat-es.md",
+      "docs/video-scripts/modules/qdrive-en.md",
+      "docs/video-scripts/modules/qdrive-es.md",
+      "docs/video-scripts/modules/qerberos-en.md",
+      "docs/video-scripts/modules/qerberos-es.md",
+      "docs/video-scripts/modules/qindex-en.md",
+      "docs/video-scripts/modules/qindex-es.md",
+      "docs/video-scripts/modules/qlock-en.md",
+      "docs/video-scripts/modules/qlock-es.md",
+      "docs/video-scripts/modules/qmail-en.md",
+      "docs/video-scripts/modules/qmail-es.md",
+      "docs/video-scripts/modules/qmarket-en.md",
+      "docs/video-scripts/modules/qmarket-es.md",
+      "docs/video-scripts/modules/qmask-en.md",
+      "docs/video-scripts/modules/qmask-es.md",
+      "docs/video-scripts/modules/qnet-en.md",
+      "docs/video-scripts/modules/qnet-es.md",
+      "docs/video-scripts/modules/qonsent-en.md",
+      "docs/video-scripts/modules/qonsent-es.md",
+      "docs/video-scripts/modules/qpic-en.md",
+      "docs/video-scripts/modules/qpic-es.md",
+      "docs/video-scripts/modules/qwallet-en.md",
+      "docs/video-scripts/modules/qwallet-es.md",
+      "docs/video-scripts/modules/squid-en.md",
+      "docs/video-scripts/modules/squid-es.md",
+      "docs/video-scripts/validate-scripts.mjs"
+    ],
+    "internal": [
+      "docs/API-CHANGES.md",
+      "docs/AUTOMATION.md",
+      "docs/CONTRIBUTING.md",
+      "docs/CROSS-REFERENCES.md",
+      "docs/DAO-DASHBOARD-ARCHITECTURE.md",
+      "docs/DEMO/runbook.md",
+      "docs/DEPLOYMENT.md",
+      "docs/DOCUMENTATION-SLA.md",
+      "docs/GLOSSARY.md",
+      "docs/INDEX.md",
+      "docs/INTEGRATIONS/README.md",
+      "docs/IPFS-INTEGRATION.md",
+      "docs/MONITORING-SYSTEM.md",
+      "docs/NAVIGATION.md",
+      "docs/PUBLIC-PORTAL-BLUEPRINT.md",
+      "docs/QFLOW-DOCUMENTATION-PIPELINE.md",
+      "docs/QSOCIAL-COMPLETE-INTEGRATION.md",
+      "docs/QSOCIAL-ECOSYSTEM-INTEGRATION.md",
+      "docs/README.md",
+      "docs/SECURITY/access-control-config.json",
+      "docs/SECURITY/classification-report.md",
+      "docs/SECURITY/content-sanitization.md",
+      "docs/SECURITY/security-scan-report.md",
+      "docs/SECURITY/test-access-control.json",
+      "docs/SECURITY/test-classification-report.md",
+      "docs/SECURITY/test-security-report.md",
+      "docs/STORJ-INTEGRATION.md",
+      "docs/STYLEGUIDE.md",
+      "docs/VERSION.json",
+      "docs/api/module-registry/README.md",
+      "docs/api/module-registry/discovery-api.md",
+      "docs/api/module-registry/examples/README.md",
+      "docs/api/module-registry/examples/basic-registration.js",
+      "docs/api/module-registry/faq.md",
+      "docs/api/module-registry/getting-started.md",
+      "docs/api/module-registry/registration-api.md",
+      "docs/api/module-registry/troubleshooting.md",
+      "docs/artifacts/documentation-coverage.json",
+      "docs/assets/IMPLEMENTATION_SUMMARY.md",
+      "docs/assets/README.md",
+      "docs/assets/design-tokens.json",
+      "docs/assets/visual-library.json",
+      "docs/cicd-status.json",
+      "docs/deployment/deployment-matrix.md",
+      "docs/disaster-recovery-procedures.md",
+      "docs/enhanced-monitoring-report.json",
+      "docs/enhanced-monitoring-report.md",
+      "docs/enhanced-validation-report.json",
+      "docs/global/architecture/q-infinity-architecture.md",
+      "docs/global/integrations/pi/README.md",
+      "docs/global/strategy/strategic-narrative.md",
+      "docs/global/technical-analysis/README.md",
+      "docs/global/technical-analysis/comprehensive-system-testing.md",
+      "docs/global/technical-analysis/performance-optimizations.md",
+      "docs/global/vision/vision-overview.md",
+      "docs/global/whitepapers/README.md",
+      "docs/integration/integration-matrix.md",
+      "docs/integration-summary.json",
+      "docs/ipfs-integration.md",
+      "docs/metadata-system-implementation-summary.md",
+      "docs/migration/deprecation-plan.md",
+      "docs/migration/legacy-to-modular-migration-guide.md",
+      "docs/migration/lessons-learned.md",
+      "docs/migration/module-specific/qwallet-migration-guide.md",
+      "docs/migration/module-specific/squid-migration-guide.md",
+      "docs/modules/README.md",
+      "docs/modules/dao/README.md",
+      "docs/modules/dao/api-reference.md",
+      "docs/modules/dao/api.md",
+      "docs/modules/dao/deployment-guide.md",
+      "docs/modules/dao/deployment.md",
+      "docs/modules/dao/examples.md",
+      "docs/modules/dao/integration-guide.md",
+      "docs/modules/dao/mcp-tools.md",
+      "docs/modules/dao/mcp.md",
+      "docs/modules/dao/runbook.md",
+      "docs/modules/dao/troubleshooting.md",
+      "docs/modules/qchat/README.md",
+      "docs/modules/qchat/api-reference.md",
+      "docs/modules/qchat/api.md",
+      "docs/modules/qchat/deployment-guide.md",
+      "docs/modules/qchat/deployment.md",
+      "docs/modules/qchat/examples.md",
+      "docs/modules/qchat/integration-guide.md",
+      "docs/modules/qchat/mcp-tools.md",
+      "docs/modules/qchat/mcp.md",
+      "docs/modules/qchat/runbook.md",
+      "docs/modules/qchat/troubleshooting.md",
+      "docs/modules/qdrive/README.md",
+      "docs/modules/qdrive/api-reference.md",
+      "docs/modules/qdrive/api.md",
+      "docs/modules/qdrive/deployment-guide.md",
+      "docs/modules/qdrive/deployment.md",
+      "docs/modules/qdrive/examples.md",
+      "docs/modules/qdrive/integration-guide.md",
+      "docs/modules/qdrive/mcp-tools.md",
+      "docs/modules/qdrive/mcp.md",
+      "docs/modules/qdrive/runbook.md",
+      "docs/modules/qdrive/troubleshooting.md",
+      "docs/modules/qerberos/README.md",
+      "docs/modules/qerberos/api-reference.md",
+      "docs/modules/qerberos/api.md",
+      "docs/modules/qerberos/deployment-guide.md",
+      "docs/modules/qerberos/deployment.md",
+      "docs/modules/qerberos/examples.md",
+      "docs/modules/qerberos/integration-guide.md",
+      "docs/modules/qerberos/mcp-tools.md",
+      "docs/modules/qerberos/mcp.md",
+      "docs/modules/qerberos/runbook.md",
+      "docs/modules/qerberos/troubleshooting.md",
+      "docs/modules/qindex/README.md",
+      "docs/modules/qindex/api-reference.md",
+      "docs/modules/qindex/api.md",
+      "docs/modules/qindex/deployment-guide.md",
+      "docs/modules/qindex/deployment.md",
+      "docs/modules/qindex/examples.md",
+      "docs/modules/qindex/integration-guide.md",
+      "docs/modules/qindex/mcp-tools.md",
+      "docs/modules/qindex/mcp.md",
+      "docs/modules/qindex/runbook.md",
+      "docs/modules/qindex/troubleshooting.md",
+      "docs/modules/qlock/README.md",
+      "docs/modules/qlock/api-reference.md",
+      "docs/modules/qlock/deployment-guide.md",
+      "docs/modules/qlock/deployment.md",
+      "docs/modules/qlock/examples.md",
+      "docs/modules/qlock/integration-guide.md",
+      "docs/modules/qlock/mcp-tools.md",
+      "docs/modules/qlock/mcp.md",
+      "docs/modules/qlock/runbook.md",
+      "docs/modules/qlock/troubleshooting.md",
+      "docs/modules/qmail/README.md",
+      "docs/modules/qmail/api-reference.md",
+      "docs/modules/qmail/api.md",
+      "docs/modules/qmail/deployment-guide.md",
+      "docs/modules/qmail/deployment.md",
+      "docs/modules/qmail/examples.md",
+      "docs/modules/qmail/integration-guide.md",
+      "docs/modules/qmail/mcp-tools.md",
+      "docs/modules/qmail/mcp.md",
+      "docs/modules/qmail/runbook.md",
+      "docs/modules/qmail/troubleshooting.md",
+      "docs/modules/qmarket/README.md",
+      "docs/modules/qmarket/api-reference.md",
+      "docs/modules/qmarket/api.md",
+      "docs/modules/qmarket/deployment-guide.md",
+      "docs/modules/qmarket/deployment.md",
+      "docs/modules/qmarket/examples.md",
+      "docs/modules/qmarket/integration-guide.md",
+      "docs/modules/qmarket/mcp-tools.md",
+      "docs/modules/qmarket/mcp.md",
+      "docs/modules/qmarket/runbook.md",
+      "docs/modules/qmarket/troubleshooting.md",
+      "docs/modules/qmask/README.md",
+      "docs/modules/qmask/api-reference.md",
+      "docs/modules/qmask/api.md",
+      "docs/modules/qmask/deployment-guide.md",
+      "docs/modules/qmask/deployment.md",
+      "docs/modules/qmask/examples.md",
+      "docs/modules/qmask/integration-guide.md",
+      "docs/modules/qmask/mcp-tools.md",
+      "docs/modules/qmask/mcp.md",
+      "docs/modules/qmask/runbook.md",
+      "docs/modules/qmask/troubleshooting.md",
+      "docs/modules/qnet/README.md",
+      "docs/modules/qnet/api-reference.md",
+      "docs/modules/qnet/api.md",
+      "docs/modules/qnet/deployment-guide.md",
+      "docs/modules/qnet/deployment.md",
+      "docs/modules/qnet/examples.md",
+      "docs/modules/qnet/integration-guide.md",
+      "docs/modules/qnet/mcp-tools.md",
+      "docs/modules/qnet/mcp.md",
+      "docs/modules/qnet/runbook.md",
+      "docs/modules/qnet/troubleshooting.md",
+      "docs/modules/qonsent/README.md",
+      "docs/modules/qonsent/api-reference.md",
+      "docs/modules/qonsent/api.md",
+      "docs/modules/qonsent/deployment-guide.md",
+      "docs/modules/qonsent/deployment.md",
+      "docs/modules/qonsent/examples.md",
+      "docs/modules/qonsent/integration-guide.md",
+      "docs/modules/qonsent/mcp-tools.md",
+      "docs/modules/qonsent/mcp.md",
+      "docs/modules/qonsent/runbook.md",
+      "docs/modules/qonsent/troubleshooting.md",
+      "docs/modules/qpic/README.md",
+      "docs/modules/qpic/api-reference.md",
+      "docs/modules/qpic/api.md",
+      "docs/modules/qpic/deployment-guide.md",
+      "docs/modules/qpic/deployment.md",
+      "docs/modules/qpic/examples.md",
+      "docs/modules/qpic/integration-guide.md",
+      "docs/modules/qpic/mcp-tools.md",
+      "docs/modules/qpic/mcp.md",
+      "docs/modules/qpic/runbook.md",
+      "docs/modules/qpic/troubleshooting.md",
+      "docs/modules/qwallet/README.md",
+      "docs/modules/qwallet/api-reference.md",
+      "docs/modules/qwallet/api.md",
+      "docs/modules/qwallet/deployment-guide.md",
+      "docs/modules/qwallet/deployment.md",
+      "docs/modules/qwallet/examples.md",
+      "docs/modules/qwallet/integration-guide.md",
+      "docs/modules/qwallet/mcp-tools.md",
+      "docs/modules/qwallet/mcp.md",
+      "docs/modules/qwallet/runbook.md",
+      "docs/modules/qwallet/troubleshooting.md",
+      "docs/modules/squid/README.md",
+      "docs/modules/squid/api-reference.md",
+      "docs/modules/squid/api.md",
+      "docs/modules/squid/deployment-guide.md",
+      "docs/modules/squid/deployment.md",
+      "docs/modules/squid/examples.md",
+      "docs/modules/squid/integration-guide.md",
+      "docs/modules/squid/mcp-tools.md",
+      "docs/modules/squid/mcp.md",
+      "docs/modules/squid/runbook.md",
+      "docs/modules/squid/troubleshooting.md",
+      "docs/monitoring-alerts.json",
+      "docs/monitoring-history.json",
+      "docs/production-deployment-runbook.md",
+      "docs/qwallet-identity-expansion/README.md",
+      "docs/qwallet-identity-expansion/components/README.md",
+      "docs/qwallet-identity-expansion/components/WalletDashboard.md",
+      "docs/qwallet-identity-expansion/examples/README.md",
+      "docs/qwallet-identity-expansion/examples/components/README.md",
+      "docs/qwallet-identity-expansion/faq.md",
+      "docs/qwallet-identity-expansion/integration/advanced-patterns.md",
+      "docs/qwallet-identity-expansion/integration/overview.md",
+      "docs/qwallet-identity-expansion/troubleshooting.md",
+      "docs/qwallet-identity-expansion/user-guides/README.md",
+      "docs/qwallet-identity-expansion/user-guides/root-identity.md",
+      "docs/reports/2025-08-30/monitoring-report.json",
+      "docs/reports/2025-08-30/monitoring-report.md",
+      "docs/runbooks/README.md",
+      "docs/runbooks/runbook-dao.md",
+      "docs/runbooks/runbook-qchat.md",
+      "docs/runbooks/runbook-qdrive.md",
+      "docs/runbooks/runbook-qerberos.md",
+      "docs/runbooks/runbook-qindex.md",
+      "docs/runbooks/runbook-qlock.md",
+      "docs/runbooks/runbook-qmail.md",
+      "docs/runbooks/runbook-qmarket.md",
+      "docs/runbooks/runbook-qmask.md",
+      "docs/runbooks/runbook-qnet.md",
+      "docs/runbooks/runbook-qonsent.md",
+      "docs/runbooks/runbook-qpic.md",
+      "docs/runbooks/runbook-qwallet.md",
+      "docs/runbooks/runbook-squid.md",
+      "docs/video-scripts/IMPLEMENTATION_SUMMARY.md",
+      "docs/video-scripts/README.md",
+      "docs/video-scripts/TASK_6_COMPLETION_SUMMARY.md",
+      "docs/video-scripts/global/TASK_COMPLETION_SUMMARY.md",
+      "docs/video-scripts/global/ecosystem-overview-en.md",
+      "docs/video-scripts/global/ecosystem-overview-es.md",
+      "docs/video-scripts/modules/dao-en.md",
+      "docs/video-scripts/modules/dao-es.md",
+      "docs/video-scripts/modules/qchat-en.md",
+      "docs/video-scripts/modules/qchat-es.md",
+      "docs/video-scripts/modules/qdrive-en.md",
+      "docs/video-scripts/modules/qdrive-es.md",
+      "docs/video-scripts/modules/qerberos-en.md",
+      "docs/video-scripts/modules/qerberos-es.md",
+      "docs/video-scripts/modules/qindex-en.md",
+      "docs/video-scripts/modules/qindex-es.md",
+      "docs/video-scripts/modules/qlock-en.md",
+      "docs/video-scripts/modules/qlock-es.md",
+      "docs/video-scripts/modules/qmail-en.md",
+      "docs/video-scripts/modules/qmail-es.md",
+      "docs/video-scripts/modules/qmarket-en.md",
+      "docs/video-scripts/modules/qmarket-es.md",
+      "docs/video-scripts/modules/qmask-en.md",
+      "docs/video-scripts/modules/qmask-es.md",
+      "docs/video-scripts/modules/qnet-en.md",
+      "docs/video-scripts/modules/qnet-es.md",
+      "docs/video-scripts/modules/qonsent-en.md",
+      "docs/video-scripts/modules/qonsent-es.md",
+      "docs/video-scripts/modules/qpic-en.md",
+      "docs/video-scripts/modules/qpic-es.md",
+      "docs/video-scripts/modules/qwallet-en.md",
+      "docs/video-scripts/modules/qwallet-es.md",
+      "docs/video-scripts/modules/squid-en.md",
+      "docs/video-scripts/modules/squid-es.md",
+      "docs/video-scripts/validate-scripts.mjs"
+    ]
+  },
+  "fileClassifications": {
+    "docs/API-CHANGES.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/AUTOMATION.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/CONTRIBUTING.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/CROSS-REFERENCES.md": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/DAO-DASHBOARD-ARCHITECTURE.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/DEMO/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/DEPLOYMENT.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/DOCUMENTATION-SLA.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/GLOSSARY.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/INDEX.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/INTEGRATIONS/README.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/IPFS-INTEGRATION.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/MONITORING-SYSTEM.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/NAVIGATION.md": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/PUBLIC-PORTAL-BLUEPRINT.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/QFLOW-DOCUMENTATION-PIPELINE.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/QSOCIAL-COMPLETE-INTEGRATION.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/QSOCIAL-ECOSYSTEM-INTEGRATION.md": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/README.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/SECURITY/access-control-config.json": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/SECURITY/classification-report.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/SECURITY/content-sanitization.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/SECURITY/security-scan-report.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/SECURITY/test-access-control.json": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/SECURITY/test-classification-report.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/SECURITY/test-security-report.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/STORJ-INTEGRATION.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/STYLEGUIDE.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/VERSION.json": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/api/module-registry/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/api/module-registry/discovery-api.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/api/module-registry/examples/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/api/module-registry/examples/basic-registration.js": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/api/module-registry/faq.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/api/module-registry/getting-started.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/api/module-registry/registration-api.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/api/module-registry/troubleshooting.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/artifacts/documentation-coverage.json": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/assets/IMPLEMENTATION_SUMMARY.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/assets/README.md": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/assets/design-tokens.json": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/assets/visual-library.json": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/cicd-status.json": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/deployment/deployment-matrix.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/disaster-recovery-procedures.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/enhanced-monitoring-report.json": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/enhanced-monitoring-report.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/enhanced-validation-report.json": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/global/architecture/q-infinity-architecture.md": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/global/integrations/pi/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/global/strategy/strategic-narrative.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/global/technical-analysis/README.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/global/technical-analysis/comprehensive-system-testing.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/global/technical-analysis/performance-optimizations.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/global/vision/vision-overview.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/global/whitepapers/README.md": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/integration/integration-matrix.md": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/integration-summary.json": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/ipfs-integration.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/metadata-system-implementation-summary.md": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/migration/deprecation-plan.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/migration/legacy-to-modular-migration-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/migration/lessons-learned.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/migration/module-specific/qwallet-migration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/migration/module-specific/squid-migration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/dao/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/dao/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/dao/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/dao/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/dao/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/dao/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/dao/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/dao/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/dao/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/dao/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/dao/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qchat/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qchat/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qchat/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qchat/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qchat/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qchat/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qchat/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qchat/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qchat/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qchat/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qchat/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qdrive/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qdrive/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qdrive/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qdrive/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qdrive/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qdrive/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qdrive/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qdrive/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qdrive/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qdrive/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qdrive/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qerberos/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qerberos/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qerberos/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qerberos/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qerberos/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qerberos/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qerberos/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qerberos/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qerberos/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qerberos/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qerberos/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qindex/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qindex/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qindex/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qindex/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qindex/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qindex/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qindex/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qindex/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qindex/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qindex/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qindex/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qlock/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qlock/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qlock/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qlock/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qlock/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qlock/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qlock/mcp-tools.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qlock/mcp.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qlock/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qlock/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmail/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmail/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmail/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmail/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qmail/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qmail/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmail/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmail/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmail/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmail/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qmail/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmarket/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmarket/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmarket/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmarket/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qmarket/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qmarket/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmarket/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmarket/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmarket/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmarket/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qmarket/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmask/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmask/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmask/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmask/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qmask/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qmask/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmask/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmask/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmask/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qmask/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qmask/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qnet/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qnet/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qnet/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qnet/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qnet/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qnet/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qnet/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qnet/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qnet/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qnet/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qnet/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qonsent/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qonsent/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qonsent/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qonsent/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qonsent/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qonsent/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qonsent/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qonsent/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qonsent/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qonsent/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qonsent/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qpic/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qpic/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qpic/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qpic/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qpic/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qpic/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qpic/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qpic/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qpic/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qpic/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qpic/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qwallet/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qwallet/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qwallet/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qwallet/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qwallet/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qwallet/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qwallet/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qwallet/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qwallet/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/qwallet/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/qwallet/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/squid/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/squid/api-reference.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/squid/api.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/squid/deployment-guide.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/squid/deployment.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.6,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/squid/examples.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/squid/integration-guide.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/squid/mcp-tools.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/squid/mcp.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/modules/squid/runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/modules/squid/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/monitoring-alerts.json": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/monitoring-history.json": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/production-deployment-runbook.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/qwallet-identity-expansion/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/qwallet-identity-expansion/components/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/qwallet-identity-expansion/components/WalletDashboard.md": {
+      "classification": "PARTNER",
+      "confidence": 0.4,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/qwallet-identity-expansion/examples/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/qwallet-identity-expansion/examples/components/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/qwallet-identity-expansion/faq.md": {
+      "classification": "INTERNAL",
+      "confidence": 1,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/qwallet-identity-expansion/integration/advanced-patterns.md": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/qwallet-identity-expansion/integration/overview.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/qwallet-identity-expansion/troubleshooting.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/qwallet-identity-expansion/user-guides/README.md": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/qwallet-identity-expansion/user-guides/root-identity.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/reports/2025-08-30/monitoring-report.json": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/reports/2025-08-30/monitoring-report.md": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/runbooks/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/runbooks/runbook-dao.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qchat.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qdrive.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qerberos.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qindex.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qlock.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qmail.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qmarket.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qmask.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qnet.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qonsent.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qpic.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-qwallet.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.8,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/runbooks/runbook-squid.md": {
+      "classification": "INTERNAL",
+      "confidence": 0.2,
+      "allowedAudiences": [
+        "internal"
+      ],
+      "restrictions": [
+        "requires_internal_access",
+        "no_external_sharing"
+      ]
+    },
+    "docs/video-scripts/IMPLEMENTATION_SUMMARY.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/README.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/TASK_6_COMPLETION_SUMMARY.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/global/TASK_COMPLETION_SUMMARY.md": {
+      "classification": "PARTNER",
+      "confidence": 1,
+      "allowedAudiences": [
+        "partner",
+        "internal"
+      ],
+      "restrictions": [
+        "requires_partner_access"
+      ]
+    },
+    "docs/video-scripts/global/ecosystem-overview-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/global/ecosystem-overview-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/dao-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/dao-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qchat-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qchat-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qdrive-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qdrive-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qerberos-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qerberos-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qindex-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qindex-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qlock-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qlock-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qmail-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qmail-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qmarket-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qmarket-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qmask-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qmask-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qnet-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qnet-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qonsent-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qonsent-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qpic-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qpic-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qwallet-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/qwallet-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/squid-en.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/modules/squid-es.md": {
+      "classification": "PUBLIC",
+      "confidence": 1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    },
+    "docs/video-scripts/validate-scripts.mjs": {
+      "classification": "PUBLIC",
+      "confidence": 0.1,
+      "allowedAudiences": [
+        "public",
+        "partner",
+        "internal"
+      ],
+      "restrictions": []
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "consensusId": "cons_test-exec-123_test-step-456_21875e78",
+  "execId": "test-exec-123",
+  "stepId": "test-step-456",
+  "operation": "payment",
+  "timestamp": "2025-08-30T23:09:40.953Z",
+  "quorum": {
+    "required": 3,
+    "achieved": 5,
+    "threshold": 4
+  },
+  "consensus": {
+    "reached": true,
+    "decision": "approve",
+    "confidence": 0.9034862918316794,
+    "analysis": {
+      "totalVotes": 5,
+      "approvals": 5,
+      "rejections": 0,
+      "majorityThreshold": 3,
+      "avgConfidence": 0.9034862918316794,
+      "consensusStrength": 1
+    }
+  },
+  "votes": [
+    {
+      "nodeId": "node-1",
+      "vote": "approve",
+      "confidence": 0.8864559822477756,
+      "timestamp": "2025-08-30T23:09:41.155Z"
+    },
+    {
+      "nodeId": "node-2",
+      "vote": "approve",
+      "confidence": 0.8681322684309027,
+      "timestamp": "2025-08-30T23:09:41.156Z"
+    },
+    {
+      "nodeId": "node-3",
+      "vote": "approve",
+      "confidence": 0.9032716773311993,
+      "timestamp": "2025-08-30T23:09:41.156Z"
+    },
+    {
+      "nodeId": "node-4",
+      "vote": "approve",
+      "confidence": 0.8642808802655214,
+      "timestamp": "2025-08-30T23:09:41.156Z"
+    },
+    {
+      "nodeId": "node-5",
+      "vote": "approve",
+      "confidence": 0.9952906508829982,
+      "timestamp": "2025-08-30T23:09:41.156Z"
+    }
+  ],
+  "recovery": {
+    "required": false,
+    "duration": 0,
+    "successful": false
+  },
+  "executionTime": 206.18898099999933
+}

@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/identity.schema.json",
+  "title": "Identity Schemas",
+  "definitions": {
+    "IdentityRef": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Primary sQuid identity identifier"
+        },
+        "subId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Optional subidentity identifier"
+        },
+        "daoId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Optional DAO/community identifier"
+        }
+      },
+      "required": ["squidId"],
+      "additionalProperties": false
+    },
+    "IdentityInfo": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Primary sQuid identity identifier"
+        },
+        "subId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Optional subidentity identifier"
+        },
+        "daoId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Optional DAO/community identifier"
+        },
+        "displayName": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Display name for the identity"
+        },
+        "reputation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Reputation score"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Identity creation timestamp"
+        },
+        "lastActive": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last activity timestamp"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ACTIVE", "SUSPENDED", "REVOKED"],
+          "description": "Identity status"
+        }
+      },
+      "required": ["squidId", "createdAt", "status"],
+      "additionalProperties": false
+    }
+  }
+}

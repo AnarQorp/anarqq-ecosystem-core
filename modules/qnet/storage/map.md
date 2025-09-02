@@ -1,0 +1,204 @@
+# QNET Storage Mapping
+
+This document describes how QNET data is mapped to IPFS storage.
+
+## Storage Architecture
+
+QNET uses IPFS for distributed storage of network topology, node configurations, and metrics data.
+
+## Content Types and CID Mapping
+
+### Node Configurations
+- **Path**: `/qnet/nodes/{nodeId}/config`
+- **CID Pattern**: `Qm...` (SHA-256 hash of node configuration)
+- **Content**: Node configuration JSON with capabilities, endpoints, and metadata
+- **Retention**: Permanent (until node is decommissioned)
+
+### Network Topology
+- **Path**: `/qnet/topology/{timestamp}`
+- **CID Pattern**: `Qm...` (SHA-256 hash of topology snapshot)
+- **Content**: Complete network topology with nodes and connections
+- **Retention**: 1 year (historical topology data)
+
+### Metrics Data
+- **Path**: `/qnet/metrics/{nodeId}/{date}`
+- **CID Pattern**: `Qm...` (SHA-256 hash of metrics data)
+- **Content**: Daily aggregated metrics for each node
+- **Retention**: 90 days (performance metrics)
+
+### Audit Logs
+- **Path**: `/qnet/audit/{date}/{hour}`
+- **CID Pattern**: `Qm...` (SHA-256 hash of audit events)
+- **Content**: Hourly batched audit events
+- **Retention**: 7 years (compliance requirement)
+
+### Event History
+- **Path**: `/qnet/events/{eventType}/{date}`
+- **CID Pattern**: `Qm...` (SHA-256 hash of event batch)
+- **Content**: Daily batched events by type
+- **Retention**: 1 year (event history)
+
+## IPFS Integration
+
+### Content Addressing
+All QNET data is content-addressed using IPFS CIDs:
+- Immutable data (audit logs, historical metrics)
+- Versioned data (node configs, topology snapshots)
+- Temporary data (real-time metrics, status updates)
+
+### Pinning Strategy
+- **Critical Data**: Pinned on multiple nodes across regions
+- **Historical Data**: Pinned on archive nodes with cold storage
+- **Temporary Data**: Unpinned after retention period expires
+
+### Replication
+- **Primary Data**: 3 replicas minimum across different regions
+- **Archive Data**: 2 replicas on dedicated archive nodes
+- **Cache Data**: 1 replica with automatic cleanup
+
+## Data Structures
+
+### Node Configuration
+```json
+{
+  "nodeId": "qnet-us-east-primary",
+  "name": "US East Primary Node",
+  "endpoint": "https://us-east.qnet.anarq.io",
+  "region": "us-east-1",
+  "type": "primary",
+  "tier": "premium",
+  "capabilities": ["routing", "gateway", "storage"],
+  "configuration": {
+    "maxConnections": 1000,
+    "maxBandwidth": "10Gbps",
+    "protocols": ["https", "ipfs"]
+  },
+  "createdAt": "2024-01-15T10:00:00Z",
+  "updatedAt": "2024-01-15T10:00:00Z",
+  "version": 1
+}
+```
+
+### Topology Snapshot
+```json
+{
+  "timestamp": "2024-01-15T12:00:00Z",
+  "version": "1.0",
+  "nodes": [
+    {
+      "id": "qnet-us-east-primary",
+      "status": "active",
+      "connections": ["qnet-us-west-primary", "qnet-eu-west-primary"]
+    }
+  ],
+  "connections": [
+    {
+      "from": "qnet-us-east-primary",
+      "to": "qnet-us-west-primary",
+      "latency": 45,
+      "bandwidth": "5Gbps",
+      "status": "active"
+    }
+  ],
+  "clusters": [
+    {
+      "region": "us-east-1",
+      "nodes": ["qnet-us-east-primary", "qnet-us-east-secondary"],
+      "status": "healthy"
+    }
+  ]
+}
+```
+
+### Metrics Data
+```json
+{
+  "nodeId": "qnet-us-east-primary",
+  "date": "2024-01-15",
+  "metrics": {
+    "requests": {
+      "total": 150000,
+      "successful": 149500,
+      "errors": 500
+    },
+    "latency": {
+      "p50": 25,
+      "p95": 85,
+      "p99": 150,
+      "average": 35
+    },
+    "uptime": 0.999,
+    "bandwidth": {
+      "inbound": "2.5Gbps",
+      "outbound": "3.2Gbps"
+    }
+  },
+  "hourlyBreakdown": [
+    {
+      "hour": 0,
+      "requests": 5000,
+      "latency": 30,
+      "errors": 15
+    }
+  ]
+}
+```
+
+## Access Patterns
+
+### Read Operations
+- **Node Discovery**: Frequent reads of node configurations
+- **Topology Queries**: Regular reads of current topology
+- **Metrics Retrieval**: Periodic reads of performance data
+- **Audit Queries**: Infrequent reads of historical audit data
+
+### Write Operations
+- **Node Updates**: Infrequent writes when nodes change
+- **Topology Updates**: Regular writes as network changes
+- **Metrics Ingestion**: High-frequency writes of metrics data
+- **Audit Logging**: Continuous writes of audit events
+
+## Performance Optimization
+
+### Caching Strategy
+- **Hot Data**: Cached in memory for sub-second access
+- **Warm Data**: Cached on local storage for fast retrieval
+- **Cold Data**: Retrieved from IPFS on demand
+
+### Indexing
+- **Node Index**: Fast lookup by node ID, region, type
+- **Topology Index**: Time-based indexing for historical queries
+- **Metrics Index**: Node and time-based indexing
+- **Audit Index**: Time and event type indexing
+
+### Compression
+- **Metrics Data**: Compressed using gzip before IPFS storage
+- **Audit Logs**: Compressed and batched for efficiency
+- **Topology Data**: Minimal compression due to frequent access
+
+## Data Lifecycle
+
+### Creation
+1. Data generated by QNET operations
+2. Validated against JSON schemas
+3. Encrypted if sensitive (using Qlock)
+4. Stored to IPFS with appropriate pinning
+
+### Access
+1. Request received with data identifier
+2. Check local cache first
+3. Retrieve from IPFS if not cached
+4. Decrypt if necessary
+5. Return to requester
+
+### Archival
+1. Data reaches retention threshold
+2. Moved to archive nodes
+3. Pinning reduced to minimum replicas
+4. Access patterns monitored
+
+### Deletion
+1. Data exceeds maximum retention
+2. Unpinned from all nodes
+3. Garbage collection removes content
+4. Deletion logged for compliance

@@ -1,0 +1,75 @@
+{
+  "name": "{{MODULE_NAME}}",
+  "version": "1.0.0",
+  "description": "{{MODULE_DESCRIPTION}}",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "NODE_ENV=development node src/index.js",
+    "dev:standalone": "NODE_ENV=development MOCK_SERVICES=all node src/index.js",
+    "start": "NODE_ENV=production node src/index.js",
+    "build": "npm run lint && npm run test",
+    "test": "npm run test:unit && npm run test:contract && npm run test:integration",
+    "test:unit": "vitest run tests/unit --coverage",
+    "test:contract": "vitest run tests/contract",
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "vitest run tests/e2e",
+    "test:watch": "vitest watch",
+    "lint": "npm run lint:code && npm run lint:openapi && npm run lint:mcp",
+    "lint:code": "eslint src/ tests/ --ext .js,.mjs,.ts",
+    "lint:openapi": "swagger-codegen validate -i openapi.yaml",
+    "lint:mcp": "ajv validate -s schemas/mcp.schema.json -d mcp.json",
+    "format": "prettier --write src/ tests/ *.json *.yaml *.md",
+    "docker:build": "docker build -t {{MODULE_NAME}} .",
+    "docker:run": "docker run -p 3000:3000 {{MODULE_NAME}}",
+    "security:scan": "npm audit && snyk test",
+    "validate:schemas": "ajv validate -s contracts/*.schema.json -d tests/fixtures/*.json"
+  },
+  "keywords": [
+    "q-ecosystem",
+    "modular",
+    "serverless",
+    "{{MODULE_NAME}}"
+  ],
+  "author": "Q Ecosystem Team",
+  "license": "MIT",
+  "dependencies": {
+    "@anarq/common-schemas": "^1.0.0",
+    "@anarq/common-clients": "^1.0.0",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^6.8.1",
+    "express-validator": "^7.0.1",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "uuid": "^9.0.0",
+    "dotenv": "^16.3.1",
+    "winston": "^3.10.0",
+    "prom-client": "^14.2.0"
+  },
+  "devDependencies": {
+    "@anarq/testing": "^1.0.0",
+    "vitest": "^0.34.0",
+    "@vitest/coverage-v8": "^0.34.0",
+    "supertest": "^6.3.3",
+    "eslint": "^8.45.0",
+    "prettier": "^3.0.0",
+    "swagger-codegen-cli": "^3.0.0",
+    "snyk": "^1.1200.0",
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/q-ecosystem/{{MODULE_NAME}}.git"
+  },
+  "bugs": {
+    "url": "https://github.com/q-ecosystem/{{MODULE_NAME}}/issues"
+  },
+  "homepage": "https://github.com/q-ecosystem/{{MODULE_NAME}}#readme"
+}

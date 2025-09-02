@@ -1,0 +1,285 @@
+name: Comprehensive Security Scanning Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 2 * * 1'  # Weekly comprehensive scan on Monday at 2 AM
+
+jobs:
+  # SAST Scanning Jobs
+  sast-scanning:
+    name: Static Application Security Testing
+    uses: ./.github/workflows/security-sast.yml
+    secrets: inherit
+
+  # Dependency Scanning Jobs
+  dependency-scanning:
+    name: Dependency Security Scanning
+    uses: ./.github/workflows/security-dependencies.yml
+    secrets: inherit
+
+  # Infrastructure as Code Scanning Jobs
+  iac-scanning:
+    name: Infrastructure as Code Security Scanning
+    uses: ./.github/workflows/security-iac.yml
+    secrets: inherit
+
+  # Dynamic Application Security Testing (only on main/develop)
+  dast-scanning:
+    name: Dynamic Application Security Testing
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || github.event_name == 'schedule'
+    uses: ./.github/workflows/security-dast.yml
+    secrets: inherit
+
+  # Security Quality Gates
+  security-quality-gates:
+    name: Security Quality Gates
+    needs: [sast-scanning, dependency-scanning, iac-scanning]
+    if: always()
+    runs-on: ubuntu-latest
+    outputs:
+      gates-passed: ${{ steps.quality-gate.outputs.passed }}
+      security-debt: ${{ steps.quality-gate.outputs.security-debt }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download All Security Scan Results
+        uses: actions/download-artifact@v4
+        with:
+          path: security-results/
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install Dependencies
+        run: |
+          pip install requests pyyaml
+      
+      - name: Run Security Quality Gates
+        id: quality-gate
+        run: |
+          python3 scripts/security/security-quality-gate.py \
+            --github-token "${{ secrets.GITHUB_TOKEN }}" \
+            --repo "${{ github.repository }}" \
+            --run-id "${{ github.run_id }}" \
+            --pr-number "${{ github.event.number }}" \
+            --config .github/security-gates.yml
+          
+          # Set outputs
+          if [ -f security-quality-gate-report.json ]; then
+            passed=$(jq -r '.overall_result == "PASSED"' security-quality-gate-report.json)
+            debt=$(jq -r '.summary.security_debt // 0' security-quality-gate-report.json)
+            echo "passed=$passed" >> $GITHUB_OUTPUT
+            echo "security-debt=$debt" >> $GITHUB_OUTPUT
+          else
+            echo "passed=false" >> $GITHUB_OUTPUT
+            echo "security-debt=999" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload Quality Gate Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-quality-gate-report
+          path: security-quality-gate-report.json
+
+  # Generate Comprehensive Security Report
+  security-report:
+    name: Generate Security Report
+    needs: [sast-scanning, dependency-scanning, iac-scanning, dast-scanning, security-quality-gates]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download All Security Results
+        uses: actions/download-artifact@v4
+        with:
+          path: security-results/
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Generate Comprehensive Security Report
+        run: |
+          python3 scripts/security/generate-comprehensive-report.py \
+            --results-dir security-results/ \
+            --output comprehensive-security-report.html \
+            --repo "${{ github.repository }}" \
+            --branch "${{ github.ref_name }}" \
+            --commit "${{ github.sha }}" \
+            --run-id "${{ github.run_id }}"
+      
+      - name: Upload Comprehensive Security Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: comprehensive-security-report
+          path: comprehensive-security-report.html
+      
+      - name: Comment PR with Security Summary
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            // Read quality gate results
+            let summary = '## 🔒 Security Scan Summary\n\n';
+            
+            try {
+              const qualityGateData = JSON.parse(fs.readFileSync('security-results/security-quality-gate-report/security-quality-gate-report.json', 'utf8'));
+              const result = qualityGateData.overall_result;
+              const debt = qualityGateData.summary.security_debt || 0;
+              const critical = qualityGateData.summary.critical_issues || 0;
+              const high = qualityGateData.summary.high_issues || 0;
+              
+              summary += `**Overall Result:** ${result === 'PASSED' ? '✅ PASSED' : '❌ FAILED'}\n`;
+              summary += `**Security Debt:** ${debt}\n`;
+              summary += `**Critical Issues:** ${critical}\n`;
+              summary += `**High Issues:** ${high}\n\n`;
+              
+              if (qualityGateData.summary.failed_gates && qualityGateData.summary.failed_gates.length > 0) {
+                summary += '### ❌ Failed Security Gates\n';
+                qualityGateData.summary.failed_gates.forEach(gate => {
+                  summary += `- **${gate.gate}:** ${gate.reason}\n`;
+                });
+                summary += '\n';
+              }
+              
+              summary += `### 📊 Detailed Reports\n`;
+              summary += `- [Comprehensive Security Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
+              
+            } catch (error) {
+              summary += '❌ Unable to load security scan results\n';
+            }
+            
+            // Post comment
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+  # Update Security Dashboard
+  security-dashboard:
+    name: Update Security Dashboard
+    needs: [security-quality-gates, security-report]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download Security Results
+        uses: actions/download-artifact@v4
+        with:
+          path: security-results/
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Update Security Dashboard
+        run: |
+          python3 scripts/security/update-security-dashboard.py \
+            --github-token "${{ secrets.GITHUB_TOKEN }}" \
+            --repo "${{ github.repository }}" \
+            --run-id "${{ github.run_id }}" \
+            --branch "${{ github.ref_name }}" \
+            --commit "${{ github.sha }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SECURITY_DASHBOARD_API: ${{ secrets.SECURITY_DASHBOARD_API }}
+          SECURITY_DASHBOARD_KEY: ${{ secrets.SECURITY_DASHBOARD_KEY }}
+
+  # Security Notifications
+  security-notifications:
+    name: Security Notifications
+    needs: [security-quality-gates]
+    if: always() && needs.security-quality-gates.outputs.gates-passed == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          channel: '#security-alerts'
+          title: '🚨 Security Quality Gates Failed'
+          text: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Security Debt: ${{ needs.security-quality-gates.outputs.security-debt }}
+            
+            Action Required: Review and fix security issues before merging.
+            
+            Details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: Send Email Notification
+        if: github.ref == 'refs/heads/main'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: '🚨 Critical Security Issues - ${{ github.repository }}'
+          to: security@example.com
+          from: github-actions@example.com
+          body: |
+            Critical security issues have been detected in ${{ github.repository }}.
+            
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Security Debt: ${{ needs.security-quality-gates.outputs.security-debt }}
+            
+            Please review the security scan results and take immediate action.
+            
+            Scan Results: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  # Block deployment if security gates fail
+  deployment-gate:
+    name: Deployment Security Gate
+    needs: [security-quality-gates]
+    if: github.ref == 'refs/heads/main' && needs.security-quality-gates.outputs.gates-passed != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Block Deployment
+        run: |
+          echo "🚫 DEPLOYMENT BLOCKED: Security quality gates failed"
+          echo "Security Debt: ${{ needs.security-quality-gates.outputs.security-debt }}"
+          echo "Please fix security issues before deploying to production"
+          exit 1
+
+  # Success notification
+  security-success:
+    name: Security Success Notification
+    needs: [security-quality-gates]
+    if: needs.security-quality-gates.outputs.gates-passed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Success Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          channel: '#security-updates'
+          title: '✅ Security Scan Completed Successfully'
+          text: |
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Security Debt: ${{ needs.security-quality-gates.outputs.security-debt }}
+            
+            All security quality gates passed! 🎉
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

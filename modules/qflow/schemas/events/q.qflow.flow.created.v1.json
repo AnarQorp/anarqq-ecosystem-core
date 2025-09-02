@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.qflow.flow.created.v1",
+  "title": "Qflow Flow Created Event",
+  "description": "Event emitted when a new flow definition is created",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity of the user who created the flow"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "flowId": {
+          "type": "string",
+          "description": "Unique identifier for the created flow"
+        },
+        "flowName": {
+          "type": "string",
+          "description": "Human-readable name of the flow"
+        },
+        "flowVersion": {
+          "type": "string",
+          "description": "Version of the flow definition"
+        },
+        "owner": {
+          "type": "string",
+          "description": "sQuid identity of the flow owner"
+        },
+        "daoSubnet": {
+          "type": "string",
+          "description": "DAO subnet where the flow was created"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "category": {
+              "type": "string"
+            },
+            "visibility": {
+              "type": "string",
+              "enum": ["public", "dao-only", "private"]
+            }
+          }
+        },
+        "ipfsCid": {
+          "type": "string",
+          "description": "IPFS CID where the flow definition is stored"
+        }
+      },
+      "required": ["flowId", "flowName", "flowVersion", "owner", "ipfsCid"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

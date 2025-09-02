@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Registry API Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .api-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .api-section h2 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .endpoint {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            background: #f7fafc;
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .endpoint-header:hover {
+            background: #edf2f7;
+        }
+
+        .method {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.875rem;
+            margin-right: 1rem;
+        }
+
+        .method.get { background: #48bb78; color: white; }
+        .method.post { background: #4299e1; color: white; }
+        .method.put { background: #ed8936; color: white; }
+        .method.delete { background: #f56565; color: white; }
+
+        .endpoint-path {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+        }
+
+        .endpoint-content {
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .endpoint-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            resize: vertical;
+        }
+
+        .btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #3182ce;
+        }
+
+        .btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+        }
+
+        .response-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .status-code {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .status-200 { background: #48bb78; color: white; }
+        .status-400 { background: #f56565; color: white; }
+        .status-401 { background: #ed8936; color: white; }
+        .status-404 { background: #a0aec0; color: white; }
+
+        .response-body {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4299e1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auth-section {
+            background: #fef5e7;
+            border: 1px solid #f6ad55;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-section h3 {
+            color: #c05621;
+            margin-bottom: 0.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            border-bottom-color: #4299e1;
+            color: #4299e1;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .example-requests {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .example-requests h4 {
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+
+        .example-request {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .example-request:hover {
+            background: #2d3748;
+        }
+
+        .copy-btn {
+            background: #68d391;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Module Registry API Explorer</h1>
+            <p>Interactive testing interface for the Qwallet Module Registration API</p>
+        </div>
+
+        <div class="auth-section">
+            <h3>🔐 Authentication</h3>
+            <p>Most endpoints require authentication. Enter your identity credentials below:</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <div style="flex: 1;">
+                    <label>Identity DID:</label>
+                    <input type="text" id="identityDid" placeholder="did:root:example123" />
+                </div>
+                <div style="flex: 1;">
+                    <label>API Endpoint:</label>
+                    <input type="text" id="apiEndpoint" value="https://api.qwallet.example.com" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration API Section -->
+        <div class="api-section">
+            <h2>📝 Registration API</h2>
+            
+            <!-- Register Module -->
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint('register-module')">
+                    <div>
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/api/modules/register</span>
+                    </div>
+                    <span>Register a new module</span>
+                </div>
+                <div class="endpoint-content" id="register-module">
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab('register-module', 'form')">Form</div>
+                        <div class="tab" onclick="switchTab('register-module', 'json')">JSON</div>
+                        <div class="tab" onclick="switchTab('register-module', 'examples')">Examples</div>
+                    </div>
+                    
+                    <div class="tab-content active" id="register-module-form">
+                        <div class="form-group">
+                            <label>Module Name *</label>
+                            <input type="text" id="reg-name" placeholder="my-awesome-module" />
+                        </div>
+                        <div class="form-group">
+                            <label>Version *</label>
+                            <input type="text" id="reg-version" placeholder="1.0.0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Description *</label>
+                            <textarea id="reg-description" placeholder="Describe what your module does..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Repository URL *</label>
+                            <input type="url" id="reg-repository" placeholder="https://github.com/username/module" />
+                        </div>
+                        <div class="form-group">
+                            <label>Supported Identities *</label>
+                            <select id="reg-identities" multiple>
+                                <option value="ROOT">ROOT</option>
+                                <option value="DAO">DAO</option>
+                                <option value="ENTERPRISE">ENTERPRISE</option>
+                                <option value="INDIVIDUAL">INDIVIDUAL</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Integrations</label>
+                            <select id="reg-integrations" multiple>
+                                <option value="Qindex">Qindex</option>
+                                <option value="Qlock">Qlock</option>
+                                <option value="Qerberos">Qerberos</option>
+                                <option value="Qonsent">Qonsent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Test Mode</label>
+                            <input type="checkbox" id="reg-testmode" />
+                        </div>
+                        <button class="btn" onclick="executeRequest('register-module')">Register Module</button>
+                    </div>
+                    
+                    <div class="tab-content" id="register-module-json">
+                        <div class="form-group">
+                            <label>Request Body (JSON)</label>
+                            <textarea id="reg-json-body" placeholder='{"moduleInfo": {"name": "my-module", ...}}'></textarea>
+                        </div>
+                        <button class="btn" onclick="executeJsonRequest('register-module')">Send Request</button>
+                    </div>
+                    
+                    <div class="tab-content" id="register-module-examples">
+                        <div class="example-requests">
+                            <h4>Example Requests:</h4>
+                            <div class="example-request" onclick="loadExample('register-basic')">
+                                Basic Module Registration
+                                <button class="copy-btn" onclick="copyExample('register-basic')">Copy</button>
+                            </div>
+                            <div class="example-request" onclick="loadExample('register-advanced')">
+                                Advanced Module with Compliance
+                                <button class="copy-btn" onclick="copyExample('register-advanced')">Copy</button>
+                            </div>
+                            <div class="example-request" onclick="loadExample('register-sandbox')">
+                                Sandbox Mode Registration
+                                <button class="copy-btn" onclick="copyExample('register-sandbox')">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="response-section" id="register-module-response" style="display: none;">
+                        <div class="response-header">
+                            <h4>Response</h4>
+                            <span class="status-code" id="register-module-status">200</span>
+                        </div>
+                        <div class="response-body" id="register-module-body"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Module -->
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint('update-module')">
+                    <div>
+                        <span class="method put">PUT</span>
+                        <span class="endpoint-path">/api/modules/{moduleId}</span>
+                    </div>
+                    <span>Update an existing module</span>
+                </div>
+                <div class="endpoint-content" id="update-module">
+                    <div class="form-group">
+                        <label>Module ID *</label>
+                        <input type="text" id="update-moduleId" placeholder="my-awesome-module" />
+                    </div>
+                    <div class="form-group">
+                        <label>New Version</label>
+                        <input type="text" id="update-version" placeholder="1.0.1" />
+                    </div>
+                    <div class="form-group">
+                        <label>Updated Description</label>
+                        <textarea id="update-description" placeholder="Updated description..."></textarea>
+                    </div>
+                    <button class="btn" onclick="executeRequest('update-module')">Update Module</button>
+                    
+                    <div class="response-section" id="update-module-response" style="display: none;">
+                        <div class="response-header">
+                            <h4>Response</h4>
+                            <span class="status-code" id="update-module-status">200</span>
+                        </div>
+                        <div class="response-body" id="update-module-body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Discovery API Section -->
+        <div class="api-section">
+            <h2>🔍 Discovery API</h2>
+            
+            <!-- List Modules -->
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint('list-modules')">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/modules</span>
+                    </div>
+                    <span>List all modules with filtering</span>
+                </div>
+                <div class="endpoint-content" id="list-modules">
+                    <div class="form-group">
+                        <label>Limit</label>
+                        <input type="number" id="list-limit" value="10" min="1" max="100" />
+                    </div>
+                    <div class="form-group">
+                        <label>Status Filter</label>
+                        <select id="list-status">
+                            <option value="">All Statuses</option>
+                            <option value="DEVELOPMENT">Development</option>
+                            <option value="TESTING">Testing</option>
+                            <option value="PRODUCTION_READY">Production Ready</option>
+                            <option value="DEPRECATED">Deprecated</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Identity Type Filter</label>
+                        <select id="list-identity">
+                            <option value="">All Identities</option>
+                            <option value="ROOT">ROOT</option>
+                            <option value="DAO">DAO</option>
+                            <option value="ENTERPRISE">ENTERPRISE</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sort By</label>
+                        <select id="list-sortby">
+                            <option value="name">Name</option>
+                            <option value="version">Version</option>
+                            <option value="registeredAt">Registration Date</option>
+                            <option value="queryCount">Query Count</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="executeRequest('list-modules')">List Modules</button>
+                    
+                    <div class="response-section" id="list-modules-response" style="display: none;">
+                        <div class="response-header">
+                            <h4>Response</h4>
+                            <span class="status-code" id="list-modules-status">200</span>
+                        </div>
+                        <div class="response-body" id="list-modules-body"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Modules -->
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint('search-modules')">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/modules/search</span>
+                    </div>
+                    <span>Search modules with advanced criteria</span>
+                </div>
+                <div class="endpoint-content" id="search-modules">
+                    <div class="form-group">
+                        <label>Search Query</label>
+                        <input type="text" id="search-query" placeholder="payment wallet defi" />
+                    </div>
+                    <div class="form-group">
+                        <label>Module Name Pattern</label>
+                        <input type="text" id="search-name" placeholder="qwallet-*" />
+                    </div>
+                    <div class="form-group">
+                        <label>Status Filter</label>
+                        <select id="search-status">
+                            <option value="">All Statuses</option>
+                            <option value="PRODUCTION_READY">Production Ready</option>
+                            <option value="TESTING">Testing</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Include Facets</label>
+                        <input type="checkbox" id="search-facets" />
+                    </div>
+                    <button class="btn" onclick="executeRequest('search-modules')">Search Modules</button>
+                    
+                    <div class="response-section" id="search-modules-response" style="display: none;">
+                        <div class="response-header">
+                            <h4>Response</h4>
+                            <span class="status-code" id="search-modules-status">200</span>
+                        </div>
+                        <div class="response-body" id="search-modules-body"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Module Details -->
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint('get-module')">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/modules/{moduleId}</span>
+                    </div>
+                    <span>Get detailed module information</span>
+                </div>
+                <div class="endpoint-content" id="get-module">
+                    <div class="form-group">
+                        <label>Module ID *</label>
+                        <input type="text" id="get-moduleId" placeholder="qwallet-core" />
+                    </div>
+                    <div class="form-group">
+                        <label>Include History</label>
+                        <input type="checkbox" id="get-history" />
+                    </div>
+                    <div class="form-group">
+                        <label>Include Dependencies</label>
+                        <input type="checkbox" id="get-dependencies" />
+                    </div>
+                    <div class="form-group">
+                        <label>Include Compatibility</label>
+                        <input type="checkbox" id="get-compatibility" />
+                    </div>
+                    <button class="btn" onclick="executeRequest('get-module')">Get Module</button>
+                    
+                    <div class="response-section" id="get-module-response" style="display: none;">
+                        <div class="response-header">
+                            <h4>Response</h4>
+                            <span class="status-code" id="get-module-status">200</span>
+                        </div>
+                        <div class="response-body" id="get-module-body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verification API Section -->
+        <div class="api-section">
+            <h2>✅ Verification API</h2>
+            
+            <!-- Verify Module -->
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint('verify-module')">
+                    <div>
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/api/modules/{moduleId}/verify</span>
+                    </div>
+                    <span>Verify module registration and signatures</span>
+                </div>
+                <div class="endpoint-content" id="verify-module">
+                    <div class="form-group">
+                        <label>Module ID *</label>
+                        <input type="text" id="verify-moduleId" placeholder="my-awesome-module" />
+                    </div>
+                    <button class="btn" onclick="executeRequest('verify-module')">Verify Module</button>
+                    
+                    <div class="response-section" id="verify-module-response" style="display: none;">
+                        <div class="response-header">
+                            <h4>Response</h4>
+                            <span class="status-code" id="verify-module-status">200</span>
+                        </div>
+                        <div class="response-body" id="verify-module-body"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Registration Status -->
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint('status-module')">
+                    <div>
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/api/modules/{moduleId}/status</span>
+                    </div>
+                    <span>Get module registration status</span>
+                </div>
+                <div class="endpoint-content" id="status-module">
+                    <div class="form-group">
+                        <label>Module ID *</label>
+                        <input type="text" id="status-moduleId" placeholder="my-awesome-module" />
+                    </div>
+                    <button class="btn" onclick="executeRequest('status-module')">Get Status</button>
+                    
+                    <div class="response-section" id="status-module-response" style="display: none;">
+                        <div class="response-header">
+                            <h4>Response</h4>
+                            <span class="status-code" id="status-module-status">200</span>
+                        </div>
+                        <div class="response-body" id="status-module-body"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Example data
+        const examples = {
+            'register-basic': {
+                "moduleInfo": {
+                    "name": "my-awesome-module",
+                    "version": "1.0.0",
+                    "description": "An awesome module for the Q ecosystem",
+                    "identitiesSupported": ["ROOT", "DAO"],
+                    "integrations": ["Qindex", "Qlock"],
+                    "repositoryUrl": "https://github.com/username/my-awesome-module"
+                },
+                "testMode": false
+            },
+            'register-advanced': {
+                "moduleInfo": {
+                    "name": "qwallet-payments",
+                    "version": "1.2.0",
+                    "description": "Advanced payment processing module with multi-chain support",
+                    "identitiesSupported": ["ROOT", "DAO", "ENTERPRISE"],
+                    "integrations": ["Qindex", "Qlock", "Qerberos"],
+                    "repositoryUrl": "https://github.com/qwallet/payments",
+                    "documentationCid": "QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco",
+                    "auditHash": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890",
+                    "compliance": {
+                        "audit": true,
+                        "privacy_enforced": true,
+                        "gdpr_compliant": true,
+                        "kyc_support": true,
+                        "data_retention_policy": "30_days"
+                    }
+                },
+                "testMode": false
+            },
+            'register-sandbox': {
+                "moduleInfo": {
+                    "name": "experimental-module",
+                    "version": "0.1.0-beta",
+                    "description": "Experimental module for testing new features",
+                    "identitiesSupported": ["ROOT"],
+                    "integrations": ["Qindex"],
+                    "repositoryUrl": "https://github.com/username/experimental-module"
+                },
+                "testMode": true
+            }
+        };
+
+        function toggleEndpoint(endpointId) {
+            const content = document.getElementById(endpointId);
+            content.classList.toggle('active');
+        }
+
+        function switchTab(endpointId, tabName) {
+            // Remove active class from all tabs and contents
+            const tabs = document.querySelectorAll(`#${endpointId} .tab`);
+            const contents = document.querySelectorAll(`#${endpointId} .tab-content`);
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            event.target.classList.add('active');
+            document.getElementById(`${endpointId}-${tabName}`).classList.add('active');
+        }
+
+        function loadExample(exampleKey) {
+            const example = examples[exampleKey];
+            if (example) {
+                document.getElementById('reg-json-body').value = JSON.stringify(example, null, 2);
+                switchTab('register-module', 'json');
+            }
+        }
+
+        function copyExample(exampleKey) {
+            const example = examples[exampleKey];
+            if (example) {
+                navigator.clipboard.writeText(JSON.stringify(example, null, 2));
+                event.target.textContent = 'Copied!';
+                setTimeout(() => {
+                    event.target.textContent = 'Copy';
+                }, 2000);
+            }
+        }
+
+        async function executeRequest(endpointId) {
+            const responseSection = document.getElementById(`${endpointId}-response`);
+            const statusElement = document.getElementById(`${endpointId}-status`);
+            const bodyElement = document.getElementById(`${endpointId}-body`);
+            
+            // Show loading
+            responseSection.style.display = 'block';
+            bodyElement.innerHTML = '<div class="loading"></div> Sending request...';
+            
+            try {
+                let url, method, body;
+                const apiEndpoint = document.getElementById('apiEndpoint').value;
+                
+                switch (endpointId) {
+                    case 'register-module':
+                        url = `${apiEndpoint}/api/modules/register`;
+                        method = 'POST';
+                        body = buildRegisterBody();
+                        break;
+                    case 'update-module':
+                        const updateModuleId = document.getElementById('update-moduleId').value;
+                        url = `${apiEndpoint}/api/modules/${updateModuleId}`;
+                        method = 'PUT';
+                        body = buildUpdateBody();
+                        break;
+                    case 'list-modules':
+                        url = `${apiEndpoint}/api/modules${buildListQuery()}`;
+                        method = 'GET';
+                        break;
+                    case 'search-modules':
+                        url = `${apiEndpoint}/api/modules/search${buildSearchQuery()}`;
+                        method = 'GET';
+                        break;
+                    case 'get-module':
+                        const getModuleId = document.getElementById('get-moduleId').value;
+                        url = `${apiEndpoint}/api/modules/${getModuleId}${buildGetQuery()}`;
+                        method = 'GET';
+                        break;
+                    case 'verify-module':
+                        const verifyModuleId = document.getElementById('verify-moduleId').value;
+                        url = `${apiEndpoint}/api/modules/${verifyModuleId}/verify`;
+                        method = 'POST';
+                        break;
+                    case 'status-module':
+                        const statusModuleId = document.getElementById('status-moduleId').value;
+                        url = `${apiEndpoint}/api/modules/${statusModuleId}/status`;
+                        method = 'GET';
+                        break;
+                }
+                
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${document.getElementById('identityDid').value}`
+                    }
+                };
+                
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+                
+                // Simulate API call (replace with actual fetch in real implementation)
+                await simulateApiCall(endpointId, url, options);
+                
+            } catch (error) {
+                statusElement.textContent = '500';
+                statusElement.className = 'status-code status-400';
+                bodyElement.textContent = JSON.stringify({
+                    success: false,
+                    error: error.message
+                }, null, 2);
+            }
+        }
+
+        async function executeJsonRequest(endpointId) {
+            const jsonBody = document.getElementById('reg-json-body').value;
+            try {
+                const body = JSON.parse(jsonBody);
+                // Use the parsed body for the request
+                await executeRequest(endpointId);
+            } catch (error) {
+                alert('Invalid JSON format');
+            }
+        }
+
+        function buildRegisterBody() {
+            const identities = Array.from(document.getElementById('reg-identities').selectedOptions)
+                .map(option => option.value);
+            const integrations = Array.from(document.getElementById('reg-integrations').selectedOptions)
+                .map(option => option.value);
+            
+            return {
+                moduleInfo: {
+                    name: document.getElementById('reg-name').value,
+                    version: document.getElementById('reg-version').value,
+                    description: document.getElementById('reg-description').value,
+                    repositoryUrl: document.getElementById('reg-repository').value,
+                    identitiesSupported: identities,
+                    integrations: integrations
+                },
+                testMode: document.getElementById('reg-testmode').checked
+            };
+        }
+
+        function buildUpdateBody() {
+            const body = {};
+            const version = document.getElementById('update-version').value;
+            const description = document.getElementById('update-description').value;
+            
+            if (version) body.version = version;
+            if (description) body.description = description;
+            
+            return body;
+        }
+
+        function buildListQuery() {
+            const params = new URLSearchParams();
+            const limit = document.getElementById('list-limit').value;
+            const status = document.getElementById('list-status').value;
+            const identity = document.getElementById('list-identity').value;
+            const sortBy = document.getElementById('list-sortby').value;
+            
+            if (limit) params.append('limit', limit);
+            if (status) params.append('status', status);
+            if (identity) params.append('identityType', identity);
+            if (sortBy) params.append('sortBy', sortBy);
+            
+            return params.toString() ? `?${params.toString()}` : '';
+        }
+
+        function buildSearchQuery() {
+            const params = new URLSearchParams();
+            const query = document.getElementById('search-query').value;
+            const name = document.getElementById('search-name').value;
+            const status = document.getElementById('search-status').value;
+            const facets = document.getElementById('search-facets').checked;
+            
+            if (query) params.append('q', query);
+            if (name) params.append('name', name);
+            if (status) params.append('status', status);
+            if (facets) params.append('facets', 'true');
+            
+            return params.toString() ? `?${params.toString()}` : '';
+        }
+
+        function buildGetQuery() {
+            const params = new URLSearchParams();
+            const history = document.getElementById('get-history').checked;
+            const dependencies = document.getElementById('get-dependencies').checked;
+            const compatibility = document.getElementById('get-compatibility').checked;
+            
+            if (history) params.append('includeHistory', 'true');
+            if (dependencies) params.append('includeDependencies', 'true');
+            if (compatibility) params.append('includeCompatibility', 'true');
+            
+            return params.toString() ? `?${params.toString()}` : '';
+        }
+
+        async function simulateApiCall(endpointId, url, options) {
+            const statusElement = document.getElementById(`${endpointId}-status`);
+            const bodyElement = document.getElementById(`${endpointId}-body`);
+            
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+            
+            // Generate mock response based on endpoint
+            let mockResponse;
+            let statusCode = 200;
+            
+            switch (endpointId) {
+                case 'register-module':
+                    mockResponse = {
+                        success: true,
+                        moduleId: "my-awesome-module",
+                        cid: "QmYwAPJzv5CZsnA8rdHaSmKRvQnHY7z6B3TmcvbPjHp8xw",
+                        indexId: "idx_1234567890abcdef",
+                        timestamp: new Date().toISOString(),
+                        warnings: []
+                    };
+                    break;
+                case 'list-modules':
+                    mockResponse = {
+                        modules: [
+                            {
+                                moduleId: "qwallet-core",
+                                metadata: {
+                                    module: "qwallet-core",
+                                    version: "2.1.0",
+                                    description: "Core Qwallet functionality",
+                                    status: "PRODUCTION_READY"
+                                },
+                                accessStats: {
+                                    queryCount: 15420,
+                                    lastAccessed: new Date().toISOString()
+                                }
+                            }
+                        ],
+                        totalCount: 1,
+                        hasMore: false
+                    };
+                    break;
+                case 'verify-module':
+                    mockResponse = {
+                        moduleId: "my-awesome-module",
+                        status: "production_ready",
+                        verificationChecks: {
+                            metadataValid: true,
+                            signatureValid: true,
+                            dependenciesResolved: true,
+                            complianceVerified: true,
+                            auditPassed: true
+                        },
+                        issues: [],
+                        lastVerified: new Date().toISOString(),
+                        verifiedBy: "system"
+                    };
+                    break;
+                default:
+                    mockResponse = {
+                        success: true,
+                        message: "Mock response for " + endpointId
+                    };
+            }
+            
+            statusElement.textContent = statusCode;
+            statusElement.className = `status-code status-${statusCode}`;
+            bodyElement.textContent = JSON.stringify(mockResponse, null, 2);
+        }
+
+        // Initialize with some default values
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('identityDid').value = 'did:root:example123';
+            document.getElementById('reg-identities').selectedIndex = 0;
+            document.getElementById('reg-integrations').selectedIndex = 0;
+        });
+    </script>
+</body>
+</html>

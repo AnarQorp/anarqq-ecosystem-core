@@ -1,0 +1,57 @@
+graph TB
+    subgraph "Performance Dashboard"
+        subgraph "Latency Metrics"
+            P50[P50: 45ms]
+            P95[P95: 120ms]
+            P99[P99: 180ms]
+        end
+        
+        subgraph "Throughput Metrics"
+            RPS[Requests/sec<br/>150]
+            TPS[Transactions/sec<br/>25]
+        end
+        
+        subgraph "Resource Utilization"
+            CPU[CPU Usage<br/>35%]
+            Memory[Memory<br/>2.1GB / 8GB]
+            Disk[Disk<br/>45.2GB / 100GB]
+        end
+        
+        subgraph "Quality Metrics"
+            ErrorRate[Error Rate<br/>2%]
+            Availability[Availability<br/>99.8%]
+            CacheHit[Cache Hit<br/>87%]
+        end
+        
+        subgraph "Overall Scores"
+            PerfScore[Performance<br/>63/100]
+            ReliScore[Reliability<br/>92/100]
+            ScaleScore[Scalability<br/>71/100]
+        end
+    end
+    
+    P50 --> PerfScore
+    P95 --> PerfScore
+    P99 --> PerfScore
+    
+    RPS --> ScaleScore
+    TPS --> ScaleScore
+    
+    CPU --> ScaleScore
+    Memory --> ScaleScore
+    Disk --> ScaleScore
+    
+    ErrorRate --> ReliScore
+    Availability --> ReliScore
+    CacheHit --> PerfScore
+    
+    classDef excellent fill:#90EE90
+    classDef good fill:#98FB98
+    classDef warning fill:#FFE4B5
+    classDef critical fill:#FFB6C1
+    
+    class P50,RPS,TPS excellent
+    class P95,CPU,Memory,CacheHit good
+    class P99,Disk,Availability excellent
+    class ErrorRate good
+    class PerfScore,ReliScore,ScaleScore warning

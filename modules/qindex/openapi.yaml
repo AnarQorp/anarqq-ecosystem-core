@@ -1,0 +1,338 @@
+openapi: 3.0.3
+info:
+  title: Qindex API
+  description: Indexing & Pointers Module for Q Ecosystem
+  version: 1.0.0
+  contact:
+    name: AnarQ Team
+    url: https://anarq.org
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3006
+    description: Development server
+  - url: https://qindex.anarq.org
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /qindex/put:
+    post:
+      summary: Store indexed record
+      operationId: putRecord
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutRecordRequest'
+      responses:
+        '201':
+          description: Record stored successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutRecordResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /qindex/get/{key}:
+    get:
+      summary: Retrieve record by key
+      operationId: getRecord
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: query
+          schema:
+            type: string
+          description: Specific version to retrieve
+      responses:
+        '200':
+          description: Record retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRecordResponse'
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /qindex/list:
+    get:
+      summary: List records with filtering
+      operationId: listRecords
+      parameters:
+        - name: prefix
+          in: query
+          schema:
+            type: string
+          description: Key prefix filter
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 1000
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [created_asc, created_desc, updated_asc, updated_desc]
+            default: created_desc
+      responses:
+        '200':
+          description: Records listed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRecordsResponse'
+
+  /qindex/history/{key}:
+    get:
+      summary: Get record history
+      operationId: getRecordHistory
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 1000
+      responses:
+        '200':
+          description: History retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoryResponse'
+
+  /qindex/delete/{key}:
+    delete:
+      summary: Remove record
+      operationId: deleteRecord
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Record deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteRecordResponse'
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "healthy"
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          example: "1.0.0"
+
+    PutRecordRequest:
+      type: object
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+          description: Unique identifier for the record
+        value:
+          type: object
+          description: Record data
+        metadata:
+          type: object
+          properties:
+            contentType:
+              type: string
+            tags:
+              type: array
+              items:
+                type: string
+            ttl:
+              type: integer
+              description: Time to live in seconds
+        options:
+          type: object
+          properties:
+            encrypt:
+              type: boolean
+              default: false
+            pin:
+              type: boolean
+              default: true
+
+    PutRecordResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        key:
+          type: string
+        cid:
+          type: string
+        version:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    GetRecordRequest:
+      type: object
+      properties:
+        key:
+          type: string
+        version:
+          type: string
+
+    GetRecordResponse:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: object
+        metadata:
+          type: object
+        version:
+          type: string
+        cid:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    ListRecordsResponse:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecordSummary'
+        total:
+          type: integer
+        hasMore:
+          type: boolean
+        nextCursor:
+          type: string
+
+    RecordSummary:
+      type: object
+      properties:
+        key:
+          type: string
+        cid:
+          type: string
+        version:
+          type: string
+        metadata:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    HistoryResponse:
+      type: object
+      properties:
+        key:
+          type: string
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/HistoryEntry'
+        total:
+          type: integer
+
+    HistoryEntry:
+      type: object
+      properties:
+        version:
+          type: string
+        cid:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        operation:
+          type: string
+          enum: [create, update, delete]
+        metadata:
+          type: object
+
+    DeleteRecordResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        key:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        code:
+          type: string
+        timestamp:
+          type: string
+          format: date-time

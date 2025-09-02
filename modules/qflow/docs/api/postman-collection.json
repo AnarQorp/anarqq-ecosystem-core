@@ -1,0 +1,433 @@
+{
+  "info": {
+    "name": "Qflow API",
+    "description": "Qflow Serverless Automation Engine API Collection",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{squid_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.qflow.anarq.org/v1",
+      "type": "string"
+    },
+    {
+      "key": "squid_token",
+      "value": "your-squid-token-here",
+      "type": "string"
+    },
+    {
+      "key": "flow_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "execution_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Flow Management",
+      "item": [
+        {
+          "name": "List Flows",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/flows?limit=20&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["flows"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "daoSubnet",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "active",
+                  "disabled": true
+                },
+                {
+                  "key": "tags",
+                  "value": "automation,email",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Flow",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"User Registration Flow\",\n  \"description\": \"Automated user registration with email verification\",\n  \"version\": \"1.0.0\",\n  \"steps\": [\n    {\n      \"id\": \"validate-input\",\n      \"type\": \"task\",\n      \"action\": \"validate-schema\",\n      \"params\": {\n        \"schema\": \"user-registration\",\n        \"data\": \"{{input.userData}}\"\n      },\n      \"onSuccess\": \"send-verification\",\n      \"onFailure\": \"log-error\",\n      \"timeout\": 30000\n    },\n    {\n      \"id\": \"send-verification\",\n      \"type\": \"module-call\",\n      \"action\": \"qmail.send-email\",\n      \"params\": {\n        \"template\": \"email-verification\",\n        \"recipient\": \"{{input.userData.email}}\",\n        \"variables\": {\n          \"verificationCode\": \"{{generated.verificationCode}}\"\n        }\n      },\n      \"onSuccess\": \"log-success\",\n      \"onFailure\": \"log-error\"\n    },\n    {\n      \"id\": \"log-success\",\n      \"type\": \"task\",\n      \"action\": \"log-message\",\n      \"params\": {\n        \"level\": \"info\",\n        \"message\": \"User registration completed successfully\"\n      }\n    },\n    {\n      \"id\": \"log-error\",\n      \"type\": \"task\",\n      \"action\": \"log-message\",\n      \"params\": {\n        \"level\": \"error\",\n        \"message\": \"User registration failed: {{error.message}}\"\n      }\n    }\n  ],\n  \"metadata\": {\n    \"tags\": [\"user-management\", \"email\", \"automation\"],\n    \"category\": \"user-management\",\n    \"visibility\": \"dao-only\",\n    \"requiredPermissions\": [\"user.create\", \"email.send\"],\n    \"estimatedDuration\": 120000\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/flows",
+              "host": ["{{base_url}}"],
+              "path": ["flows"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('flow_id', response.id);",
+                  "    console.log('Flow created with ID:', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Flow",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/flows/{{flow_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["flows", "{{flow_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Flow",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated User Registration Flow\",\n  \"description\": \"Updated automated user registration with enhanced validation\",\n  \"version\": \"1.1.0\",\n  \"steps\": [\n    {\n      \"id\": \"validate-input\",\n      \"type\": \"task\",\n      \"action\": \"validate-schema\",\n      \"params\": {\n        \"schema\": \"user-registration-v2\",\n        \"data\": \"{{input.userData}}\"\n      },\n      \"onSuccess\": \"check-duplicate\",\n      \"onFailure\": \"log-error\",\n      \"timeout\": 30000\n    },\n    {\n      \"id\": \"check-duplicate\",\n      \"type\": \"task\",\n      \"action\": \"check-user-exists\",\n      \"params\": {\n        \"email\": \"{{input.userData.email}}\"\n      },\n      \"onSuccess\": \"send-verification\",\n      \"onFailure\": \"log-duplicate-error\"\n    },\n    {\n      \"id\": \"send-verification\",\n      \"type\": \"module-call\",\n      \"action\": \"qmail.send-email\",\n      \"params\": {\n        \"template\": \"email-verification-v2\",\n        \"recipient\": \"{{input.userData.email}}\",\n        \"variables\": {\n          \"verificationCode\": \"{{generated.verificationCode}}\",\n          \"userName\": \"{{input.userData.name}}\"\n        }\n      },\n      \"onSuccess\": \"log-success\",\n      \"onFailure\": \"log-error\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/flows/{{flow_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["flows", "{{flow_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Flow",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/flows/{{flow_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["flows", "{{flow_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Execution Management",
+      "item": [
+        {
+          "name": "Start Flow Execution",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inputData\": {\n    \"userData\": {\n      \"name\": \"John Doe\",\n      \"email\": \"john.doe@example.com\",\n      \"phone\": \"+1234567890\"\n    }\n  },\n  \"variables\": {\n    \"environment\": \"production\",\n    \"notificationEnabled\": true\n  },\n  \"priority\": \"normal\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/flows/{{flow_id}}/start",
+              "host": ["{{base_url}}"],
+              "path": ["flows", "{{flow_id}}", "start"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('execution_id', response.executionId);",
+                  "    console.log('Execution started with ID:', response.executionId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Trigger Flow from External Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventType\": \"webhook.github.push\",\n  \"payload\": {\n    \"repository\": {\n      \"name\": \"my-app\",\n      \"full_name\": \"user/my-app\",\n      \"url\": \"https://github.com/user/my-app\"\n    },\n    \"ref\": \"refs/heads/main\",\n    \"commits\": [\n      {\n        \"id\": \"abc123\",\n        \"message\": \"Fix user registration bug\",\n        \"author\": {\n          \"name\": \"Developer\",\n          \"email\": \"dev@example.com\"\n        }\n      }\n    ]\n  },\n  \"source\": \"github.com\",\n  \"signature\": \"sha256=...\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/flows/{{flow_id}}/trigger",
+              "host": ["{{base_url}}"],
+              "path": ["flows", "{{flow_id}}", "trigger"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Execution Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/executions/{{execution_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["executions", "{{execution_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Pause Execution",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/executions/{{execution_id}}/pause",
+              "host": ["{{base_url}}"],
+              "path": ["executions", "{{execution_id}}", "pause"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resume Execution",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/executions/{{execution_id}}/resume",
+              "host": ["{{base_url}}"],
+              "path": ["executions", "{{execution_id}}", "resume"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Abort Execution",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/executions/{{execution_id}}/abort",
+              "host": ["{{base_url}}"],
+              "path": ["executions", "{{execution_id}}", "abort"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Monitoring",
+      "item": [
+        {
+          "name": "Get Execution Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/executions/{{execution_id}}/logs?limit=100&level=info",
+              "host": ["{{base_url}}"],
+              "path": ["executions", "{{execution_id}}", "logs"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "disabled": true
+                },
+                {
+                  "key": "level",
+                  "value": "info"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Execution Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/executions/{{execution_id}}/metrics",
+              "host": ["{{base_url}}"],
+              "path": ["executions", "{{execution_id}}", "metrics"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "System Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/system/health",
+              "host": ["{{base_url}}"],
+              "path": ["system", "health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get System Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/system/metrics",
+              "host": ["{{base_url}}"],
+              "path": ["system", "metrics"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "External Integration",
+      "item": [
+        {
+          "name": "Webhook Endpoint",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Webhook-Signature",
+                "value": "sha256=..."
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventType\": \"user.created\",\n  \"timestamp\": \"2024-01-15T10:30:00Z\",\n  \"data\": {\n    \"userId\": \"user-123\",\n    \"email\": \"newuser@example.com\",\n    \"name\": \"New User\",\n    \"plan\": \"premium\"\n  },\n  \"source\": \"user-management-system\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/webhooks/{{flow_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["webhooks", "{{flow_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Event Schemas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schemas",
+              "host": ["{{base_url}}"],
+              "path": ["schemas"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-generate request ID for debugging",
+          "pm.request.headers.add({",
+          "    key: 'X-Request-ID',",
+          "    value: 'req-' + Math.random().toString(36).substr(2, 9)",
+          "});"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Log response time and status",
+          "console.log('Response time:', pm.response.responseTime + 'ms');",
+          "console.log('Status:', pm.response.status);",
+          "",
+          "// Check for rate limiting headers",
+          "if (pm.response.headers.has('X-RateLimit-Remaining')) {",
+          "    console.log('Rate limit remaining:', pm.response.headers.get('X-RateLimit-Remaining'));",
+          "}"
+        ]
+      }
+    }
+  ]
+}

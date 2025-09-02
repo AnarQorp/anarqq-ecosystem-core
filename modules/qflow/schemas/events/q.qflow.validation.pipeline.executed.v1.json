@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.qflow.validation.pipeline.executed.v1",
+  "title": "Qflow Validation Pipeline Executed Event",
+  "description": "Event emitted when the universal validation pipeline is executed",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity requesting validation"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "validationId": {
+          "type": "string",
+          "description": "Unique identifier for this validation execution"
+        },
+        "operationType": {
+          "type": "string",
+          "enum": ["flow-execution", "step-execution", "external-event", "flow-creation"],
+          "description": "Type of operation being validated"
+        },
+        "operationId": {
+          "type": "string",
+          "description": "Identifier of the operation being validated"
+        },
+        "inputHash": {
+          "type": "string",
+          "description": "Hash of the input data for validation"
+        },
+        "pipelineResult": {
+          "type": "object",
+          "properties": {
+            "overall": {
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "type": "boolean"
+                },
+                "durationMs": {
+                  "type": "number"
+                }
+              }
+            },
+            "qlock": {
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "type": "boolean"
+                },
+                "durationMs": {
+                  "type": "number"
+                },
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "metadata": {
+                  "type": "object"
+                }
+              }
+            },
+            "qonsent": {
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "type": "boolean"
+                },
+                "durationMs": {
+                  "type": "number"
+                },
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "permissions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "qindex": {
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "type": "boolean"
+                },
+                "durationMs": {
+                  "type": "number"
+                },
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "indexed": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "qerberos": {
+              "type": "object",
+              "properties": {
+                "valid": {
+                  "type": "boolean"
+                },
+                "durationMs": {
+                  "type": "number"
+                },
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "riskScore": {
+                  "type": "number"
+                },
+                "anomalies": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "cacheHit": {
+          "type": "boolean",
+          "description": "Whether this validation result was served from cache"
+        },
+        "cacheKey": {
+          "type": "string",
+          "description": "Cache key used for this validation"
+        }
+      },
+      "required": ["validationId", "operationType", "operationId", "inputHash", "pipelineResult"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

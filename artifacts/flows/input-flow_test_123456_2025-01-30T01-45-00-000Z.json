@@ -1,0 +1,71 @@
+{
+  "flowId": "flow_test_123456",
+  "flowType": "input",
+  "flowMetadata": {
+    "startTime": "2025-01-30T01:45:00.000Z",
+    "endTime": "2025-01-30T01:45:00.500Z",
+    "totalSteps": 5,
+    "duration": 500.25
+  },
+  "stepDetails": [
+    {
+      "stepId": "step_test_001",
+      "stepName": "qompress",
+      "duration": 45.2,
+      "status": "completed",
+      "inputHash": "abc123def456789",
+      "outputHash": "def456abc123789"
+    },
+    {
+      "stepId": "step_test_002",
+      "stepName": "qlock",
+      "duration": 12.5,
+      "status": "completed",
+      "inputHash": "def456abc123789",
+      "outputHash": "789abc456def123"
+    },
+    {
+      "stepId": "step_test_003",
+      "stepName": "qindex",
+      "duration": 85.7,
+      "status": "completed",
+      "inputHash": "789abc456def123",
+      "outputHash": "123def789abc456"
+    },
+    {
+      "stepId": "step_test_004",
+      "stepName": "qerberos",
+      "duration": 67.3,
+      "status": "completed",
+      "inputHash": "123def789abc456",
+      "outputHash": "456789123defabc"
+    },
+    {
+      "stepId": "step_test_005",
+      "stepName": "ipfs",
+      "duration": 289.55,
+      "status": "completed",
+      "inputHash": "456789123defabc",
+      "outputHash": "abcdef123456789"
+    }
+  ],
+  "validation": {
+    "hashVerification": true,
+    "signatureValidation": true,
+    "integrityCheck": true,
+    "executionLedger": null,
+    "performanceMetrics": {
+      "totalDuration": 500.25,
+      "stepDurations": {
+        "qompress": 45.2,
+        "qlock": 12.5,
+        "qindex": 85.7,
+        "qerberos": 67.3,
+        "ipfs": 289.55
+      },
+      "errorRate": 0,
+      "throughput": 48.5
+    }
+  },
+  "anomalies": []
+}

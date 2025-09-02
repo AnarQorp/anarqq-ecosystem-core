@@ -1,0 +1,1228 @@
+openapi: 3.0.3
+info:
+  title: Qchat API
+  description: Instant Messaging Module for AnarQ&Q Ecosystem
+  version: 1.0.0
+  contact:
+    name: AnarQ&Q Team
+    url: https://github.com/anarq/qchat
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3001/api/qchat
+    description: Development server
+  - url: https://api.q.network/qchat
+    description: Production server
+
+paths:
+  /rooms:
+    post:
+      summary: Create chat room
+      description: Create a new chat room with specified configuration
+      operationId: createRoom
+      tags:
+        - Rooms
+      security:
+        - squidAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoomRequest'
+            examples:
+              publicRoom:
+                summary: Public chat room
+                value:
+                  name: "General Discussion"
+                  description: "Open discussion for all users"
+                  type: "PUBLIC"
+                  maxMembers: 100
+                  encryptionLevel: "STANDARD"
+              privateRoom:
+                summary: Private chat room
+                value:
+                  name: "Team Planning"
+                  description: "Private team coordination"
+                  type: "PRIVATE"
+                  maxMembers: 20
+                  encryptionLevel: "HIGH"
+      responses:
+        '201':
+          description: Room created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRoomResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    get:
+      summary: List chat rooms
+      description: Get list of available chat rooms for user
+      operationId: listRooms
+      tags:
+        - Rooms
+      security:
+        - squidAuth: []
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [PUBLIC, PRIVATE, DAO, REPUTATION]
+          description: Filter by room type
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Maximum rooms to return
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Pagination offset
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search room names and descriptions
+      responses:
+        '200':
+          description: Rooms retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRoomsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /rooms/{roomId}:
+    get:
+      summary: Get room details
+      description: Get detailed information about a specific chat room
+      operationId: getRoomDetails
+      tags:
+        - Rooms
+      security:
+        - squidAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Chat room ID
+      responses:
+        '200':
+          description: Room details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomDetailsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      summary: Update room settings
+      description: Update chat room configuration (owner/admin only)
+      operationId: updateRoom
+      tags:
+        - Rooms
+      security:
+        - squidAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Chat room ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRoomRequest'
+      responses:
+        '200':
+          description: Room updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    delete:
+      summary: Delete room
+      description: Delete chat room (owner only)
+      operationId: deleteRoom
+      tags:
+        - Rooms
+      security:
+        - squidAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Chat room ID
+      responses:
+        '200':
+          description: Room deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /rooms/{roomId}/join:
+    post:
+      summary: Join chat room
+      description: Join a chat room (if permitted)
+      operationId: joinRoom
+      tags:
+        - Membership
+      security:
+        - squidAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Chat room ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inviteCode:
+                  type: string
+                  description: Invite code for private rooms
+      responses:
+        '200':
+          description: Joined room successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinRoomResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Already a member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /rooms/{roomId}/leave:
+    post:
+      summary: Leave chat room
+      description: Leave a chat room
+      operationId: leaveRoom
+      tags:
+        - Membership
+      security:
+        - squidAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Chat room ID
+      responses:
+        '200':
+          description: Left room successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /rooms/{roomId}/messages:
+    get:
+      summary: Get message history
+      description: Retrieve message history for a chat room
+      operationId: getMessageHistory
+      tags:
+        - Messages
+      security:
+        - squidAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Chat room ID
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          description: Maximum messages to return
+        - name: before
+          in: query
+          schema:
+            type: string
+          description: Message ID to paginate before
+        - name: after
+          in: query
+          schema:
+            type: string
+          description: Message ID to paginate after
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Get messages since timestamp
+      responses:
+        '200':
+          description: Message history retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageHistoryResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      summary: Send message
+      description: Send a message to the chat room
+      operationId: sendMessage
+      tags:
+        - Messages
+      security:
+        - squidAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Chat room ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '201':
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendMessageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /rooms/{roomId}/messages/{messageId}:
+    put:
+      summary: Edit message
+      description: Edit a previously sent message
+      operationId: editMessage
+      tags:
+        - Messages
+      security:
+        - squidAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Chat room ID
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Message ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  description: New message content
+              required:
+                - content
+      responses:
+        '200':
+          description: Message edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    delete:
+      summary: Delete message
+      description: Delete a message (sender or moderator only)
+      operationId: deleteMessage
+      tags:
+        - Messages
+      security:
+        - squidAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Chat room ID
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Message ID
+      responses:
+        '200':
+          description: Message deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /rooms/{roomId}/moderate:
+    post:
+      summary: Perform moderation action
+      description: Perform moderation actions in the chat room
+      operationId: moderateRoom
+      tags:
+        - Moderation
+      security:
+        - squidAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Chat room ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModerationRequest'
+      responses:
+        '200':
+          description: Moderation action completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModerationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /rooms/{roomId}/members:
+    get:
+      summary: Get room members
+      description: Get list of room members with their roles
+      operationId: getRoomMembers
+      tags:
+        - Membership
+      security:
+        - squidAuth: []
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Chat room ID
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          description: Maximum members to return
+        - name: role
+          in: query
+          schema:
+            type: string
+            enum: [OWNER, ADMIN, MEMBER, GUEST]
+          description: Filter by role
+      responses:
+        '200':
+          description: Members retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembersResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /websocket:
+    get:
+      summary: WebSocket endpoint
+      description: WebSocket endpoint for real-time messaging
+      operationId: websocketConnect
+      tags:
+        - WebSocket
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Authentication token
+        - name: roomId
+          in: query
+          schema:
+            type: string
+          description: Initial room to join
+      responses:
+        '101':
+          description: WebSocket connection established
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /health:
+    get:
+      summary: Health check
+      description: Check service health and dependencies
+      operationId: healthCheck
+      tags:
+        - System
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service is unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+components:
+  securitySchemes:
+    squidAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: sQuid identity authentication
+
+  schemas:
+    CreateRoomRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          description: Room name
+        description:
+          type: string
+          maxLength: 500
+          description: Room description
+        type:
+          type: string
+          enum: [PUBLIC, PRIVATE, DAO, REPUTATION]
+          default: PUBLIC
+          description: Room access type
+        maxMembers:
+          type: integer
+          minimum: 2
+          maximum: 10000
+          default: 100
+          description: Maximum number of members
+        encryptionLevel:
+          type: string
+          enum: [STANDARD, HIGH, QUANTUM]
+          default: STANDARD
+          description: Encryption level for messages
+        moderationLevel:
+          type: string
+          enum: [NONE, BASIC, STRICT, AI_ASSISTED]
+          default: BASIC
+          description: Automatic moderation level
+        minReputation:
+          type: number
+          description: Minimum reputation required (for REPUTATION type)
+        daoId:
+          type: string
+          description: DAO ID (for DAO type rooms)
+        tags:
+          type: array
+          items:
+            type: string
+          description: Room tags for discovery
+        ephemeral:
+          type: boolean
+          default: false
+          description: Room disappears when empty
+        messageRetention:
+          type: integer
+          description: Message retention period in days
+
+    CreateRoomResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            roomId:
+              type: string
+            name:
+              type: string
+            type:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            inviteCode:
+              type: string
+              description: Invite code for private rooms
+            websocketUrl:
+              type: string
+              description: WebSocket URL for real-time events
+
+    ListRoomsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            rooms:
+              type: array
+              items:
+                $ref: '#/components/schemas/RoomSummary'
+            totalCount:
+              type: integer
+            hasMore:
+              type: boolean
+
+    RoomSummary:
+      type: object
+      properties:
+        roomId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        memberCount:
+          type: integer
+        maxMembers:
+          type: integer
+        lastActivity:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            type: string
+        encryptionLevel:
+          type: string
+        isJoined:
+          type: boolean
+
+    RoomDetailsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/RoomDetails'
+
+    RoomDetails:
+      type: object
+      properties:
+        roomId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        memberCount:
+          type: integer
+        maxMembers:
+          type: integer
+        encryptionLevel:
+          type: string
+        moderationLevel:
+          type: string
+        messageRetention:
+          type: integer
+        tags:
+          type: array
+          items:
+            type: string
+        permissions:
+          type: object
+          properties:
+            canPost:
+              type: boolean
+            canInvite:
+              type: boolean
+            canModerate:
+              type: boolean
+            canManage:
+              type: boolean
+        userRole:
+          type: string
+          enum: [OWNER, ADMIN, MEMBER, GUEST]
+        lastActivity:
+          type: string
+          format: date-time
+
+    UpdateRoomRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+        maxMembers:
+          type: integer
+          minimum: 2
+          maximum: 10000
+        moderationLevel:
+          type: string
+          enum: [NONE, BASIC, STRICT, AI_ASSISTED]
+        messageRetention:
+          type: integer
+        tags:
+          type: array
+          items:
+            type: string
+
+    JoinRoomResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            roomId:
+              type: string
+            role:
+              type: string
+            joinedAt:
+              type: string
+              format: date-time
+            permissions:
+              type: object
+            websocketUrl:
+              type: string
+
+    SendMessageRequest:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+          description: Message content
+        messageType:
+          type: string
+          enum: [TEXT, IMAGE, FILE, SYSTEM, REACTION]
+          default: TEXT
+          description: Type of message
+        replyTo:
+          type: string
+          description: Message ID being replied to
+        mentions:
+          type: array
+          items:
+            type: string
+          description: Array of mentioned sQuid IDs
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+          description: File attachments
+        ephemeral:
+          type: boolean
+          default: false
+          description: Message disappears after reading
+        expiresIn:
+          type: integer
+          description: Message expiration in seconds
+
+    SendMessageResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            messageId:
+              type: string
+            timestamp:
+              type: string
+              format: date-time
+            encryptedCid:
+              type: string
+              description: IPFS CID of encrypted message
+            deliveryStatus:
+              type: string
+              enum: [SENT, DELIVERED, READ, FAILED]
+
+    MessageHistoryResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/ChatMessage'
+            totalCount:
+              type: integer
+            hasMore:
+              type: boolean
+            nextCursor:
+              type: string
+
+    ChatMessage:
+      type: object
+      properties:
+        messageId:
+          type: string
+        senderId:
+          type: string
+        senderName:
+          type: string
+        content:
+          type: string
+        messageType:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        editedAt:
+          type: string
+          format: date-time
+        replyTo:
+          type: string
+        mentions:
+          type: array
+          items:
+            type: string
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        reactions:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        deliveryStatus:
+          type: string
+        encryptionLevel:
+          type: string
+        deleted:
+          type: boolean
+
+    Attachment:
+      type: object
+      properties:
+        name:
+          type: string
+        cid:
+          type: string
+          description: IPFS CID
+        size:
+          type: integer
+        mimeType:
+          type: string
+        thumbnail:
+          type: string
+          description: Thumbnail CID for images/videos
+
+    ModerationRequest:
+      type: object
+      required:
+        - action
+        - targetId
+      properties:
+        action:
+          type: string
+          enum: [MUTE, UNMUTE, KICK, BAN, UNBAN, DELETE_MESSAGE, PIN_MESSAGE, UNPIN_MESSAGE, WARN]
+          description: Moderation action to perform
+        targetId:
+          type: string
+          description: Target sQuid ID or message ID
+        reason:
+          type: string
+          description: Reason for moderation action
+        duration:
+          type: integer
+          description: Duration in seconds for temporary actions
+        severity:
+          type: string
+          enum: [LOW, MEDIUM, HIGH, CRITICAL]
+          default: MEDIUM
+          description: Severity level of the violation
+        notifyUser:
+          type: boolean
+          default: true
+          description: Notify the user about the action
+
+    ModerationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            actionId:
+              type: string
+            timestamp:
+              type: string
+              format: date-time
+            effectiveUntil:
+              type: string
+              format: date-time
+            auditCid:
+              type: string
+              description: IPFS CID of audit record
+
+    MembersResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            members:
+              type: array
+              items:
+                type: object
+                properties:
+                  squidId:
+                    type: string
+                  displayName:
+                    type: string
+                  role:
+                    type: string
+                    enum: [OWNER, ADMIN, MEMBER, GUEST]
+                  joinedAt:
+                    type: string
+                    format: date-time
+                  lastSeen:
+                    type: string
+                    format: date-time
+                  reputation:
+                    type: number
+                  isOnline:
+                    type: boolean
+            totalCount:
+              type: integer
+
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        dependencies:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [up, down, degraded]
+              latency:
+                type: number
+              lastCheck:
+                type: string
+                format: date-time
+        metrics:
+          type: object
+          properties:
+            uptime:
+              type: number
+            requestCount:
+              type: number
+            errorRate:
+              type: number
+            avgResponseTime:
+              type: number
+            activeConnections:
+              type: number
+            totalRooms:
+              type: number
+            totalMessages:
+              type: number
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    RateLimited:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+tags:
+  - name: Rooms
+    description: Chat room management
+  - name: Messages
+    description: Message operations
+  - name: Membership
+    description: Room membership operations
+  - name: Moderation
+    description: Moderation operations
+  - name: WebSocket
+    description: Real-time WebSocket operations
+  - name: System
+    description: System operations

@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://anarq.com/schemas/qlock/encryption.json",
+  "title": "Qlock Encryption Schema",
+  "description": "Schema for Qlock encryption operations",
+  "definitions": {
+    "EncryptionRequest": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "Data to encrypt (base64 encoded for binary)"
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": ["AES-256-GCM", "ChaCha20-Poly1305", "Kyber-768", "Dilithium-3"],
+          "default": "AES-256-GCM"
+        },
+        "keyId": {
+          "type": "string",
+          "pattern": "^qlock_[a-f0-9]{16}$"
+        },
+        "identityId": {
+          "type": "string",
+          "description": "sQuid identity ID"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "compression": {
+              "type": "boolean",
+              "default": false
+            },
+            "keyRotation": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        }
+      },
+      "required": ["data", "identityId"]
+    },
+    "EncryptionResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["ok", "error"]
+        },
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "encryptedData": {
+              "type": "string"
+            },
+            "keyId": {
+              "type": "string"
+            },
+            "algorithm": {
+              "type": "string"
+            },
+            "metadata": {
+              "$ref": "#/definitions/EncryptionMetadata"
+            }
+          },
+          "required": ["encryptedData", "keyId", "algorithm", "metadata"]
+        },
+        "cid": {
+          "type": "string",
+          "description": "IPFS content identifier"
+        }
+      },
+      "required": ["status", "code", "message"]
+    },
+    "DecryptionRequest": {
+      "type": "object",
+      "properties": {
+        "encryptedData": {
+          "type": "string"
+        },
+        "keyId": {
+          "type": "string"
+        },
+        "identityId": {
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/definitions/EncryptionMetadata"
+        }
+      },
+      "required": ["encryptedData", "keyId", "identityId", "metadata"]
+    },
+    "DecryptionResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["ok", "error"]
+        },
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "decryptedData": {
+              "type": "string"
+            },
+            "verified": {
+              "type": "boolean"
+            }
+          },
+          "required": ["decryptedData", "verified"]
+        }
+      },
+      "required": ["status", "code", "message"]
+    },
+    "EncryptionMetadata": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string"
+        },
+        "keyId": {
+          "type": "string"
+        },
+        "iv": {
+          "type": "string"
+        },
+        "authTag": {
+          "type": "string"
+        },
+        "keySize": {
+          "type": "integer"
+        },
+        "quantumResistant": {
+          "type": "boolean"
+        },
+        "encryptedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": ["algorithm", "keyId", "encryptedAt", "version"]
+    }
+  }
+}

@@ -1,0 +1,34 @@
+sequenceDiagram
+    participant User
+    participant sQuid
+    participant Qwallet
+    participant Qlock
+    participant Qindex
+    participant Qerberos
+    participant IPFS
+    participant QNET
+    
+    Note over User,QNET: Data Flow with Hash Chain Validation
+    
+    User->>sQuid: Create Identity
+    Note right of sQuid: Hash: sha256(identity_data)
+    sQuid->>Qwallet: Link Wallet (45ms)
+    Note right of Qwallet: Hash: sha256(wallet_link + prev_hash)
+    
+    Qwallet->>Qlock: Encrypt Data (120ms)
+    Note right of Qlock: Hash: sha256(encrypted_data + prev_hash)
+    Qlock->>Qindex: Index Metadata
+    Note right of Qindex: Hash: sha256(metadata + prev_hash)
+    
+    Qindex->>Qerberos: Audit Log
+    Note right of Qerberos: Hash: sha256(audit_entry + prev_hash)
+    Note right of Qerberos: CIDs Verified: 0
+    
+    Qerberos->>IPFS: Store CID
+    Note right of IPFS: CID: Qm... (Content Addressed)
+    IPFS->>QNET: Replicate (67ms)
+    Note right of QNET: Consensus: Pending
+    
+    QNET-->>User: Confirmation
+    Note left of User: Chain Valid: No
+    Note left of User: Success Rate: 94.9%

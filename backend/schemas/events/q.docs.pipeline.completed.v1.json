@@ -1,0 +1,172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.docs.pipeline.completed.v1",
+  "title": "Documentation Pipeline Completed Event",
+  "description": "Event emitted when the documentation automation pipeline completes successfully",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "const": "qflow-docs-pipeline",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "const": "qflow-docs-pipeline",
+          "description": "sQuid identity of the pipeline system"
+        }
+      },
+      "required": ["squidId"]
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "pipelineId": {
+          "type": "string",
+          "description": "Unique identifier for the completed pipeline execution"
+        },
+        "executionTime": {
+          "type": "number",
+          "description": "Total execution time in milliseconds"
+        },
+        "verdict": {
+          "type": "string",
+          "enum": ["ALLOW", "WARN", "DENY"],
+          "description": "Overall pipeline verdict from Qflow evaluation"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence score of the pipeline execution"
+        },
+        "stepsCompleted": {
+          "type": "number",
+          "description": "Number of pipeline steps completed successfully"
+        },
+        "stepResults": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step": {
+                "type": "string",
+                "enum": ["validate", "regenerate-index", "build-scripts", "publish-portal"]
+              },
+              "status": {
+                "type": "string",
+                "enum": ["success", "warning", "failure", "skipped"]
+              },
+              "executionTime": {
+                "type": "number",
+                "description": "Step execution time in milliseconds"
+              },
+              "verdict": {
+                "type": "string",
+                "enum": ["ALLOW", "WARN", "DENY"]
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "string"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            },
+            "required": ["step", "status", "executionTime"]
+          },
+          "description": "Results for each pipeline step"
+        },
+        "artifacts": {
+          "type": "object",
+          "properties": {
+            "validationReport": {
+              "type": "string",
+              "description": "Path to validation report"
+            },
+            "indexFiles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of generated index files"
+            },
+            "scriptFiles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of generated script files"
+            },
+            "portalUrl": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL of the published documentation portal"
+            }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "filesProcessed": {
+              "type": "number",
+              "description": "Total number of files processed"
+            },
+            "scriptsGenerated": {
+              "type": "number",
+              "description": "Number of video scripts generated"
+            },
+            "linksValidated": {
+              "type": "number",
+              "description": "Number of links validated"
+            },
+            "issuesFixed": {
+              "type": "number",
+              "description": "Number of issues automatically fixed"
+            }
+          }
+        },
+        "rollbackPointsCreated": {
+          "type": "number",
+          "description": "Number of rollback points created during execution"
+        }
+      },
+      "required": ["pipelineId", "executionTime", "verdict", "confidence", "stepsCompleted"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

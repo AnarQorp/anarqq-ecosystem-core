@@ -1,0 +1,75 @@
+{
+  "expectations": [
+    {
+      "httpRequest": {
+        "method": "POST",
+        "path": "/identity/verify"
+      },
+      "httpResponse": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": ["application/json"]
+        },
+        "body": {
+          "status": "ok",
+          "code": "SUCCESS",
+          "message": "Identity verified",
+          "data": {
+            "squidId": "mock-squid-id",
+            "verified": true,
+            "reputation": 0.85
+          },
+          "timestamp": "2024-01-15T10:00:00Z"
+        }
+      }
+    },
+    {
+      "httpRequest": {
+        "method": "GET",
+        "path": "/identity/.*"
+      },
+      "httpResponse": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": ["application/json"]
+        },
+        "body": {
+          "status": "ok",
+          "code": "SUCCESS",
+          "message": "Identity retrieved",
+          "data": {
+            "squidId": "mock-squid-id",
+            "subId": "mock-sub-id",
+            "reputation": 0.85,
+            "verified": true,
+            "createdAt": "2024-01-01T00:00:00Z"
+          },
+          "timestamp": "2024-01-15T10:00:00Z"
+        }
+      }
+    },
+    {
+      "httpRequest": {
+        "method": "GET",
+        "path": "/health"
+      },
+      "httpResponse": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": ["application/json"]
+        },
+        "body": {
+          "status": "ok",
+          "code": "SUCCESS",
+          "message": "sQuid service healthy",
+          "data": {
+            "service": "squid",
+            "version": "1.0.0",
+            "uptime": 3600
+          },
+          "timestamp": "2024-01-15T10:00:00Z"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  qonsent:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HOST=0.0.0.0
+      - MONGODB_URI=mongodb://mongodb:27017/qonsent
+      - LOG_LEVEL=debug
+      - CORS_ORIGIN=*
+      - JWT_SECRET=your-jwt-secret
+      - SQUID_API_URL=https://api.squid.xyz
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+    networks:
+      - qonsent-network
+
+  mongodb:
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=qonsent
+    networks:
+      - qonsent-network
+
+  mongo-express:
+    image: mongo-express:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+    depends_on:
+      - mongodb
+    networks:
+      - qonsent-network
+
+networks:
+  qonsent-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:

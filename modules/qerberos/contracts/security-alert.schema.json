@@ -1,0 +1,252 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qerberos/security-alert.json",
+  "title": "Security Alert",
+  "description": "Schema for security alerts in the Qerberos security module",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique alert identifier",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+    },
+    "type": {
+      "type": "string",
+      "description": "Alert type",
+      "minLength": 1,
+      "maxLength": 100,
+      "examples": ["anomaly", "intrusion", "policy_violation", "authentication_failure", "data_breach"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"],
+      "description": "Alert severity level"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "resolved", "dismissed", "investigating"],
+      "description": "Current status of the alert"
+    },
+    "title": {
+      "type": "string",
+      "description": "Alert title",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the alert",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "source": {
+      "$ref": "#/definitions/AlertSource",
+      "description": "Source of the alert"
+    },
+    "affectedResources": {
+      "type": "array",
+      "description": "Resources affected by this alert",
+      "items": {
+        "$ref": "#/definitions/AffectedResource"
+      },
+      "maxItems": 100
+    },
+    "indicators": {
+      "type": "array",
+      "description": "Indicators of compromise or suspicious activity",
+      "items": {
+        "$ref": "#/definitions/Indicator"
+      },
+      "maxItems": 50
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the alert was created"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the alert was last updated"
+    },
+    "resolvedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the alert was resolved (if applicable)"
+    },
+    "assignedTo": {
+      "type": "string",
+      "description": "Identity assigned to handle this alert",
+      "maxLength": 100
+    },
+    "tags": {
+      "type": "array",
+      "description": "Tags for categorizing the alert",
+      "items": {
+        "type": "string",
+        "maxLength": 50
+      },
+      "maxItems": 20,
+      "uniqueItems": true
+    },
+    "recommendations": {
+      "type": "array",
+      "description": "Recommended actions to address the alert",
+      "items": {
+        "type": "string",
+        "maxLength": 500
+      },
+      "maxItems": 10
+    },
+    "relatedAlerts": {
+      "type": "array",
+      "description": "IDs of related alerts",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "maxItems": 20,
+      "uniqueItems": true
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the alert",
+      "additionalProperties": true
+    }
+  },
+  "required": ["id", "type", "severity", "status", "title", "description", "source", "createdAt"],
+  "additionalProperties": false,
+  "definitions": {
+    "AlertSource": {
+      "type": "object",
+      "properties": {
+        "module": {
+          "type": "string",
+          "description": "Module that generated the alert",
+          "examples": ["qerberos", "qwallet", "qmail", "qdrive", "qonsent"]
+        },
+        "component": {
+          "type": "string",
+          "description": "Specific component within the module",
+          "examples": ["anomaly_detector", "risk_scorer", "audit_logger"]
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the source component",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        }
+      },
+      "required": ["module"],
+      "additionalProperties": false
+    },
+    "AffectedResource": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Type of affected resource",
+          "examples": ["identity", "file", "transaction", "session", "api_endpoint"]
+        },
+        "id": {
+          "type": "string",
+          "description": "Resource identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable resource name"
+        },
+        "impact": {
+          "type": "string",
+          "enum": ["none", "low", "medium", "high", "critical"],
+          "description": "Impact level on this resource"
+        }
+      },
+      "required": ["type", "id"],
+      "additionalProperties": false
+    },
+    "Indicator": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Type of indicator",
+          "examples": ["ip_address", "user_agent", "file_hash", "domain", "pattern"]
+        },
+        "value": {
+          "type": "string",
+          "description": "Indicator value"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence in this indicator"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of what this indicator represents",
+          "maxLength": 500
+        }
+      },
+      "required": ["type", "value", "confidence"],
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "type": "anomaly",
+      "severity": "high",
+      "status": "active",
+      "title": "Unusual File Access Pattern Detected",
+      "description": "User did:squid:user123 downloaded 50 files in 2 minutes, which is 10x their normal rate",
+      "source": {
+        "module": "qerberos",
+        "component": "anomaly_detector",
+        "version": "2.1.0"
+      },
+      "affectedResources": [
+        {
+          "type": "identity",
+          "id": "did:squid:user123",
+          "name": "John Doe",
+          "impact": "medium"
+        },
+        {
+          "type": "api_endpoint",
+          "id": "/qdrive/download",
+          "name": "File Download API",
+          "impact": "low"
+        }
+      ],
+      "indicators": [
+        {
+          "type": "pattern",
+          "value": "rapid_file_download",
+          "confidence": 0.92,
+          "description": "Detected rapid sequential file downloads"
+        },
+        {
+          "type": "ip_address",
+          "value": "192.168.1.100",
+          "confidence": 0.8,
+          "description": "Source IP address of the suspicious activity"
+        }
+      ],
+      "createdAt": "2024-02-08T15:30:00.000Z",
+      "updatedAt": "2024-02-08T15:30:00.000Z",
+      "tags": ["behavioral", "file_access", "rate_limit"],
+      "recommendations": [
+        "Verify user identity through additional authentication",
+        "Temporarily limit download rate for this user",
+        "Review user's recent activity for other suspicious patterns"
+      ],
+      "metadata": {
+        "detectionModel": "behavioral_anomaly_v2.1",
+        "threshold": 0.8,
+        "baselineRate": 5.0,
+        "observedRate": 25.0
+      }
+    }
+  ]
+}

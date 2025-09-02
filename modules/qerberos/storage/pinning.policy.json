@@ -1,0 +1,259 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Qerberos IPFS Pinning Policy",
+  "description": "Defines pinning policies for Qerberos data stored in IPFS",
+  "version": "1.0.0",
+  "policies": {
+    "audit_events": {
+      "description": "Immutable audit trail entries",
+      "pinning_strategy": "PERMANENT",
+      "replication_factor": 3,
+      "geo_distribution": ["us-east-1", "eu-west-1", "ap-southeast-1"],
+      "access_pattern": "HOT",
+      "retention_period": "P7Y",
+      "priority": "critical",
+      "cost_optimization": false,
+      "backup_required": true,
+      "encryption_required": true,
+      "signature_required": true,
+      "compliance_tags": ["gdpr", "sox", "audit_trail"],
+      "auto_pin": true,
+      "pin_timeout": "PT30S",
+      "verification_interval": "P1D"
+    },
+    "security_alerts": {
+      "description": "Security incident and alert records",
+      "pinning_strategy": "PERMANENT",
+      "replication_factor": 3,
+      "geo_distribution": ["us-east-1", "eu-west-1", "ap-southeast-1"],
+      "access_pattern": "HOT",
+      "retention_period": "P5Y",
+      "priority": "high",
+      "cost_optimization": false,
+      "backup_required": true,
+      "encryption_required": true,
+      "signature_required": true,
+      "compliance_tags": ["security", "incident_response"],
+      "auto_pin": true,
+      "pin_timeout": "PT30S",
+      "verification_interval": "P1D"
+    },
+    "risk_assessments": {
+      "description": "Risk scoring and assessment results",
+      "pinning_strategy": "CONDITIONAL",
+      "replication_factor": 2,
+      "geo_distribution": ["us-east-1", "eu-west-1"],
+      "access_pattern": "WARM",
+      "retention_period": "P2Y",
+      "priority": "medium",
+      "cost_optimization": true,
+      "backup_required": true,
+      "encryption_required": true,
+      "signature_required": true,
+      "compliance_tags": ["risk_management"],
+      "auto_pin": true,
+      "pin_timeout": "PT60S",
+      "verification_interval": "P7D",
+      "conditions": {
+        "min_risk_score": 0.7,
+        "critical_identities": true,
+        "regulatory_flagged": true
+      }
+    },
+    "compliance_reports": {
+      "description": "Regulatory compliance documentation",
+      "pinning_strategy": "PERMANENT",
+      "replication_factor": 5,
+      "geo_distribution": [
+        "us-east-1",
+        "us-west-2", 
+        "eu-west-1",
+        "eu-central-1",
+        "ap-southeast-1"
+      ],
+      "access_pattern": "COLD",
+      "retention_period": "P10Y",
+      "priority": "critical",
+      "cost_optimization": false,
+      "backup_required": true,
+      "encryption_required": true,
+      "signature_required": true,
+      "compliance_tags": ["gdpr", "sox", "regulatory"],
+      "auto_pin": true,
+      "pin_timeout": "PT120S",
+      "verification_interval": "P1D"
+    },
+    "anomaly_results": {
+      "description": "ML-based anomaly detection outputs",
+      "pinning_strategy": "CONDITIONAL",
+      "replication_factor": 2,
+      "geo_distribution": ["us-east-1", "eu-west-1"],
+      "access_pattern": "WARM",
+      "retention_period": "P1Y",
+      "priority": "medium",
+      "cost_optimization": true,
+      "backup_required": false,
+      "encryption_required": true,
+      "signature_required": true,
+      "compliance_tags": ["ml_analysis"],
+      "auto_pin": true,
+      "pin_timeout": "PT60S",
+      "verification_interval": "P7D",
+      "conditions": {
+        "min_severity": "medium",
+        "min_confidence": 0.8,
+        "high_impact": true
+      }
+    },
+    "ml_models": {
+      "description": "Machine learning model artifacts",
+      "pinning_strategy": "PERMANENT",
+      "replication_factor": 3,
+      "geo_distribution": ["us-east-1", "eu-west-1", "ap-southeast-1"],
+      "access_pattern": "COLD",
+      "retention_period": "P3Y",
+      "priority": "high",
+      "cost_optimization": true,
+      "backup_required": true,
+      "encryption_required": false,
+      "signature_required": true,
+      "compliance_tags": ["ml_models"],
+      "auto_pin": true,
+      "pin_timeout": "PT300S",
+      "verification_interval": "P30D"
+    },
+    "configuration": {
+      "description": "System configuration and policies",
+      "pinning_strategy": "PERMANENT",
+      "replication_factor": 3,
+      "geo_distribution": ["us-east-1", "eu-west-1", "ap-southeast-1"],
+      "access_pattern": "HOT",
+      "retention_period": "P5Y",
+      "priority": "high",
+      "cost_optimization": false,
+      "backup_required": true,
+      "encryption_required": true,
+      "signature_required": true,
+      "compliance_tags": ["configuration"],
+      "auto_pin": true,
+      "pin_timeout": "PT30S",
+      "verification_interval": "P1D"
+    },
+    "temporary_data": {
+      "description": "Temporary analysis and processing data",
+      "pinning_strategy": "TEMPORARY",
+      "replication_factor": 1,
+      "geo_distribution": ["us-east-1"],
+      "access_pattern": "HOT",
+      "retention_period": "P7D",
+      "priority": "low",
+      "cost_optimization": true,
+      "backup_required": false,
+      "encryption_required": false,
+      "signature_required": false,
+      "compliance_tags": [],
+      "auto_pin": false,
+      "pin_timeout": "PT10S",
+      "verification_interval": "P1D",
+      "auto_unpin_after": "P7D"
+    }
+  },
+  "global_settings": {
+    "default_timeout": "PT60S",
+    "max_pin_attempts": 3,
+    "retry_backoff": "exponential",
+    "health_check_interval": "PT5M",
+    "garbage_collection_interval": "P1D",
+    "cost_monitoring": true,
+    "cost_alerts": {
+      "warning_threshold": 0.8,
+      "critical_threshold": 0.95
+    },
+    "performance_monitoring": true,
+    "sla_targets": {
+      "pin_success_rate": 0.999,
+      "average_pin_time": "PT30S",
+      "data_availability": 0.9999
+    }
+  },
+  "lifecycle_rules": {
+    "hot_to_warm": {
+      "condition": "age > P90D",
+      "action": "migrate_to_warm_storage",
+      "cost_optimization": true
+    },
+    "warm_to_cold": {
+      "condition": "age > P2Y",
+      "action": "migrate_to_cold_storage",
+      "cost_optimization": true
+    },
+    "cold_to_archive": {
+      "condition": "age > P7Y",
+      "action": "migrate_to_archive_storage",
+      "cost_optimization": true
+    },
+    "archive_cleanup": {
+      "condition": "age > retention_period",
+      "action": "secure_deletion",
+      "compliance_required": true
+    }
+  },
+  "disaster_recovery": {
+    "backup_frequency": "P1D",
+    "backup_retention": "P30D",
+    "cross_region_replication": true,
+    "recovery_time_objective": "PT4H",
+    "recovery_point_objective": "PT1H",
+    "failover_strategy": "automatic",
+    "data_integrity_checks": "continuous"
+  },
+  "monitoring": {
+    "metrics": [
+      "pin_success_rate",
+      "pin_duration",
+      "storage_utilization",
+      "replication_health",
+      "cost_per_gb",
+      "data_integrity_violations"
+    ],
+    "alerts": [
+      {
+        "name": "pin_failure_rate_high",
+        "condition": "pin_success_rate < 0.99",
+        "severity": "high",
+        "notification": ["email", "slack"]
+      },
+      {
+        "name": "storage_cost_high",
+        "condition": "monthly_cost > budget * 0.9",
+        "severity": "medium",
+        "notification": ["email"]
+      },
+      {
+        "name": "data_integrity_violation",
+        "condition": "integrity_check_failed",
+        "severity": "critical",
+        "notification": ["email", "slack", "pagerduty"]
+      }
+    ]
+  },
+  "compliance": {
+    "gdpr": {
+      "data_subject_rights": true,
+      "right_to_erasure": "cryptographic_deletion",
+      "data_portability": true,
+      "consent_management": true
+    },
+    "sox": {
+      "audit_trail": true,
+      "access_controls": true,
+      "data_integrity": true,
+      "retention_policies": true
+    },
+    "data_residency": {
+      "enforce_geo_restrictions": true,
+      "allowed_regions": ["us", "eu"],
+      "restricted_regions": ["cn", "ru"]
+    }
+  }
+}

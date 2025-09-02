@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.docs.pipeline.started.v1",
+  "title": "Documentation Pipeline Started Event",
+  "description": "Event emitted when the documentation automation pipeline starts",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "const": "qflow-docs-pipeline",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "squidId": {
+          "type": "string",
+          "const": "qflow-docs-pipeline",
+          "description": "sQuid identity of the pipeline system"
+        }
+      },
+      "required": ["squidId"]
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "pipelineId": {
+          "type": "string",
+          "description": "Unique identifier for this pipeline execution"
+        },
+        "trigger": {
+          "type": "string",
+          "enum": ["documentation-update", "module-release", "quality-remediation", "scheduled", "manual"],
+          "description": "What triggered the pipeline execution"
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "description": "Source of the trigger"
+            },
+            "updateType": {
+              "type": "string",
+              "description": "Type of update if triggered by documentation update"
+            },
+            "module": {
+              "type": "string",
+              "description": "Module name if triggered by module release"
+            },
+            "version": {
+              "type": "string",
+              "description": "Version if triggered by module release"
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of files that triggered the pipeline"
+            }
+          },
+          "additionalProperties": true
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["validate", "regenerate-index", "build-scripts", "publish-portal"]
+          },
+          "description": "List of pipeline steps to execute"
+        },
+        "configuration": {
+          "type": "object",
+          "properties": {
+            "maxRetries": {
+              "type": "number",
+              "description": "Maximum number of retries per step"
+            },
+            "rollbackOnFailure": {
+              "type": "boolean",
+              "description": "Whether to rollback on failure"
+            },
+            "publishToPortal": {
+              "type": "boolean",
+              "description": "Whether to publish to documentation portal"
+            },
+            "notifyOnFailure": {
+              "type": "boolean",
+              "description": "Whether to send notifications on failure"
+            }
+          }
+        },
+        "estimatedDuration": {
+          "type": "number",
+          "description": "Estimated pipeline duration in milliseconds"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "default": "medium",
+          "description": "Priority level of the pipeline execution"
+        }
+      },
+      "required": ["pipelineId", "trigger", "steps"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

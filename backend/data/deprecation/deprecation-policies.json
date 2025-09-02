@@ -1,0 +1,141 @@
+{
+  "defaultTimelines": {
+    "announcement": {
+      "description": "Time between deprecation announcement and sunset",
+      "minimumDays": 90,
+      "recommendedDays": 180
+    },
+    "migration": {
+      "description": "Time allowed for migration after announcement",
+      "minimumDays": 60,
+      "recommendedDays": 120
+    },
+    "warning": {
+      "description": "Days before sunset to send warning notifications",
+      "days": 30
+    },
+    "final": {
+      "description": "Days before sunset to send final notifications",
+      "days": 7
+    }
+  },
+  "supportLevels": {
+    "FULL": {
+      "description": "Full feature support with bug fixes and enhancements",
+      "bugFixes": true,
+      "securityUpdates": true,
+      "enhancements": true,
+      "documentation": true
+    },
+    "MAINTENANCE": {
+      "description": "Maintenance mode with bug fixes and security updates only",
+      "bugFixes": true,
+      "securityUpdates": true,
+      "enhancements": false,
+      "documentation": false
+    },
+    "SECURITY_ONLY": {
+      "description": "Security updates only, no bug fixes or enhancements",
+      "bugFixes": false,
+      "securityUpdates": true,
+      "enhancements": false,
+      "documentation": false
+    },
+    "NONE": {
+      "description": "No support provided, feature is sunset",
+      "bugFixes": false,
+      "securityUpdates": false,
+      "enhancements": false,
+      "documentation": false
+    }
+  },
+  "notificationTemplates": {
+    "ANNOUNCEMENT": {
+      "subject": "Deprecation Notice: {feature}",
+      "template": "Feature '{feature}' has been deprecated and will be sunset on {sunsetDate}. Migration deadline: {migrationDeadline}. Please review the migration guide: {migrationGuide}",
+      "urgency": "LOW",
+      "channels": ["email", "dashboard", "api"]
+    },
+    "WARNING": {
+      "subject": "Deprecation Warning: {feature} - 30 Days Remaining",
+      "template": "Warning: Feature '{feature}' will be sunset in 30 days ({sunsetDate}). Migration deadline approaching: {migrationDeadline}. Immediate action required.",
+      "urgency": "MEDIUM",
+      "channels": ["email", "dashboard", "api", "slack"]
+    },
+    "FINAL": {
+      "subject": "Final Notice: {feature} - 7 Days Remaining",
+      "template": "Final notice: Feature '{feature}' will be sunset in 7 days ({sunsetDate}). This is your last chance to migrate before service interruption.",
+      "urgency": "HIGH",
+      "channels": ["email", "dashboard", "api", "slack", "sms"]
+    },
+    "SUNSET": {
+      "subject": "Service Sunset: {feature}",
+      "template": "Feature '{feature}' has been sunset as of {timestamp}. Service is no longer available. Please contact support if you need assistance.",
+      "urgency": "CRITICAL",
+      "channels": ["email", "dashboard", "api", "slack", "sms"]
+    }
+  },
+  "migrationStepTypes": {
+    "DATA_TRANSFORM": {
+      "description": "Transform data from old format to new format",
+      "rollbackSupported": true,
+      "validationRequired": true
+    },
+    "API_UPDATE": {
+      "description": "Update API endpoints and contracts",
+      "rollbackSupported": true,
+      "validationRequired": true
+    },
+    "CONFIG_CHANGE": {
+      "description": "Update configuration settings",
+      "rollbackSupported": true,
+      "validationRequired": false
+    },
+    "VALIDATION": {
+      "description": "Validate migration results",
+      "rollbackSupported": false,
+      "validationRequired": false
+    },
+    "CLEANUP": {
+      "description": "Clean up old resources",
+      "rollbackSupported": false,
+      "validationRequired": true
+    }
+  },
+  "validationRuleTypes": {
+    "DATA_INTEGRITY": {
+      "description": "Verify data integrity after migration",
+      "required": true,
+      "blocking": true
+    },
+    "API_COMPATIBILITY": {
+      "description": "Verify API compatibility",
+      "required": true,
+      "blocking": true
+    },
+    "PERFORMANCE": {
+      "description": "Verify performance requirements are met",
+      "required": false,
+      "blocking": false
+    },
+    "SECURITY": {
+      "description": "Verify security requirements are met",
+      "required": true,
+      "blocking": true
+    }
+  },
+  "compatibilityLayerPolicies": {
+    "maxDuration": {
+      "description": "Maximum duration for compatibility layers",
+      "days": 365
+    },
+    "performanceThresholds": {
+      "maxLatencyIncrease": 50,
+      "maxErrorRate": 0.01
+    },
+    "usageThresholds": {
+      "warningRequestCount": 1000,
+      "criticalRequestCount": 10000
+    }
+  }
+}

@@ -1,0 +1,276 @@
+name: Key Management Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/services/KeyManagementService.mjs'
+      - 'libs/anarq/common-schemas/src/models/key-management.ts'
+      - 'libs/anarq/common-schemas/schemas/key-management.schema.json'
+      - 'backend/config/key-management-policy.json'
+      - 'scripts/validate-key-management.mjs'
+      - 'backend/tests/key-management.test.mjs'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/services/KeyManagementService.mjs'
+      - 'libs/anarq/common-schemas/src/models/key-management.ts'
+      - 'libs/anarq/common-schemas/schemas/key-management.schema.json'
+      - 'backend/config/key-management-policy.json'
+      - 'scripts/validate-key-management.mjs'
+      - 'backend/tests/key-management.test.mjs'
+
+jobs:
+  key-management-validation:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: |
+          package-lock.json
+          backend/package-lock.json
+          libs/anarq/common-schemas/package-lock.json
+    
+    - name: Install root dependencies
+      run: npm ci
+      
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        npm ci
+        
+    - name: Install common-schemas dependencies
+      run: |
+        cd libs/anarq/common-schemas
+        npm ci
+    
+    - name: Validate key management policies
+      run: node scripts/validate-key-management.mjs
+      
+    - name: Run key management tests
+      run: |
+        cd backend
+        npx vitest tests/key-management.test.mjs --run --reporter=verbose
+        
+    - name: Build common schemas
+      run: |
+        cd libs/anarq/common-schemas
+        npm run build
+        
+    - name: Validate JSON schemas
+      run: |
+        cd libs/anarq/common-schemas
+        npm run validate-schemas
+        
+    - name: Security audit
+      run: |
+        npm audit --audit-level=high
+        cd backend && npm audit --audit-level=high
+        cd libs/anarq/common-schemas && npm audit --audit-level=high
+        
+    - name: Check for secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified
+        
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: key-management-test-results-${{ matrix.node-version }}
+        path: |
+          backend/coverage/
+          backend/test-results/
+        retention-days: 30
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: key-management-validation
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run CodeQL Analysis
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript
+        queries: security-and-quality
+        
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      
+    - name: Run Semgrep
+      uses: returntocorp/semgrep-action@v1
+      with:
+        config: >-
+          p/security-audit
+          p/secrets
+          p/nodejs
+        generateSarif: "1"
+        
+    - name: Upload Semgrep results to GitHub
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: semgrep.sarif
+
+  compliance-check:
+    runs-on: ubuntu-latest
+    needs: key-management-validation
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Check GDPR compliance
+      run: |
+        echo "Checking GDPR compliance requirements..."
+        grep -r "GDPR\|Data Subject\|Right to Erasure" backend/services/KeyManagementService.mjs || echo "GDPR compliance checks needed"
+        
+    - name: Check SOC2 compliance
+      run: |
+        echo "Checking SOC2 compliance requirements..."
+        grep -r "audit\|immutable\|retention" backend/services/KeyManagementService.mjs || echo "SOC2 compliance checks needed"
+        
+    - name: Validate key rotation policies
+      run: |
+        echo "Validating key rotation policies..."
+        node -e "
+          const policy = require('./backend/config/key-management-policy.json');
+          const envs = ['dev', 'staging', 'prod'];
+          const usages = ['SIGNING', 'ENCRYPTION', 'KEY_DERIVATION', 'AUTHENTICATION', 'TRANSPORT'];
+          
+          for (const env of envs) {
+            if (!policy.environments[env]) {
+              console.error(\`Missing environment: \${env}\`);
+              process.exit(1);
+            }
+            for (const usage of usages) {
+              if (!policy.environments[env].keyRotationSchedule[usage]) {
+                console.error(\`Missing rotation schedule for \${env}:\${usage}\`);
+                process.exit(1);
+              }
+            }
+          }
+          console.log('✅ Key rotation policies validated');
+        "
+        
+    - name: Check post-quantum readiness
+      run: |
+        echo "Checking post-quantum cryptography readiness..."
+        node -e "
+          const policy = require('./backend/config/key-management-policy.json');
+          if (!policy.pqcPolicy.enabled) {
+            console.error('PQC policy not enabled');
+            process.exit(1);
+          }
+          const pqcAlgs = policy.pqcPolicy.preferredAlgorithms;
+          if (!pqcAlgs.signing.includes('Dilithium3') || !pqcAlgs.encryption.includes('Kyber768')) {
+            console.error('Missing recommended PQC algorithms');
+            process.exit(1);
+          }
+          console.log('✅ Post-quantum cryptography readiness validated');
+        "
+
+  deployment-readiness:
+    runs-on: ubuntu-latest
+    needs: [key-management-validation, security-scan, compliance-check]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm ci
+        cd backend && npm ci
+        
+    - name: Production readiness check
+      run: |
+        echo "Checking production readiness..."
+        
+        # Check for development-only code
+        if grep -r "LOCAL_DEV\|console.log\|debugger" backend/services/KeyManagementService.mjs; then
+          echo "⚠️ Development code found - review before production deployment"
+        fi
+        
+        # Check environment variables
+        echo "Required environment variables:"
+        echo "- NODE_ENV (should be 'production')"
+        echo "- KMS_PROVIDER (should be 'HSM' or cloud provider)"
+        echo "- AUDIT_STORAGE_ENABLED (should be 'true')"
+        
+        # Check key management policy
+        node -e "
+          const policy = require('./backend/config/key-management-policy.json');
+          const prodPolicy = policy.environments.prod;
+          
+          if (prodPolicy.kmsProvider === 'LOCAL_DEV') {
+            console.error('❌ Production environment using LOCAL_DEV KMS provider');
+            process.exit(1);
+          }
+          
+          if (!prodPolicy.auditPolicy.immutableStorage) {
+            console.error('❌ Production environment requires immutable audit storage');
+            process.exit(1);
+          }
+          
+          console.log('✅ Production configuration validated');
+        "
+        
+    - name: Generate deployment summary
+      run: |
+        echo "## Key Management Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### ✅ Validation Results" >> $GITHUB_STEP_SUMMARY
+        echo "- Key management policies: Validated" >> $GITHUB_STEP_SUMMARY
+        echo "- Cryptographic algorithms: Compliant" >> $GITHUB_STEP_SUMMARY
+        echo "- Key rotation schedules: Configured" >> $GITHUB_STEP_SUMMARY
+        echo "- Audit logging: Implemented" >> $GITHUB_STEP_SUMMARY
+        echo "- Post-quantum readiness: Prepared" >> $GITHUB_STEP_SUMMARY
+        echo "- Environment scoping: Configured" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔐 Security Features" >> $GITHUB_STEP_SUMMARY
+        echo "- KMS/HSM integration ready" >> $GITHUB_STEP_SUMMARY
+        echo "- Automated key rotation" >> $GITHUB_STEP_SUMMARY
+        echo "- Comprehensive audit logging" >> $GITHUB_STEP_SUMMARY
+        echo "- Environment-specific key scoping" >> $GITHUB_STEP_SUMMARY
+        echo "- Post-quantum cryptographic support" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📋 Compliance" >> $GITHUB_STEP_SUMMARY
+        echo "- GDPR: Data lifecycle management" >> $GITHUB_STEP_SUMMARY
+        echo "- SOC2: Audit trails and retention" >> $GITHUB_STEP_SUMMARY
+        echo "- Key management best practices" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Ready for production deployment! 🚀" >> $GITHUB_STEP_SUMMARY

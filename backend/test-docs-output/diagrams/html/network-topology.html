@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>network-topology - AnarQ&Q Ecosystem</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 20px;
+        }
+        .diagram-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .metrics-info {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .timestamp {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>network topology</h1>
+            <p>Real-time metrics visualization for AnarQ&Q ecosystem</p>
+        </div>
+        
+        <div class="diagram-container">
+            <div class="mermaid">
+graph TB
+    subgraph "QNET Distributed Network"
+        subgraph "Node Cluster 1"
+            N1[QNET Node 1<br/>Status: Active<br/>Peers: 2]
+            I1[IPFS Node 1<br/>Objects: 949]
+        end
+        
+        subgraph "Node Cluster 2"
+            N2[QNET Node 2<br/>Status: Active<br/>Peers: 2]
+            I2[IPFS Node 2<br/>Objects: 949]
+        end
+        
+        subgraph "Node Cluster 3"
+            N3[QNET Node 3<br/>Status: Active<br/>Peers: 2]
+            I3[IPFS Node 3<br/>Objects: 949]
+        end
+    end
+    
+    subgraph "External Networks"
+        PiNet[Pi Network<br/>Testnet]
+        Internet[Internet<br/>Gateway]
+    end
+    
+    subgraph "Network Stats"
+        Stats[Total Nodes: 3<br/>Active: 3<br/>Synced: 3<br/>Avg Latency: 67ms<br/>Bandwidth: 2.3/1.8 Mbps]
+    end
+    
+    N1 -.->|67ms| N2
+    N2 -.->|67ms| N3
+    N3 -.->|67ms| N1
+    
+    N1 --- I1
+    N2 --- I2
+    N3 --- I3
+    
+    I1 -.->|Replicate| I2
+    I2 -.->|Replicate| I3
+    I3 -.->|Replicate| I1
+    
+    N1 -->|API| Internet
+    N2 -->|Pi Integration| PiNet
+    
+    classDef active fill:#90EE90
+    classDef synced fill:#98FB98
+    classDef external fill:#E6E6FA
+    classDef stats fill:#F0F8FF
+    
+    class N1,N2,N3,I1,I2,I3 active
+    class PiNet,Internet external
+    class Stats stats
+
+            </div>
+        </div>
+        
+        <div class="metrics-info">
+            <strong>Metrics Information:</strong><br/>
+            This diagram is automatically updated with real-time metrics from the AnarQ&Q ecosystem.
+            Metrics include performance data, integrity validation results, and network topology information.
+            Colors indicate health status: Green (healthy), Yellow (warning), Red (critical).
+        </div>
+        
+        <div class="timestamp">
+            Generated: 2025-08-31T09:42:47.600Z<br/>
+            DocumentationGenerator v1.0.0
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#90EE90',
+                primaryTextColor: '#333',
+                primaryBorderColor: '#666',
+                lineColor: '#666',
+                secondaryColor: '#FFE4B5',
+                tertiaryColor: '#FFB6C1'
+            }
+        });
+    </script>
+</body>
+</html>

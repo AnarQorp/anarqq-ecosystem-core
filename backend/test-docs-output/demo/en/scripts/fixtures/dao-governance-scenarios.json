@@ -1,0 +1,20 @@
+{
+  "scenarios": [
+    {
+      "proposalId": "prop_demo_upgrade_01",
+      "title": "Protocol Upgrade Demo",
+      "description": "Demo proposal for protocol upgrade",
+      "type": "PROTOCOL_UPGRADE",
+      "requiredVotes": 5,
+      "votingPeriod": "7d"
+    },
+    {
+      "proposalId": "prop_demo_funding_01",
+      "title": "Funding Proposal Demo",
+      "description": "Demo proposal for project funding",
+      "type": "FUNDING_REQUEST",
+      "requiredVotes": 3,
+      "votingPeriod": "5d"
+    }
+  ]
+}

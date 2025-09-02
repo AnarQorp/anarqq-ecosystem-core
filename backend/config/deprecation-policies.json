@@ -1,0 +1,188 @@
+{
+  "deprecationPolicies": {
+    "defaultTimelines": {
+      "deprecationPeriod": "P90D",
+      "migrationPeriod": "P150D",
+      "sunsetPeriod": "P180D"
+    },
+    "supportLevels": {
+      "full": {
+        "description": "Full support including new features and bug fixes",
+        "slaResponse": "24h",
+        "maintenanceWindow": "scheduled"
+      },
+      "maintenance": {
+        "description": "Bug fixes and security updates only",
+        "slaResponse": "72h",
+        "maintenanceWindow": "emergency_only"
+      },
+      "security_only": {
+        "description": "Critical security updates only",
+        "slaResponse": "168h",
+        "maintenanceWindow": "emergency_only"
+      },
+      "none": {
+        "description": "No support provided",
+        "slaResponse": "none",
+        "maintenanceWindow": "none"
+      }
+    },
+    "impactLevels": {
+      "low": {
+        "description": "Minimal impact on consumers",
+        "notificationFrequency": "monthly",
+        "migrationAssistance": "documentation_only"
+      },
+      "medium": {
+        "description": "Moderate impact requiring code changes",
+        "notificationFrequency": "bi_weekly",
+        "migrationAssistance": "documentation_and_examples"
+      },
+      "high": {
+        "description": "Significant impact requiring substantial changes",
+        "notificationFrequency": "weekly",
+        "migrationAssistance": "documentation_examples_and_consultation"
+      },
+      "critical": {
+        "description": "Breaking changes affecting core functionality",
+        "notificationFrequency": "daily",
+        "migrationAssistance": "full_migration_support"
+      }
+    },
+    "notificationChannels": {
+      "email": {
+        "enabled": true,
+        "templates": {
+          "announced": "deprecation_announcement.html",
+          "deprecated": "deprecation_active.html",
+          "warning": "deprecation_warning.html",
+          "sunset": "deprecation_sunset.html"
+        }
+      },
+      "webhook": {
+        "enabled": true,
+        "endpoints": [
+          {
+            "url": "${DEPRECATION_WEBHOOK_URL}",
+            "headers": {
+              "Authorization": "Bearer ${DEPRECATION_WEBHOOK_TOKEN}",
+              "Content-Type": "application/json"
+            }
+          }
+        ]
+      },
+      "slack": {
+        "enabled": false,
+        "webhook_url": "${SLACK_WEBHOOK_URL}",
+        "channel": "#deprecation-notices"
+      }
+    },
+    "migrationStrategies": {
+      "api_endpoint": {
+        "steps": [
+          "backup_current_configuration",
+          "validate_replacement_endpoint",
+          "update_endpoint_configuration",
+          "test_new_endpoint",
+          "cleanup_old_references"
+        ],
+        "validationRules": [
+          "replacement_endpoint_accessible",
+          "response_format_compatible",
+          "authentication_working"
+        ]
+      },
+      "data_format": {
+        "steps": [
+          "backup_current_data",
+          "validate_new_format",
+          "transform_data_format",
+          "test_data_compatibility",
+          "cleanup_old_format"
+        ],
+        "validationRules": [
+          "data_transformation_successful",
+          "no_data_loss",
+          "format_validation_passes"
+        ]
+      },
+      "authentication_method": {
+        "steps": [
+          "backup_current_auth_config",
+          "validate_new_auth_method",
+          "update_authentication",
+          "test_authentication",
+          "cleanup_old_auth_tokens"
+        ],
+        "validationRules": [
+          "new_auth_method_working",
+          "permissions_preserved",
+          "security_requirements_met"
+        ]
+      }
+    },
+    "compatibilityLayers": {
+      "defaultTtl": "P30D",
+      "maxTransformationTime": 5000,
+      "cacheTransformations": true,
+      "logUsage": true,
+      "alertThresholds": {
+        "highUsage": 1000,
+        "errorRate": 0.05
+      }
+    },
+    "telemetry": {
+      "enabled": true,
+      "retentionPeriod": "P365D",
+      "aggregationInterval": "PT1H",
+      "anonymizeConsumerData": false,
+      "trackingFields": [
+        "consumer_id",
+        "feature_id",
+        "usage_count",
+        "last_used",
+        "context"
+      ]
+    },
+    "compliance": {
+      "gdpr": {
+        "enabled": true,
+        "dataRetentionPeriod": "P2Y",
+        "anonymizationDelay": "P30D"
+      },
+      "sox": {
+        "enabled": true,
+        "auditLogRetention": "P7Y",
+        "changeApprovalRequired": true
+      }
+    }
+  },
+  "moduleSpecificPolicies": {
+    "qwallet": {
+      "deprecationPeriod": "P120D",
+      "migrationPeriod": "P180D",
+      "sunsetPeriod": "P240D",
+      "requiresSecurityReview": true
+    },
+    "qlock": {
+      "deprecationPeriod": "P180D",
+      "migrationPeriod": "P270D",
+      "sunsetPeriod": "P365D",
+      "requiresSecurityReview": true,
+      "requiresCryptographicReview": true
+    },
+    "qonsent": {
+      "deprecationPeriod": "P90D",
+      "migrationPeriod": "P150D",
+      "sunsetPeriod": "P180D",
+      "requiresPrivacyReview": true
+    },
+    "qerberos": {
+      "deprecationPeriod": "P180D",
+      "migrationPeriod": "P270D",
+      "sunsetPeriod": "P365D",
+      "requiresSecurityReview": true,
+      "requiresComplianceReview": true
+    }
+  }
+}

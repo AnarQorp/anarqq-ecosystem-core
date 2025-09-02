@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q.anarq.org/events/qonsent/grant-issued.v1.json",
+  "title": "Permission Grant Issued Event",
+  "description": "Event published when a permission grant is issued",
+  "type": "object",
+  "required": ["eventId", "timestamp", "source", "type", "data"],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event identifier"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp in ISO 8601 format"
+    },
+    "source": {
+      "type": "string",
+      "const": "qonsent",
+      "description": "Event source module"
+    },
+    "type": {
+      "type": "string",
+      "const": "q.qonsent.grant.issued.v1",
+      "description": "Event type"
+    },
+    "data": {
+      "type": "object",
+      "required": ["grantId", "resource", "identity", "permissions", "grantedBy"],
+      "properties": {
+        "grantId": {
+          "type": "string",
+          "description": "Unique grant identifier"
+        },
+        "resource": {
+          "type": "string",
+          "pattern": "^[a-z]+:[a-z]+:[a-zA-Z0-9_-]+$",
+          "description": "Resource identifier"
+        },
+        "identity": {
+          "type": "string",
+          "pattern": "^did:squid:[a-zA-Z0-9_-]+$",
+          "description": "Target identity DID"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["read", "write", "delete", "admin", "share", "execute"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "grantedBy": {
+          "type": "string",
+          "pattern": "^did:squid:[a-zA-Z0-9_-]+$",
+          "description": "Identity that granted the permission"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Permission expiration time"
+        },
+        "conditions": {
+          "type": "object",
+          "description": "Additional conditions for the grant"
+        },
+        "daoContext": {
+          "type": "string",
+          "description": "DAO context if applicable"
+        }
+      }
+    },
+    "signature": {
+      "type": "string",
+      "description": "Event signature for integrity verification"
+    }
+  }
+}

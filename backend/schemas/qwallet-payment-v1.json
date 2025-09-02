@@ -1,0 +1,67 @@
+{
+  "topic": "q.qwallet.payment.created.v1",
+  "version": "v1",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "paymentId": {
+        "type": "string",
+        "pattern": "^pay_[a-zA-Z0-9]+$",
+        "description": "Unique payment identifier"
+      },
+      "amount": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Payment amount"
+      },
+      "currency": {
+        "type": "string",
+        "enum": ["PI", "ETH", "BTC", "USD"],
+        "description": "Payment currency"
+      },
+      "from": {
+        "type": "string",
+        "description": "Sender identity"
+      },
+      "to": {
+        "type": "string",
+        "description": "Recipient identity"
+      },
+      "purpose": {
+        "type": "string",
+        "maxLength": 500,
+        "description": "Payment purpose or description"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["pending", "processing", "completed", "failed", "cancelled"],
+        "description": "Current payment status"
+      },
+      "metadata": {
+        "type": "object",
+        "description": "Additional payment metadata",
+        "additionalProperties": true
+      }
+    },
+    "required": ["paymentId", "amount", "currency", "from", "to", "status"],
+    "additionalProperties": false
+  },
+  "compatibility": "BACKWARD",
+  "deprecated": false,
+  "description": "Event published when a payment is created in Qwallet",
+  "examples": [
+    {
+      "paymentId": "pay_abc123def456",
+      "amount": 100.50,
+      "currency": "PI",
+      "from": "alice@q.network",
+      "to": "bob@q.network",
+      "purpose": "Message delivery fee",
+      "status": "pending",
+      "metadata": {
+        "messageId": "msg_1234567890",
+        "service": "qmail"
+      }
+    }
+  ]
+}

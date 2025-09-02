@@ -1,0 +1,184 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.com/qmarket/events/sold.json",
+  "title": "Qmarket Sold Event Schema",
+  "description": "Event published when a marketplace item is successfully purchased",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "pattern": "^evt_qmarket_sold_[0-9]+$",
+      "description": "Unique event identifier"
+    },
+    "eventType": {
+      "type": "string",
+      "const": "q.qmarket.sold.v1",
+      "description": "Event type following Q ecosystem convention"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred"
+    },
+    "source": {
+      "type": "string",
+      "const": "qmarket",
+      "description": "Source module that published the event"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "correlationId": {
+      "type": "string",
+      "description": "Correlation ID for tracing related events"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "purchaseId": {
+          "type": "string",
+          "pattern": "^purchase_[a-f0-9]{32}$",
+          "description": "Unique purchase identifier"
+        },
+        "listingId": {
+          "type": "string",
+          "pattern": "^listing_[a-f0-9]{24}$",
+          "description": "ID of the purchased listing"
+        },
+        "buyerId": {
+          "type": "string",
+          "description": "sQuid identity of the buyer"
+        },
+        "sellerId": {
+          "type": "string",
+          "description": "sQuid identity of the seller"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the purchased item"
+        },
+        "price": {
+          "type": "number",
+          "minimum": 0.01,
+          "description": "Purchase price"
+        },
+        "currency": {
+          "type": "string",
+          "enum": ["QToken", "PI"],
+          "description": "Currency used for purchase"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["digital-art", "media", "documents", "software", "data", "services"],
+          "description": "Content category"
+        },
+        "paymentIntentId": {
+          "type": "string",
+          "description": "Qwallet payment intent ID"
+        },
+        "transactionId": {
+          "type": "string",
+          "description": "Blockchain transaction ID"
+        },
+        "fees": {
+          "type": "object",
+          "properties": {
+            "platformFee": {
+              "type": "number",
+              "minimum": 0
+            },
+            "royaltyFee": {
+              "type": "number",
+              "minimum": 0
+            },
+            "networkFee": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "description": "Breakdown of fees charged"
+        },
+        "settlement": {
+          "type": "object",
+          "properties": {
+            "sellerAmount": {
+              "type": "number",
+              "minimum": 0
+            },
+            "creatorRoyalty": {
+              "type": "number",
+              "minimum": 0
+            },
+            "platformFee": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "description": "Revenue distribution details"
+        },
+        "licenseGranted": {
+          "type": "boolean",
+          "description": "Whether a digital license was granted"
+        },
+        "licenseId": {
+          "type": "string",
+          "pattern": "^license_[a-f0-9]{32}$",
+          "description": "ID of the granted license"
+        },
+        "accessUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to access the purchased content"
+        },
+        "isResale": {
+          "type": "boolean",
+          "description": "Whether this was a resale transaction"
+        },
+        "originalCreatorId": {
+          "type": "string",
+          "description": "sQuid ID of the original creator (for resales)"
+        },
+        "ecosystem": {
+          "type": "object",
+          "properties": {
+            "qonsentAccessGranted": {
+              "type": "boolean"
+            },
+            "qerberosAuditId": {
+              "type": "string"
+            },
+            "qindexUpdated": {
+              "type": "boolean"
+            }
+          },
+          "description": "Integration results with other Q modules"
+        }
+      },
+      "required": [
+        "purchaseId",
+        "listingId",
+        "buyerId",
+        "sellerId",
+        "title",
+        "price",
+        "currency",
+        "category",
+        "paymentIntentId",
+        "transactionId",
+        "licenseGranted",
+        "isResale"
+      ]
+    }
+  },
+  "required": [
+    "eventId",
+    "eventType",
+    "timestamp",
+    "source",
+    "version",
+    "data"
+  ],
+  "additionalProperties": false
+}

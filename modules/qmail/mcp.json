@@ -1,0 +1,362 @@
+{
+  "name": "qmail",
+  "version": "1.0.0",
+  "description": "Qmail MCP Tools - Certified Messaging Module",
+  "tools": [
+    {
+      "name": "qmail.send",
+      "description": "Send encrypted message with certified delivery",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "squidId": {
+            "type": "string",
+            "description": "Sender sQuid identity ID"
+          },
+          "recipientId": {
+            "type": "string",
+            "description": "Recipient sQuid identity ID"
+          },
+          "subject": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Message subject"
+          },
+          "content": {
+            "type": "string",
+            "description": "Message content (will be encrypted)"
+          },
+          "encryptionLevel": {
+            "type": "string",
+            "enum": ["STANDARD", "HIGH", "QUANTUM"],
+            "default": "STANDARD",
+            "description": "Encryption level"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["LOW", "NORMAL", "HIGH", "URGENT"],
+            "default": "NORMAL",
+            "description": "Message priority"
+          },
+          "certifiedDelivery": {
+            "type": "boolean",
+            "default": true,
+            "description": "Request certified delivery receipt"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "description": "Message expiration in seconds (optional)"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "cid": { "type": "string" },
+                "size": { "type": "integer" },
+                "mimeType": { "type": "string" }
+              }
+            },
+            "description": "File attachments (IPFS CIDs)"
+          }
+        },
+        "required": ["squidId", "recipientId", "subject", "content"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messageId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["SENT", "QUEUED", "FAILED"]
+          },
+          "encryptedCid": {
+            "type": "string",
+            "description": "IPFS CID of encrypted message"
+          },
+          "deliveryTracking": {
+            "type": "string",
+            "description": "Delivery tracking ID"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "qmail.fetch",
+      "description": "Fetch messages from inbox with decryption",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "squidId": {
+            "type": "string",
+            "description": "Recipient sQuid identity ID"
+          },
+          "folder": {
+            "type": "string",
+            "enum": ["INBOX", "SENT", "DRAFTS", "SPAM", "TRASH"],
+            "default": "INBOX",
+            "description": "Message folder"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 20,
+            "description": "Maximum messages to fetch"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "Pagination offset"
+          },
+          "unreadOnly": {
+            "type": "boolean",
+            "default": false,
+            "description": "Fetch only unread messages"
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fetch messages since timestamp"
+          }
+        },
+        "required": ["squidId"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "messageId": { "type": "string" },
+                "senderId": { "type": "string" },
+                "subject": { "type": "string" },
+                "content": { "type": "string" },
+                "timestamp": { "type": "string", "format": "date-time" },
+                "status": { "type": "string" },
+                "priority": { "type": "string" },
+                "attachments": { "type": "array" },
+                "deliveryReceipt": { "type": "boolean" },
+                "encryptionLevel": { "type": "string" }
+              }
+            }
+          },
+          "totalCount": {
+            "type": "integer"
+          },
+          "unreadCount": {
+            "type": "integer"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "qmail.receipt",
+      "description": "Generate or verify delivery receipt",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "type": "string",
+            "description": "Message ID for receipt"
+          },
+          "squidId": {
+            "type": "string",
+            "description": "Recipient sQuid identity ID"
+          },
+          "action": {
+            "type": "string",
+            "enum": ["GENERATE", "VERIFY"],
+            "description": "Receipt action"
+          },
+          "receiptData": {
+            "type": "string",
+            "description": "Receipt data for verification (base64 encoded)"
+          }
+        },
+        "required": ["messageId", "squidId", "action"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "receiptId": {
+            "type": "string"
+          },
+          "receiptData": {
+            "type": "string",
+            "description": "Cryptographic receipt (base64 encoded)"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "Receipt verification result"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Cryptographic signature"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "qmail.search",
+      "description": "Search messages with encrypted content support",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "squidId": {
+            "type": "string",
+            "description": "Searcher sQuid identity ID"
+          },
+          "query": {
+            "type": "string",
+            "description": "Search query"
+          },
+          "folder": {
+            "type": "string",
+            "enum": ["ALL", "INBOX", "SENT", "DRAFTS"],
+            "default": "ALL",
+            "description": "Search scope"
+          },
+          "dateRange": {
+            "type": "object",
+            "properties": {
+              "from": { "type": "string", "format": "date-time" },
+              "to": { "type": "string", "format": "date-time" }
+            },
+            "description": "Date range filter"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10,
+            "description": "Maximum results"
+          }
+        },
+        "required": ["squidId", "query"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "messageId": { "type": "string" },
+                "subject": { "type": "string" },
+                "snippet": { "type": "string" },
+                "senderId": { "type": "string" },
+                "timestamp": { "type": "string", "format": "date-time" },
+                "relevanceScore": { "type": "number" }
+              }
+            }
+          },
+          "totalMatches": {
+            "type": "integer"
+          },
+          "searchTime": {
+            "type": "number",
+            "description": "Search time in milliseconds"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "qmail://messages",
+      "name": "Message Store",
+      "description": "Access to encrypted message storage and retrieval"
+    },
+    {
+      "uri": "qmail://receipts",
+      "name": "Delivery Receipts",
+      "description": "Access to cryptographic delivery receipts"
+    },
+    {
+      "uri": "qmail://audit",
+      "name": "Message Audit Trail",
+      "description": "Access to message audit logs and compliance data"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "message-summary",
+      "description": "Generate message summary for identity",
+      "arguments": [
+        {
+          "name": "squidId",
+          "description": "sQuid identity ID",
+          "required": true
+        },
+        {
+          "name": "period",
+          "description": "Time period (7d, 30d, 90d)",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "compliance-report",
+      "description": "Generate GDPR compliance report",
+      "arguments": [
+        {
+          "name": "squidId",
+          "description": "sQuid identity ID",
+          "required": true
+        },
+        {
+          "name": "reportType",
+          "description": "Report type (retention, deletion, access)",
+          "required": false
+        }
+      ]
+    }
+  ]
+}

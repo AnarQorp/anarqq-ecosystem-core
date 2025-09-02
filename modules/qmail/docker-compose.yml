@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  qmail:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - QMAIL_MODE=standalone
+      - PORT=3000
+      - QMAIL_ENCRYPTION_LEVEL=STANDARD
+      - QMAIL_RETENTION_DAYS=730
+      - QMAIL_SPAM_THRESHOLD=0.7
+      - QMAIL_PREMIUM_ENABLED=true
+      - CORS_ORIGIN=*
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+    networks:
+      - qmail-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # Mock IPFS node for standalone mode
+  ipfs:
+    image: ipfs/go-ipfs:latest
+    ports:
+      - "4001:4001"
+      - "5001:5001"
+      - "8080:8080"
+    volumes:
+      - ipfs_data:/data/ipfs
+    networks:
+      - qmail-network
+    environment:
+      - IPFS_PROFILE=server
+    healthcheck:
+      test: ["CMD", "ipfs", "id"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for caching and session storage
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - qmail-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Event bus (using Redis Streams)
+  eventbus:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - eventbus_data:/data
+    networks:
+      - qmail-network
+    command: redis-server --appendonly yes --port 6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  ipfs_data:
+    driver: local
+  redis_data:
+    driver: local
+  eventbus_data:
+    driver: local
+
+networks:
+  qmail-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

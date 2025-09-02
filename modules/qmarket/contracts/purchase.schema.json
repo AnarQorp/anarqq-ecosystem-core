@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.com/qmarket/purchase.json",
+  "title": "Qmarket Purchase Schema",
+  "description": "Schema for marketplace purchase objects",
+  "type": "object",
+  "properties": {
+    "purchaseId": {
+      "type": "string",
+      "pattern": "^purchase_[a-f0-9]{32}$",
+      "description": "Unique purchase identifier"
+    },
+    "listingId": {
+      "type": "string",
+      "pattern": "^listing_[a-f0-9]{24}$",
+      "description": "ID of the purchased listing"
+    },
+    "buyerId": {
+      "type": "string",
+      "description": "sQuid identity of the buyer"
+    },
+    "sellerId": {
+      "type": "string",
+      "description": "sQuid identity of the seller"
+    },
+    "price": {
+      "type": "number",
+      "minimum": 0.01,
+      "description": "Purchase price"
+    },
+    "currency": {
+      "type": "string",
+      "enum": ["QToken", "PI"],
+      "description": "Currency used for purchase"
+    },
+    "paymentResult": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "intentId": {
+          "type": "string"
+        },
+        "transactionId": {
+          "type": "string"
+        },
+        "paymentMethod": {
+          "type": "string"
+        },
+        "fees": {
+          "type": "object",
+          "properties": {
+            "platformFee": {
+              "type": "number"
+            },
+            "royaltyFee": {
+              "type": "number"
+            },
+            "networkFee": {
+              "type": "number"
+            }
+          }
+        },
+        "settlement": {
+          "type": "object",
+          "properties": {
+            "sellerAmount": {
+              "type": "number"
+            },
+            "creatorRoyalty": {
+              "type": "number"
+            },
+            "platformFee": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "required": ["success", "intentId", "transactionId"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "completed", "failed", "refunded"],
+      "description": "Purchase status"
+    },
+    "accessGranted": {
+      "type": "boolean",
+      "description": "Whether access to content has been granted"
+    },
+    "license": {
+      "type": "object",
+      "properties": {
+        "licenseId": {
+          "type": "string"
+        },
+        "licenseType": {
+          "type": "string",
+          "enum": ["personal", "commercial", "resale", "derivative"]
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "restrictions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "purchasedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the purchase was completed"
+    },
+    "refundedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the purchase was refunded"
+    },
+    "lastAccessedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when content was last accessed"
+    }
+  },
+  "required": [
+    "purchaseId",
+    "listingId",
+    "buyerId",
+    "sellerId",
+    "price",
+    "currency",
+    "paymentResult",
+    "status",
+    "accessGranted",
+    "purchasedAt"
+  ],
+  "additionalProperties": false
+}

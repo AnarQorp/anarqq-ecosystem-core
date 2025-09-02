@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q Ecosystem Migration Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            color: #4a5568;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+
+        .metric-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .status-completed { color: #38a169; }
+        .status-in-progress { color: #d69e2e; }
+        .status-failed { color: #e53e3e; }
+        .status-not-started { color: #718096; }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            transition: width 0.3s ease;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .module-card.completed { border-left-color: #38a169; }
+        .module-card.in-progress { border-left-color: #d69e2e; }
+        .module-card.failed { border-left-color: #e53e3e; }
+        .module-card.not-started { border-left-color: #718096; }
+
+        .module-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: capitalize;
+        }
+
+        .module-status {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        .alert {
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            color: #c53030;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .alert.warning {
+            background: #fefcbf;
+            border-color: #f6e05e;
+            color: #d69e2e;
+        }
+
+        .alert.info {
+            background: #bee3f8;
+            border-color: #90cdf4;
+            color: #2b6cb0;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e2e8f0;
+        }
+
+        .timeline-item.completed::before { background: #38a169; }
+        .timeline-item.current::before { background: #d69e2e; }
+
+        .refresh-btn {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #3182ce;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Q Ecosystem Migration Dashboard</h1>
+        <p>Real-time monitoring of the legacy to modular architecture migration</p>
+    </div>
+
+    <div class="container">
+        <div id="alerts"></div>
+
+        <div class="dashboard-grid">
+            <!-- Overall Progress Card -->
+            <div class="card">
+                <h3>Overall Progress</h3>
+                <div class="metric">
+                    <span class="metric-label">Completion</span>
+                    <span class="metric-value" id="overall-completion">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="overall-progress" style="width: 0%"></div>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Modules Completed</span>
+                    <span class="metric-value" id="modules-completed">0/14</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Data Migrated</span>
+                    <span class="metric-value" id="data-migrated">0 GB</span>
+                </div>
+            </div>
+
+            <!-- System Health Card -->
+            <div class="card">
+                <h3>System Health</h3>
+                <div class="metric">
+                    <span class="metric-label">Availability</span>
+                    <span class="metric-value status-completed" id="availability">99.9%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Error Rate</span>
+                    <span class="metric-value status-completed" id="error-rate">0.05%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Avg Response Time</span>
+                    <span class="metric-value status-completed" id="response-time">145ms</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Active Alerts</span>
+                    <span class="metric-value status-failed" id="active-alerts">2</span>
+                </div>
+            </div>
+
+            <!-- Migration Timeline Card -->
+            <div class="card">
+                <h3>Migration Timeline</h3>
+                <div class="timeline">
+                    <div class="timeline-item completed">
+                        <strong>Phase 1: Foundation</strong><br>
+                        <small>sQuid, Qlock, Qonsent, Qindex</small>
+                    </div>
+                    <div class="timeline-item current">
+                        <strong>Phase 2: Core Services</strong><br>
+                        <small>Qwallet, Qerberos, Qmask</small>
+                    </div>
+                    <div class="timeline-item">
+                        <strong>Phase 3: Storage & Content</strong><br>
+                        <small>Qdrive, QpiC, Qmarket</small>
+                    </div>
+                    <div class="timeline-item">
+                        <strong>Phase 4: Communication</strong><br>
+                        <small>Qmail, Qchat, QNET, DAO</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics Card -->
+            <div class="card">
+                <h3>Performance Impact</h3>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module Status Grid -->
+        <div class="card">
+            <h3>Module Migration Status</h3>
+            <div class="module-grid" id="module-grid">
+                <!-- Modules will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Migration Progress Chart -->
+        <div class="card">
+            <h3>Migration Progress Over Time</h3>
+            <div class="chart-container">
+                <canvas id="progressChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Data Integrity Card -->
+            <div class="card">
+                <h3>Data Integrity</h3>
+                <div class="chart-container">
+                    <canvas id="integrityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Resource Utilization Card -->
+            <div class="card">
+                <h3>Resource Utilization</h3>
+                <div class="metric">
+                    <span class="metric-label">CPU Usage</span>
+                    <span class="metric-value">65%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Memory Usage</span>
+                    <span class="metric-value">78%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Storage Used</span>
+                    <span class="metric-value">2.3 TB</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Network I/O</span>
+                    <span class="metric-value">1.2 GB/s</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <button class="refresh-btn" onclick="refreshDashboard()">Refresh Data</button>
+        </div>
+
+        <div class="last-updated" id="last-updated">
+            Last updated: Never
+        </div>
+    </div>
+
+    <script>
+        // Dashboard data and functionality
+        const modules = [
+            { name: 'squid', status: 'completed', progress: 100 },
+            { name: 'qlock', status: 'completed', progress: 100 },
+            { name: 'qonsent', status: 'completed', progress: 100 },
+            { name: 'qindex', status: 'completed', progress: 100 },
+            { name: 'qwallet', status: 'in-progress', progress: 75 },
+            { name: 'qerberos', status: 'in-progress', progress: 60 },
+            { name: 'qmask', status: 'in-progress', progress: 45 },
+            { name: 'qdrive', status: 'not-started', progress: 0 },
+            { name: 'qpic', status: 'not-started', progress: 0 },
+            { name: 'qmarket', status: 'not-started', progress: 0 },
+            { name: 'qmail', status: 'not-started', progress: 0 },
+            { name: 'qchat', status: 'not-started', progress: 0 },
+            { name: 'qnet', status: 'not-started', progress: 0 },
+            { name: 'dao', status: 'not-started', progress: 0 }
+        ];
+
+        let performanceChart, progressChart, integrityChart;
+
+        function initializeDashboard() {
+            updateOverallMetrics();
+            renderModuleGrid();
+            initializeCharts();
+            checkAlerts();
+            updateLastUpdated();
+        }
+
+        function updateOverallMetrics() {
+            const completed = modules.filter(m => m.status === 'completed').length;
+            const totalProgress = modules.reduce((sum, m) => sum + m.progress, 0) / modules.length;
+            
+            document.getElementById('overall-completion').textContent = `${Math.round(totalProgress)}%`;
+            document.getElementById('overall-progress').style.width = `${totalProgress}%`;
+            document.getElementById('modules-completed').textContent = `${completed}/${modules.length}`;
+            
+            // Simulate data migration progress
+            const dataMigrated = (totalProgress / 100) * 2.3;
+            document.getElementById('data-migrated').textContent = `${dataMigrated.toFixed(1)} GB`;
+        }
+
+        function renderModuleGrid() {
+            const grid = document.getElementById('module-grid');
+            grid.innerHTML = '';
+            
+            modules.forEach(module => {
+                const card = document.createElement('div');
+                card.className = `module-card ${module.status}`;
+                card.innerHTML = `
+                    <div class="module-name">${module.name}</div>
+                    <div class="module-status">${module.status.replace('-', ' ')}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${module.progress}%"></div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #718096;">${module.progress}% complete</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function initializeCharts() {
+            // Performance Chart
+            const perfCtx = document.getElementById('performanceChart').getContext('2d');
+            performanceChart = new Chart(perfCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+                    datasets: [{
+                        label: 'Response Time (ms)',
+                        data: [180, 165, 155, 145, 140, 145],
+                        borderColor: '#4299e1',
+                        backgroundColor: 'rgba(66, 153, 225, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Error Rate (%)',
+                        data: [0.2, 0.15, 0.1, 0.08, 0.05, 0.05],
+                        borderColor: '#e53e3e',
+                        backgroundColor: 'rgba(229, 62, 62, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Progress Chart
+            const progCtx = document.getElementById('progressChart').getContext('2d');
+            progressChart = new Chart(progCtx, {
+                type: 'bar',
+                data: {
+                    labels: modules.map(m => m.name),
+                    datasets: [{
+                        label: 'Migration Progress (%)',
+                        data: modules.map(m => m.progress),
+                        backgroundColor: modules.map(m => {
+                            switch(m.status) {
+                                case 'completed': return '#38a169';
+                                case 'in-progress': return '#d69e2e';
+                                case 'failed': return '#e53e3e';
+                                default: return '#718096';
+                            }
+                        })
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // Data Integrity Chart
+            const intCtx = document.getElementById('integrityChart').getContext('2d');
+            integrityChart = new Chart(intCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Valid Records', 'Invalid Records', 'Pending Validation'],
+                    datasets: [{
+                        data: [97.5, 0.3, 2.2],
+                        backgroundColor: ['#38a169', '#e53e3e', '#d69e2e']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function checkAlerts() {
+            const alertsContainer = document.getElementById('alerts');
+            const alerts = [
+                {
+                    type: 'warning',
+                    message: 'Qwallet migration is 2 days behind schedule. Consider allocating additional resources.'
+                },
+                {
+                    type: 'info',
+                    message: 'Data validation for Qerberos module will begin tomorrow at 2 AM UTC.'
+                }
+            ];
+
+            alertsContainer.innerHTML = '';
+            alerts.forEach(alert => {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert ${alert.type}`;
+                alertDiv.textContent = alert.message;
+                alertsContainer.appendChild(alertDiv);
+            });
+        }
+
+        function updateLastUpdated() {
+            document.getElementById('last-updated').textContent = 
+                `Last updated: ${new Date().toLocaleString()}`;
+        }
+
+        function refreshDashboard() {
+            // Simulate data refresh
+            const button = document.querySelector('.refresh-btn');
+            button.textContent = 'Refreshing...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                // Simulate some progress
+                modules.forEach(module => {
+                    if (module.status === 'in-progress' && Math.random() > 0.7) {
+                        module.progress = Math.min(100, module.progress + Math.floor(Math.random() * 10));
+                        if (module.progress === 100) {
+                            module.status = 'completed';
+                        }
+                    }
+                });
+                
+                updateOverallMetrics();
+                renderModuleGrid();
+                progressChart.data.datasets[0].data = modules.map(m => m.progress);
+                progressChart.update();
+                updateLastUpdated();
+                
+                button.textContent = 'Refresh Data';
+                button.disabled = false;
+            }, 2000);
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(refreshDashboard, 30000);
+
+        // Initialize dashboard on load
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>

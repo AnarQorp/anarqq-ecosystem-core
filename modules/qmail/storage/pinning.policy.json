@@ -1,0 +1,315 @@
+{
+  "version": "1.0.0",
+  "description": "IPFS pinning policies for Qmail module",
+  "lastUpdated": "2024-01-15T00:00:00Z",
+  "policies": {
+    "messages": {
+      "standard": {
+        "description": "Standard message pinning policy",
+        "pinningStrategy": "TEMPORARY",
+        "replicationFactor": 3,
+        "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+        "accessPattern": "HOT",
+        "retentionPeriod": "P2Y",
+        "costOptimization": true,
+        "conditions": {
+          "encryptionLevel": "STANDARD",
+          "messageSize": {"max": "10MB"},
+          "attachmentCount": {"max": 5}
+        },
+        "pinningDuration": {
+          "sender": "P2Y",
+          "recipient": "P2Y",
+          "archive": "P7Y"
+        },
+        "unpinningTriggers": [
+          "retention_expired",
+          "user_deleted",
+          "gdpr_request"
+        ]
+      },
+      "high_security": {
+        "description": "High security message pinning policy",
+        "pinningStrategy": "PERMANENT",
+        "replicationFactor": 5,
+        "geoDistribution": ["us-east", "us-west", "eu-west", "eu-central", "asia-pacific"],
+        "accessPattern": "WARM",
+        "retentionPeriod": "P10Y",
+        "costOptimization": false,
+        "conditions": {
+          "encryptionLevel": ["HIGH", "QUANTUM"],
+          "messageSize": {"max": "100MB"},
+          "certifiedDelivery": true
+        },
+        "pinningDuration": {
+          "sender": "P10Y",
+          "recipient": "P10Y",
+          "archive": "PERMANENT",
+          "compliance": "PERMANENT"
+        },
+        "unpinningTriggers": [
+          "legal_hold_released",
+          "compliance_period_expired"
+        ]
+      },
+      "legal_hold": {
+        "description": "Legal hold message pinning policy",
+        "pinningStrategy": "PERMANENT",
+        "replicationFactor": 7,
+        "geoDistribution": ["us-east", "us-west", "us-central", "eu-west", "eu-central", "asia-pacific", "backup-region"],
+        "accessPattern": "COLD",
+        "retentionPeriod": "INDEFINITE",
+        "costOptimization": false,
+        "conditions": {
+          "legalHold": true
+        },
+        "pinningDuration": {
+          "sender": "INDEFINITE",
+          "recipient": "INDEFINITE",
+          "archive": "INDEFINITE",
+          "legal": "INDEFINITE"
+        },
+        "unpinningTriggers": [
+          "legal_hold_released_by_court_order"
+        ]
+      }
+    },
+    "attachments": {
+      "small_files": {
+        "description": "Small attachment pinning policy",
+        "pinningStrategy": "TEMPORARY",
+        "replicationFactor": 3,
+        "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+        "accessPattern": "HOT",
+        "retentionPeriod": "P2Y",
+        "costOptimization": true,
+        "conditions": {
+          "fileSize": {"max": "1MB"},
+          "mimeType": ["text/*", "application/json", "application/pdf"]
+        },
+        "deduplication": true,
+        "compressionEnabled": true
+      },
+      "media_files": {
+        "description": "Media file pinning policy",
+        "pinningStrategy": "CONDITIONAL",
+        "replicationFactor": 2,
+        "geoDistribution": ["us-east", "eu-west"],
+        "accessPattern": "WARM",
+        "retentionPeriod": "P1Y",
+        "costOptimization": true,
+        "conditions": {
+          "fileSize": {"min": "1MB", "max": "100MB"},
+          "mimeType": ["image/*", "video/*", "audio/*"]
+        },
+        "deduplication": true,
+        "compressionEnabled": false,
+        "transcoding": {
+          "enabled": true,
+          "formats": ["webp", "mp4", "opus"]
+        }
+      },
+      "large_files": {
+        "description": "Large file pinning policy",
+        "pinningStrategy": "CONDITIONAL",
+        "replicationFactor": 2,
+        "geoDistribution": ["us-east", "eu-west"],
+        "accessPattern": "COLD",
+        "retentionPeriod": "P6M",
+        "costOptimization": true,
+        "conditions": {
+          "fileSize": {"min": "100MB", "max": "1GB"}
+        },
+        "deduplication": true,
+        "compressionEnabled": true,
+        "archivalTier": "GLACIER"
+      }
+    },
+    "receipts": {
+      "delivery_receipts": {
+        "description": "Delivery receipt pinning policy",
+        "pinningStrategy": "PERMANENT",
+        "replicationFactor": 5,
+        "geoDistribution": ["us-east", "us-west", "eu-west", "eu-central", "asia-pacific"],
+        "accessPattern": "COLD",
+        "retentionPeriod": "P7Y",
+        "costOptimization": false,
+        "conditions": {
+          "receiptType": "DELIVERY",
+          "legallyBinding": true
+        },
+        "complianceStandards": ["SOX", "GDPR", "HIPAA"]
+      },
+      "read_receipts": {
+        "description": "Read receipt pinning policy",
+        "pinningStrategy": "TEMPORARY",
+        "replicationFactor": 3,
+        "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+        "accessPattern": "WARM",
+        "retentionPeriod": "P2Y",
+        "costOptimization": true,
+        "conditions": {
+          "receiptType": "READ"
+        }
+      }
+    },
+    "indices": {
+      "message_indices": {
+        "description": "Message index pinning policy",
+        "pinningStrategy": "PERMANENT",
+        "replicationFactor": 3,
+        "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+        "accessPattern": "HOT",
+        "retentionPeriod": "P5Y",
+        "costOptimization": true,
+        "updateFrequency": "REAL_TIME",
+        "indexTypes": [
+          "sender_index",
+          "recipient_index",
+          "thread_index",
+          "date_index",
+          "tag_index"
+        ]
+      },
+      "search_indices": {
+        "description": "Search index pinning policy",
+        "pinningStrategy": "TEMPORARY",
+        "replicationFactor": 2,
+        "geoDistribution": ["us-east", "eu-west"],
+        "accessPattern": "HOT",
+        "retentionPeriod": "P1Y",
+        "costOptimization": true,
+        "updateFrequency": "BATCH",
+        "rebuildSchedule": "WEEKLY"
+      }
+    },
+    "audit_logs": {
+      "security_events": {
+        "description": "Security audit log pinning policy",
+        "pinningStrategy": "PERMANENT",
+        "replicationFactor": 7,
+        "geoDistribution": ["us-east", "us-west", "us-central", "eu-west", "eu-central", "asia-pacific", "backup-region"],
+        "accessPattern": "COLD",
+        "retentionPeriod": "P10Y",
+        "costOptimization": false,
+        "immutable": true,
+        "encryptionRequired": true,
+        "complianceStandards": ["SOX", "PCI_DSS", "ISO27001"]
+      },
+      "access_logs": {
+        "description": "Access log pinning policy",
+        "pinningStrategy": "TEMPORARY",
+        "replicationFactor": 3,
+        "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+        "accessPattern": "COLD",
+        "retentionPeriod": "P3Y",
+        "costOptimization": true,
+        "compressionEnabled": true,
+        "archivalSchedule": "MONTHLY"
+      }
+    }
+  },
+  "globalSettings": {
+    "defaultReplicationFactor": 3,
+    "defaultRetentionPeriod": "P2Y",
+    "costOptimizationEnabled": true,
+    "monitoringEnabled": true,
+    "alertingEnabled": true,
+    "garbageCollectionSchedule": "DAILY",
+    "pinningServiceProviders": [
+      {
+        "name": "pinata",
+        "priority": 1,
+        "regions": ["us-east", "eu-west"],
+        "costTier": "standard"
+      },
+      {
+        "name": "web3storage",
+        "priority": 2,
+        "regions": ["us-west", "asia-pacific"],
+        "costTier": "economy"
+      },
+      {
+        "name": "infura",
+        "priority": 3,
+        "regions": ["eu-central", "backup-region"],
+        "costTier": "premium"
+      }
+    ]
+  },
+  "costOptimization": {
+    "strategies": [
+      {
+        "name": "intelligent_tiering",
+        "description": "Automatically move data between access tiers based on usage",
+        "enabled": true,
+        "rules": [
+          {
+            "condition": "not_accessed_30_days",
+            "action": "move_to_warm_tier"
+          },
+          {
+            "condition": "not_accessed_90_days",
+            "action": "move_to_cold_tier"
+          },
+          {
+            "condition": "not_accessed_1_year",
+            "action": "move_to_archive_tier"
+          }
+        ]
+      },
+      {
+        "name": "deduplication",
+        "description": "Remove duplicate content across messages",
+        "enabled": true,
+        "scope": ["attachments", "media_files"],
+        "algorithm": "sha256_content_hash"
+      },
+      {
+        "name": "compression",
+        "description": "Compress content before storage",
+        "enabled": true,
+        "algorithms": ["gzip", "brotli"],
+        "excludeTypes": ["image/*", "video/*", "audio/*", "application/zip"]
+      }
+    ],
+    "budgetLimits": {
+      "monthly": {
+        "storage": "$1000",
+        "bandwidth": "$500",
+        "operations": "$200"
+      },
+      "alerts": {
+        "warning": "80%",
+        "critical": "95%"
+      }
+    }
+  },
+  "monitoring": {
+    "metrics": [
+      "total_pinned_content",
+      "storage_usage_by_policy",
+      "replication_health",
+      "access_patterns",
+      "cost_breakdown",
+      "performance_metrics"
+    ],
+    "alerting": {
+      "pinning_failures": {
+        "threshold": "5%",
+        "window": "1h",
+        "severity": "high"
+      },
+      "replication_degraded": {
+        "threshold": "2_replicas_lost",
+        "window": "15m",
+        "severity": "critical"
+      },
+      "cost_overrun": {
+        "threshold": "budget_exceeded",
+        "window": "1d",
+        "severity": "high"
+      }
+    }
+  }
+}

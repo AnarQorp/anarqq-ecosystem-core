@@ -1,0 +1,206 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q-ecosystem.com/mcp.json",
+  "title": "MCP Configuration Schema",
+  "description": "Schema for Model Context Protocol configuration files",
+  "type": "object",
+  "required": ["name", "version", "description", "tools"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Module name in kebab-case"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 200,
+      "description": "Module description"
+    },
+    "author": {
+      "type": "string",
+      "description": "Module author"
+    },
+    "license": {
+      "type": "string",
+      "description": "License identifier"
+    },
+    "homepage": {
+      "type": "string",
+      "format": "uri",
+      "description": "Homepage URL"
+    },
+    "repository": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["git"]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": ["type", "url"]
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "tools": {
+          "type": "object"
+        },
+        "resources": {
+          "type": "object"
+        },
+        "prompts": {
+          "type": "object"
+        }
+      }
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description", "inputSchema"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9._-]*$",
+            "description": "Tool name"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 500,
+            "description": "Tool description"
+          },
+          "inputSchema": {
+            "type": "object",
+            "description": "JSON Schema for input validation"
+          },
+          "outputSchema": {
+            "type": "object",
+            "description": "JSON Schema for output validation"
+          }
+        }
+      }
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["uri", "name", "description"],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "format": "uri",
+            "description": "Resource URI"
+          },
+          "name": {
+            "type": "string",
+            "description": "Resource name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Resource description"
+          },
+          "mimeType": {
+            "type": "string",
+            "description": "MIME type"
+          }
+        }
+      }
+    },
+    "prompts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "description"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$",
+            "description": "Prompt name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Prompt description"
+          },
+          "arguments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "description"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Argument name"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Argument description"
+                },
+                "required": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "server": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "Server command"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Server arguments"
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Environment variables"
+        }
+      }
+    },
+    "client": {
+      "type": "object",
+      "properties": {
+        "timeout": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 300000,
+          "description": "Client timeout in milliseconds"
+        },
+        "retries": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Number of retries"
+        },
+        "backoff": {
+          "type": "string",
+          "enum": ["linear", "exponential"],
+          "description": "Backoff strategy"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

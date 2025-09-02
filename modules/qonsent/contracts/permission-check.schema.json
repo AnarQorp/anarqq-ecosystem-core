@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q.anarq.org/qonsent/permission-check.json",
+  "title": "Permission Check",
+  "description": "Schema for permission check requests and responses",
+  "type": "object",
+  "definitions": {
+    "PermissionCheckRequest": {
+      "type": "object",
+      "required": ["resource", "identity", "action"],
+      "properties": {
+        "resource": {
+          "type": "string",
+          "pattern": "^[a-z]+:[a-z]+:[a-zA-Z0-9_-]+$",
+          "description": "Resource identifier in format module:type:id"
+        },
+        "identity": {
+          "type": "string",
+          "pattern": "^did:squid:[a-zA-Z0-9_-]+$",
+          "description": "Identity DID to check"
+        },
+        "action": {
+          "type": "string",
+          "enum": ["read", "write", "delete", "admin", "share", "execute"],
+          "description": "Action to check permission for"
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "timestamp": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "clientIp": {
+              "type": "string",
+              "format": "ipv4"
+            },
+            "userAgent": {
+              "type": "string"
+            },
+            "daoContext": {
+              "type": "string",
+              "description": "DAO identifier for context-aware permissions"
+            }
+          }
+        }
+      }
+    },
+    "PermissionCheckResponse": {
+      "type": "object",
+      "required": ["allowed", "reason"],
+      "properties": {
+        "allowed": {
+          "type": "boolean",
+          "description": "Whether the action is permitted"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Human-readable reason for the decision"
+        },
+        "policy": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" },
+            "type": { "type": "string", "enum": ["direct", "inherited", "dao", "public"] }
+          }
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this permission expires"
+        },
+        "conditions": {
+          "type": "object",
+          "description": "Any conditions that apply to this permission"
+        },
+        "auditTrail": {
+          "type": "object",
+          "properties": {
+            "checkId": { "type": "string", "format": "uuid" },
+            "timestamp": { "type": "string", "format": "date-time" },
+            "source": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

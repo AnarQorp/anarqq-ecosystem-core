@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q-ecosystem.com/squid/create-identity-request.json",
+  "title": "Create Identity Request Schema",
+  "description": "Schema for identity creation requests",
+  "type": "object",
+  "required": ["name"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-zA-Z0-9\\s\\-_\\.]+$",
+      "description": "Human-readable name for the identity"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Optional description of the identity"
+    },
+    "avatar": {
+      "type": "string",
+      "format": "uri",
+      "description": "Avatar image URL or IPFS hash"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      },
+      "maxItems": 10,
+      "description": "Tags for categorizing the identity"
+    },
+    "privacyLevel": {
+      "type": "string",
+      "enum": ["PUBLIC", "DAO_ONLY", "PRIVATE", "ANONYMOUS"],
+      "default": "PUBLIC",
+      "description": "Privacy level for the identity"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Additional metadata for the identity"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,316 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/key-management.schema.json",
+  "title": "Key Management Schemas",
+  "definitions": {
+    "KMSProvider": {
+      "type": "string",
+      "enum": ["AWS_KMS", "AZURE_KEY_VAULT", "HASHICORP_VAULT", "HSM", "LOCAL_DEV"],
+      "description": "Supported key management providers"
+    },
+    "CryptographicAlgorithm": {
+      "type": "string",
+      "enum": [
+        "Ed25519",
+        "ECDSA-secp256k1", 
+        "RSA-2048",
+        "RSA-4096",
+        "AES-256-GCM",
+        "ChaCha20-Poly1305",
+        "Dilithium2",
+        "Dilithium3", 
+        "Dilithium5",
+        "Falcon-512",
+        "Falcon-1024",
+        "Kyber512",
+        "Kyber768",
+        "Kyber1024"
+      ],
+      "description": "Supported cryptographic algorithms including post-quantum"
+    },
+    "KeyUsage": {
+      "type": "string",
+      "enum": ["SIGNING", "ENCRYPTION", "KEY_DERIVATION", "AUTHENTICATION", "TRANSPORT"],
+      "description": "Key usage types"
+    },
+    "Environment": {
+      "type": "string",
+      "enum": ["dev", "staging", "prod"],
+      "description": "Environment scoping for keys"
+    },
+    "KeyMetadata": {
+      "type": "object",
+      "properties": {
+        "keyId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "Unique key identifier"
+        },
+        "usage": {
+          "$ref": "#/definitions/KeyUsage"
+        },
+        "algorithm": {
+          "$ref": "#/definitions/CryptographicAlgorithm"
+        },
+        "environment": {
+          "$ref": "#/definitions/Environment"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Key creation timestamp"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Key expiration timestamp"
+        },
+        "rotationSchedule": {
+          "type": "string",
+          "pattern": "^P(?:\\d+Y)?(?:\\d+M)?(?:\\d+D)?(?:T(?:\\d+H)?(?:\\d+M)?(?:\\d+S)?)?$",
+          "description": "Key rotation schedule in ISO 8601 duration format"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ACTIVE", "ROTATING", "DEPRECATED", "REVOKED"],
+          "description": "Key status"
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Associated identity or service"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Key version for rotation tracking"
+        },
+        "previousKeyId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "Previous key ID for rotation chain"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional metadata"
+        }
+      },
+      "required": ["keyId", "usage", "algorithm", "environment", "createdAt", "rotationSchedule", "status", "owner", "version"],
+      "additionalProperties": false
+    },
+    "KeyAuditEvent": {
+      "type": "object",
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Event ID"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Event timestamp"
+        },
+        "keyId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "Key ID involved in operation"
+        },
+        "operation": {
+          "type": "string",
+          "enum": ["CREATE", "USE", "ROTATE", "REVOKE", "BACKUP", "RESTORE"],
+          "description": "Operation type"
+        },
+        "actor": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["USER", "SERVICE", "SYSTEM"]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "ip": {
+              "type": "string",
+              "format": "ipv4"
+            }
+          },
+          "required": ["type", "id"],
+          "additionalProperties": false
+        },
+        "result": {
+          "type": "string",
+          "enum": ["SUCCESS", "FAILURE", "PARTIAL"],
+          "description": "Operation result"
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "environment": {
+              "$ref": "#/definitions/Environment"
+            },
+            "algorithm": {
+              "$ref": "#/definitions/CryptographicAlgorithm"
+            },
+            "usage": {
+              "$ref": "#/definitions/KeyUsage"
+            },
+            "errorCode": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "errorMessage": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          "required": ["environment"],
+          "additionalProperties": true
+        },
+        "auditCid": {
+          "type": "string",
+          "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$",
+          "description": "IPFS CID for immutable storage reference"
+        }
+      },
+      "required": ["eventId", "timestamp", "keyId", "operation", "actor", "result", "context"],
+      "additionalProperties": false
+    },
+    "KeyRotationRequest": {
+      "type": "object",
+      "properties": {
+        "keyId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "Key to rotate"
+        },
+        "reason": {
+          "type": "string",
+          "enum": ["SCHEDULED", "COMPROMISE", "POLICY", "MANUAL"],
+          "description": "Reason for rotation"
+        },
+        "newAlgorithm": {
+          "$ref": "#/definitions/CryptographicAlgorithm",
+          "description": "New key algorithm (if changing)"
+        },
+        "gracePeriod": {
+          "type": "string",
+          "pattern": "^P(?:\\d+Y)?(?:\\d+M)?(?:\\d+D)?(?:T(?:\\d+H)?(?:\\d+M)?(?:\\d+S)?)?$",
+          "description": "Grace period for old key in ISO 8601 duration format"
+        },
+        "immediate": {
+          "type": "boolean",
+          "description": "Immediate rotation flag"
+        }
+      },
+      "required": ["keyId", "reason", "immediate"],
+      "additionalProperties": false
+    },
+    "KeyRotationResult": {
+      "type": "object",
+      "properties": {
+        "oldKeyId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "Original key ID"
+        },
+        "newKeyId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "description": "New key ID"
+        },
+        "rotatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Rotation timestamp"
+        },
+        "gracePeriodEnd": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Grace period end"
+        },
+        "migrationStatus": {
+          "type": "string",
+          "enum": ["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED"],
+          "description": "Migration status"
+        },
+        "affectedServices": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "description": "Affected services/components"
+        }
+      },
+      "required": ["oldKeyId", "newKeyId", "rotatedAt", "migrationStatus", "affectedServices"],
+      "additionalProperties": false
+    },
+    "PQCMigrationStatus": {
+      "type": "object",
+      "properties": {
+        "phase": {
+          "type": "string",
+          "enum": ["PLANNING", "HYBRID", "MIGRATION", "COMPLETE"],
+          "description": "Migration phase"
+        },
+        "progress": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Overall progress percentage"
+        },
+        "keysMigrated": {
+          "type": "object",
+          "patternProperties": {
+            "^(Ed25519|ECDSA-secp256k1|RSA-2048|RSA-4096|AES-256-GCM|ChaCha20-Poly1305|Dilithium2|Dilithium3|Dilithium5|Falcon-512|Falcon-1024|Kyber512|Kyber768|Kyber1024)$": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false,
+          "description": "Keys migrated by algorithm"
+        },
+        "servicesMigrated": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "description": "Services migrated"
+        },
+        "deadline": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Migration deadline"
+        },
+        "estimatedCompletion": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Estimated completion"
+        }
+      },
+      "required": ["phase", "progress", "keysMigrated", "servicesMigrated"],
+      "additionalProperties": false
+    }
+  }
+}

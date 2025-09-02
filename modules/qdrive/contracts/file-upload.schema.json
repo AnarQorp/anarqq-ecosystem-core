@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qdrive/file-upload.json",
+  "title": "File Upload Request",
+  "description": "Schema for file upload requests to Qdrive",
+  "type": "object",
+  "properties": {
+    "file": {
+      "type": "object",
+      "description": "File data (handled by multipart/form-data)",
+      "properties": {
+        "originalname": {
+          "type": "string",
+          "description": "Original filename"
+        },
+        "mimetype": {
+          "type": "string",
+          "description": "MIME type of the file"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 104857600,
+          "description": "File size in bytes (max 100MB)"
+        },
+        "buffer": {
+          "description": "File buffer data"
+        }
+      },
+      "required": ["originalname", "mimetype", "size", "buffer"]
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "Display name for the file"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "File description"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "maxItems": 20,
+          "uniqueItems": true,
+          "description": "Tags for categorization"
+        },
+        "privacy": {
+          "type": "string",
+          "enum": ["public", "private", "dao-only"],
+          "default": "private",
+          "description": "Privacy level"
+        },
+        "retention": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3650,
+          "description": "Retention period in days"
+        }
+      }
+    },
+    "encrypt": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to encrypt the file"
+    }
+  },
+  "required": ["file"],
+  "additionalProperties": false
+}

@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  qdrive:
+    build: .
+    ports:
+      - "3008:3008"
+    environment:
+      - NODE_ENV=development
+      - QDRIVE_PORT=3008
+      - QDRIVE_MODE=standalone
+      - IPFS_API_URL=http://ipfs:5001
+      - IPFS_GATEWAY_URL=http://ipfs:8080
+      - MAX_FILE_SIZE=104857600  # 100MB
+      - DEFAULT_RETENTION_DAYS=365
+      - STORAGE_PATH=/app/storage
+    volumes:
+      - ./storage:/app/storage
+      - ./src:/app/src
+    depends_on:
+      - ipfs
+      - redis
+    networks:
+      - qdrive-network
+
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - "4001:4001"
+      - "5001:5001"
+      - "8080:8080"
+    volumes:
+      - ipfs-data:/data/ipfs
+    environment:
+      - IPFS_PROFILE=server
+    networks:
+      - qdrive-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - qdrive-network
+
+volumes:
+  ipfs-data:
+  redis-data:
+
+networks:
+  qdrive-network:
+    driver: bridge

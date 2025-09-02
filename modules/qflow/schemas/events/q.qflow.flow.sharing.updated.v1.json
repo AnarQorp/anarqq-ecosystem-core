@@ -1,0 +1,88 @@
+{
+  "$id": "q.qflow.flow.sharing.updated.v1",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Qflow Flow Sharing Settings Updated Event",
+  "description": "Event emitted when flow sharing settings are updated",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity that performed the action"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "flowId": {
+          "type": "string",
+          "description": "Unique identifier of the flow"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "allowPublicAccess": {
+              "type": "boolean",
+              "description": "Whether public access is allowed"
+            },
+            "allowDAOAccess": {
+              "type": "boolean",
+              "description": "Whether DAO access is allowed"
+            },
+            "allowedIdentities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of allowed sQuid identities"
+            },
+            "restrictedIdentities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of restricted sQuid identities"
+            },
+            "requireApproval": {
+              "type": "boolean",
+              "description": "Whether access requires approval"
+            },
+            "maxShares": {
+              "type": "number",
+              "description": "Maximum number of shares allowed"
+            }
+          },
+          "required": ["allowPublicAccess", "allowDAOAccess", "allowedIdentities", "restrictedIdentities", "requireApproval"]
+        },
+        "setBy": {
+          "type": "string",
+          "description": "sQuid identity that updated the settings"
+        },
+        "setAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When settings were updated"
+        }
+      },
+      "required": ["flowId", "settings", "setBy", "setAt"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}

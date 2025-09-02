@@ -1,0 +1,305 @@
+{
+  "version": "1.0",
+  "description": "Unified Storage Management Configuration",
+  "lastUpdated": "2024-01-15T00:00:00Z",
+  "pinningPolicies": {
+    "default": {
+      "name": "Default Pinning Policy",
+      "description": "Standard pinning for regular files",
+      "minReplicas": 2,
+      "maxReplicas": 5,
+      "geoDistribution": ["us-east-1", "eu-west-1"],
+      "priority": "normal",
+      "ttl": 2592000,
+      "conditions": {
+        "fileSize": {
+          "min": 0,
+          "max": 104857600
+        },
+        "privacy": ["public", "private", "dao-only"]
+      }
+    },
+    "public": {
+      "name": "Public File Pinning",
+      "description": "Enhanced pinning for public files",
+      "minReplicas": 3,
+      "maxReplicas": 10,
+      "geoDistribution": ["us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"],
+      "priority": "high",
+      "ttl": 7776000,
+      "cachingStrategy": "aggressive",
+      "conditions": {
+        "privacy": ["public"],
+        "accessCount": {
+          "min": 0
+        }
+      }
+    },
+    "hot": {
+      "name": "Hot File Pinning",
+      "description": "High-performance pinning for frequently accessed files",
+      "minReplicas": 5,
+      "maxReplicas": 15,
+      "geoDistribution": ["us-east-1", "us-west-2", "eu-west-1", "eu-central-1", "ap-southeast-1", "ap-northeast-1"],
+      "priority": "critical",
+      "ttl": 15552000,
+      "cachingStrategy": "edge",
+      "cdnIntegration": true,
+      "conditions": {
+        "accessCount": {
+          "min": 100
+        },
+        "accessFrequency": {
+          "period": "24h",
+          "min": 10
+        }
+      }
+    },
+    "cold": {
+      "name": "Cold Storage Pinning",
+      "description": "Minimal pinning for rarely accessed files",
+      "minReplicas": 1,
+      "maxReplicas": 2,
+      "geoDistribution": ["us-east-1"],
+      "priority": "low",
+      "ttl": 1296000,
+      "archivalStorage": true,
+      "conditions": {
+        "lastAccessed": {
+          "olderThan": "90d"
+        },
+        "accessCount": {
+          "max": 5
+        }
+      }
+    },
+    "premium": {
+      "name": "Premium User Pinning",
+      "description": "Enhanced pinning for premium subscribers",
+      "minReplicas": 4,
+      "maxReplicas": 8,
+      "geoDistribution": ["us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"],
+      "priority": "high",
+      "ttl": 15552000,
+      "slaGuarantee": "99.9%",
+      "prioritySupport": true,
+      "conditions": {
+        "subscriptionTier": ["premium", "enterprise"],
+        "userType": "paid"
+      }
+    }
+  },
+  "deduplication": {
+    "enabled": true,
+    "hashAlgorithm": "sha256",
+    "chunkSize": 262144,
+    "minFileSize": 1024,
+    "maxCacheSize": 1000000,
+    "cacheEvictionPolicy": "lru",
+    "persistentStorage": true
+  },
+  "quotaManagement": {
+    "defaultQuota": 1073741824,
+    "warningThreshold": 0.8,
+    "criticalThreshold": 0.95,
+    "quotaTiers": {
+      "free": {
+        "limit": 1073741824,
+        "description": "1GB free tier"
+      },
+      "basic": {
+        "limit": 10737418240,
+        "description": "10GB basic tier"
+      },
+      "premium": {
+        "limit": 107374182400,
+        "description": "100GB premium tier"
+      },
+      "enterprise": {
+        "limit": 1099511627776,
+        "description": "1TB enterprise tier"
+      }
+    },
+    "overage": {
+      "enabled": true,
+      "costPerGB": 0.1,
+      "currency": "QToken",
+      "billingCycle": "monthly",
+      "gracePeriod": 86400000
+    }
+  },
+  "garbageCollection": {
+    "enabled": true,
+    "interval": 3600000,
+    "batchSize": 100,
+    "gracePeriod": 86400000,
+    "orphanThreshold": 604800000,
+    "retentionPolicies": {
+      "delete": {
+        "action": "remove",
+        "description": "Permanently delete file and all replicas"
+      },
+      "archive": {
+        "action": "migrate",
+        "destination": "cold-storage",
+        "description": "Move to archival storage with reduced replicas"
+      },
+      "anonymize": {
+        "action": "sanitize",
+        "description": "Remove identifying metadata while keeping file"
+      }
+    }
+  },
+  "backupVerification": {
+    "enabled": true,
+    "verificationInterval": 86400000,
+    "redundancyCheck": true,
+    "integrityCheck": true,
+    "recoveryTestInterval": 604800000,
+    "alertThresholds": {
+      "degradedReplicas": 0.1,
+      "failedBackups": 0.05,
+      "integrityErrors": 0.01
+    }
+  },
+  "disasterRecovery": {
+    "enabled": true,
+    "testInterval": 604800000,
+    "backupLocations": ["primary", "secondary", "tertiary"],
+    "recoveryTimeObjective": 3600,
+    "recoveryPointObjective": 300,
+    "testScenarios": [
+      "backup_restore",
+      "replication_recovery",
+      "data_integrity",
+      "performance_recovery"
+    ]
+  },
+  "geoDistribution": {
+    "regions": {
+      "us-east-1": {
+        "name": "US East (Virginia)",
+        "provider": "aws",
+        "latency": "low",
+        "cost": "standard",
+        "capacity": "high"
+      },
+      "us-west-2": {
+        "name": "US West (Oregon)",
+        "provider": "aws",
+        "latency": "low",
+        "cost": "standard",
+        "capacity": "high"
+      },
+      "eu-west-1": {
+        "name": "Europe (Ireland)",
+        "provider": "aws",
+        "latency": "medium",
+        "cost": "standard",
+        "capacity": "medium"
+      },
+      "eu-central-1": {
+        "name": "Europe (Frankfurt)",
+        "provider": "aws",
+        "latency": "medium",
+        "cost": "standard",
+        "capacity": "medium"
+      },
+      "ap-southeast-1": {
+        "name": "Asia Pacific (Singapore)",
+        "provider": "aws",
+        "latency": "high",
+        "cost": "premium",
+        "capacity": "medium"
+      },
+      "ap-northeast-1": {
+        "name": "Asia Pacific (Tokyo)",
+        "provider": "aws",
+        "latency": "high",
+        "cost": "premium",
+        "capacity": "medium"
+      }
+    },
+    "selectionStrategy": "latency_cost_optimized",
+    "failoverEnabled": true,
+    "loadBalancing": "round_robin"
+  },
+  "costOptimization": {
+    "enabled": true,
+    "strategies": {
+      "replicationReduction": {
+        "enabled": true,
+        "threshold": "90d",
+        "minReplicas": 1
+      },
+      "geoConsolidation": {
+        "enabled": true,
+        "threshold": "180d",
+        "preferredRegions": ["us-east-1"]
+      },
+      "compressionUpgrade": {
+        "enabled": true,
+        "threshold": "30d",
+        "algorithm": "zstd"
+      },
+      "tierMigration": {
+        "enabled": true,
+        "hotToCold": "90d",
+        "coldToArchive": "365d"
+      }
+    },
+    "budgetLimits": {
+      "monthly": 1000,
+      "currency": "QToken",
+      "alertThresholds": [0.8, 0.9, 0.95]
+    }
+  },
+  "monitoring": {
+    "metrics": [
+      "replication_factor",
+      "pin_success_rate",
+      "retrieval_latency",
+      "storage_cost",
+      "bandwidth_usage",
+      "deduplication_ratio",
+      "quota_utilization",
+      "garbage_collection_efficiency"
+    ],
+    "alerts": {
+      "replication_below_minimum": {
+        "threshold": "min_replicas",
+        "severity": "critical"
+      },
+      "pin_failure_rate": {
+        "threshold": "5%",
+        "severity": "high"
+      },
+      "retrieval_latency": {
+        "threshold": "1s",
+        "severity": "medium"
+      },
+      "quota_exceeded": {
+        "threshold": "100%",
+        "severity": "high"
+      },
+      "backup_verification_failed": {
+        "threshold": "5%",
+        "severity": "critical"
+      }
+    },
+    "dashboards": {
+      "storage_overview": {
+        "enabled": true,
+        "refreshInterval": 60
+      },
+      "cost_analysis": {
+        "enabled": true,
+        "refreshInterval": 300
+      },
+      "performance_metrics": {
+        "enabled": true,
+        "refreshInterval": 30
+      }
+    }
+  }
+}

@@ -1,0 +1,258 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Qwallet IPFS Pinning Policy",
+  "description": "Defines pinning policies for different types of Qwallet content",
+  "version": "1.0.0",
+  "policies": {
+    "payment-intents": {
+      "strategy": "TEMPORARY",
+      "duration": "P30D",
+      "priority": "LOW",
+      "conditions": {
+        "pin_on_creation": true,
+        "unpin_on_expiration": true,
+        "extend_on_activity": false
+      },
+      "replication": {
+        "min_replicas": 2,
+        "max_replicas": 3,
+        "geographic_distribution": false
+      },
+      "cost_optimization": {
+        "enabled": true,
+        "max_cost_per_gb": 0.01,
+        "auto_migrate_to_cold": false
+      }
+    },
+    "transactions": {
+      "strategy": "PERMANENT",
+      "duration": "P7Y",
+      "priority": "HIGH",
+      "conditions": {
+        "pin_on_creation": true,
+        "unpin_on_expiration": false,
+        "extend_on_activity": false
+      },
+      "replication": {
+        "min_replicas": 3,
+        "max_replicas": 5,
+        "geographic_distribution": true
+      },
+      "cost_optimization": {
+        "enabled": false,
+        "max_cost_per_gb": 0.10,
+        "auto_migrate_to_cold": true
+      },
+      "compliance": {
+        "regulatory_retention": "P7Y",
+        "audit_requirements": ["SOX", "AML", "GDPR"],
+        "immutable": true
+      }
+    },
+    "audit-logs": {
+      "strategy": "PERMANENT",
+      "duration": "P7Y",
+      "priority": "CRITICAL",
+      "conditions": {
+        "pin_on_creation": true,
+        "unpin_on_expiration": false,
+        "extend_on_activity": false
+      },
+      "replication": {
+        "min_replicas": 5,
+        "max_replicas": 7,
+        "geographic_distribution": true
+      },
+      "cost_optimization": {
+        "enabled": false,
+        "max_cost_per_gb": 0.20,
+        "auto_migrate_to_cold": false
+      },
+      "compliance": {
+        "regulatory_retention": "P7Y",
+        "audit_requirements": ["SOX", "AML", "GDPR", "PCI"],
+        "immutable": true,
+        "tamper_proof": true
+      }
+    },
+    "wallet-snapshots": {
+      "strategy": "CONDITIONAL",
+      "duration": "P2Y",
+      "priority": "MEDIUM",
+      "conditions": {
+        "pin_on_creation": true,
+        "unpin_on_expiration": true,
+        "extend_on_activity": false,
+        "conditional_rules": [
+          {
+            "condition": "snapshot_type == 'monthly'",
+            "action": "PERMANENT_PIN"
+          },
+          {
+            "condition": "snapshot_type == 'daily'",
+            "action": "TEMPORARY_PIN",
+            "duration": "P30D"
+          },
+          {
+            "condition": "wallet_balance > 10000",
+            "action": "EXTENDED_PIN",
+            "duration": "P1Y"
+          }
+        ]
+      },
+      "replication": {
+        "min_replicas": 2,
+        "max_replicas": 4,
+        "geographic_distribution": false
+      },
+      "cost_optimization": {
+        "enabled": true,
+        "max_cost_per_gb": 0.05,
+        "auto_migrate_to_cold": true
+      }
+    },
+    "fee-calculations": {
+      "strategy": "TEMPORARY",
+      "duration": "P90D",
+      "priority": "LOW",
+      "conditions": {
+        "pin_on_creation": false,
+        "unpin_on_expiration": true,
+        "extend_on_activity": false,
+        "lazy_pinning": true
+      },
+      "replication": {
+        "min_replicas": 1,
+        "max_replicas": 2,
+        "geographic_distribution": false
+      },
+      "cost_optimization": {
+        "enabled": true,
+        "max_cost_per_gb": 0.005,
+        "auto_migrate_to_cold": true
+      }
+    },
+    "compliance-reports": {
+      "strategy": "PERMANENT",
+      "duration": "P10Y",
+      "priority": "CRITICAL",
+      "conditions": {
+        "pin_on_creation": true,
+        "unpin_on_expiration": false,
+        "extend_on_activity": false
+      },
+      "replication": {
+        "min_replicas": 5,
+        "max_replicas": 7,
+        "geographic_distribution": true
+      },
+      "cost_optimization": {
+        "enabled": false,
+        "max_cost_per_gb": 0.50,
+        "auto_migrate_to_cold": false
+      },
+      "compliance": {
+        "regulatory_retention": "P10Y",
+        "audit_requirements": ["SOX", "AML", "GDPR", "PCI", "CCPA"],
+        "immutable": true,
+        "tamper_proof": true,
+        "encryption_required": true
+      }
+    }
+  },
+  "global_settings": {
+    "default_strategy": "TEMPORARY",
+    "default_duration": "P30D",
+    "default_priority": "MEDIUM",
+    "max_total_storage": "1TB",
+    "cost_alert_threshold": 100.00,
+    "monitoring": {
+      "enabled": true,
+      "metrics": [
+        "storage_usage",
+        "pinning_costs",
+        "replication_health",
+        "access_patterns"
+      ],
+      "alerts": [
+        {
+          "condition": "storage_usage > 80%",
+          "action": "NOTIFY_ADMIN"
+        },
+        {
+          "condition": "monthly_cost > cost_alert_threshold",
+          "action": "COST_OPTIMIZATION_REVIEW"
+        },
+        {
+          "condition": "replication_health < 90%",
+          "action": "INCREASE_REPLICATION"
+        }
+      ]
+    }
+  },
+  "garbage_collection": {
+    "enabled": true,
+    "schedule": "0 2 * * *",
+    "batch_size": 1000,
+    "safety_checks": {
+      "verify_expiration": true,
+      "check_references": true,
+      "confirm_unpinning": true
+    },
+    "retention_overrides": [
+      {
+        "condition": "legal_hold == true",
+        "action": "SKIP_DELETION"
+      },
+      {
+        "condition": "dispute_active == true",
+        "action": "EXTEND_RETENTION",
+        "extension": "P1Y"
+      },
+      {
+        "condition": "regulatory_review == true",
+        "action": "SKIP_DELETION"
+      }
+    ]
+  },
+  "disaster_recovery": {
+    "backup_strategy": "MULTI_REGION",
+    "backup_frequency": "DAILY",
+    "backup_retention": "P30D",
+    "recovery_targets": {
+      "rto": "4h",
+      "rpo": "1h"
+    },
+    "backup_locations": [
+      "us-east-1",
+      "eu-west-1",
+      "ap-southeast-1"
+    ],
+    "verification": {
+      "enabled": true,
+      "frequency": "WEEKLY",
+      "sample_rate": 0.1
+    }
+  },
+  "performance_optimization": {
+    "caching": {
+      "enabled": true,
+      "cache_size": "10GB",
+      "ttl": "1h",
+      "eviction_policy": "LRU"
+    },
+    "prefetching": {
+      "enabled": true,
+      "patterns": [
+        "recent_transactions",
+        "active_intents",
+        "current_balances"
+      ]
+    },
+    "compression": {
+      "enabled": true,
+      "algorithm": "gzip",
+      "level": 6
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "contractId": "pi_contract_governance_001",
+  "contractName": "GovernanceContract",
+  "contractVersion": "1.0.0",
+  "templateType": "governance",
+  "deploymentInfo": {
+    "environment": "testnet",
+    "contractAddress": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+    "deploymentTxHash": "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+    "deployedAt": "2025-01-30T02:21:00.000Z",
+    "blockNumber": 1234568,
+    "status": "DEPLOYED"
+  },
+  "gasEstimation": {
+    "estimated": 200000,
+    "maximum": 300000,
+    "baseFee": 100000,
+    "complexityFee": 75000,
+    "argumentsFee": 25000,
+    "actualUsed": 189750,
+    "efficiency": 94.9
+  },
+  "qflowIntegration": {
+    "workflowId": "qflow_governance_workflow_001",
+    "triggerEvents": ["ProposalCreated", "VoteCast"],
+    "callbackEndpoints": [
+      "https://api.qflow.com/webhooks/governance-events",
+      "https://api.dao.com/governance/contract-events"
+    ],
+    "stateValidation": {
+      "owner": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+      "proposalCount": 0,
+      "lastValidated": "2025-01-30T02:26:00.000Z"
+    }
+  },
+  "contractCode": "contract GovernanceContract {\n    address public owner;\n    mapping(bytes32 => uint256) public votes;\n    mapping(bytes32 => bool) public proposals;\n    \n    constructor() {\n        owner = msg.sender;\n    }\n    \n    function createProposal(bytes32 proposalId) public {\n        require(msg.sender == owner, \"Only owner can create proposals\");\n        proposals[proposalId] = true;\n    }\n    \n    function vote(bytes32 proposalId) public {\n        require(proposals[proposalId], \"Proposal does not exist\");\n        votes[proposalId] += 1;\n    }\n    \n    function getVotes(bytes32 proposalId) public view returns (uint256) {\n        return votes[proposalId];\n    }\n}",
+  "testResults": {
+    "deploymentTest": "PASSED",
+    "functionTests": {
+      "createProposal": "PASSED",
+      "vote": "PASSED",
+      "getVotes": "PASSED"
+    },
+    "qflowIntegrationTest": "PASSED",
+    "stateValidationTest": "PASSED"
+  },
+  "securityAudit": {
+    "dangerousPatterns": [],
+    "vulnerabilities": [
+      "No vote weight mechanism",
+      "Missing proposal expiration"
+    ],
+    "recommendations": [
+      "Implement weighted voting based on token holdings",
+      "Add proposal lifecycle management",
+      "Consider adding quorum requirements"
+    ],
+    "auditScore": 78,
+    "auditedAt": "2025-01-30T02:23:00.000Z"
+  }
+}

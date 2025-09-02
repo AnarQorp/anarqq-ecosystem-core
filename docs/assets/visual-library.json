@@ -1,0 +1,147 @@
+{
+  "categories": {
+    "logos": {
+      "description": "Brand logos and wordmarks",
+      "assets": []
+    },
+    "icons": {
+      "description": "Module icons and UI elements",
+      "assets": []
+    },
+    "diagrams": {
+      "description": "Architecture and flow diagrams",
+      "assets": []
+    },
+    "screenshots": {
+      "description": "Interface screenshots and demos",
+      "assets": []
+    },
+    "animations": {
+      "description": "Animated graphics and transitions",
+      "assets": []
+    }
+  },
+  "templates": {
+    "mermaid": {
+      "architecture": "graph TB\n    subgraph \"Q∞ Architecture\"\n        UI[User Interface Layer]\n        API[API Gateway Layer]\n        CORE[Core Services Layer]\n        DATA[Data Layer]\n    end\n    \n    UI --> API\n    API --> CORE\n    CORE --> DATA",
+      "sequence": "sequenceDiagram\n    participant User\n    participant Frontend\n    participant API\n    participant Service\n    participant Database\n    \n    User->>Frontend: Action\n    Frontend->>API: Request\n    API->>Service: Process\n    Service->>Database: Query\n    Database-->>Service: Result\n    Service-->>API: Response\n    API-->>Frontend: Data\n    Frontend-->>User: Update",
+      "flowchart": "flowchart TD\n    A[Start] --> B{Decision}\n    B -->|Yes| C[Process A]\n    B -->|No| D[Process B]\n    C --> E[End]\n    D --> E",
+      "ecosystem": "graph TB\n    subgraph \"AnarQ&Q Ecosystem\"\n        SQUID[sQuid Identity]\n        QWALLET[Qwallet]\n        QMARKET[Qmarket]\n        QMAIL[Qmail]\n        QCHAT[Qchat]\n        QDRIVE[Qdrive]\n        QLOCK[Qlock]\n        QONSENT[Qonsent]\n        QINDEX[Qindex]\n        QERBEROS[Qerberos]\n        QMASK[Qmask]\n        QPIC[QpiC]\n        QNET[QNET]\n        DAO[DAO]\n    end\n    \n    SQUID --> QWALLET\n    SQUID --> QMARKET\n    SQUID --> QMAIL\n    QWALLET --> QMARKET\n    QMARKET --> QPIC\n    QMAIL --> QCHAT\n    QDRIVE --> QPIC\n    QLOCK --> QONSENT\n    QINDEX --> QERBEROS\n    QMASK --> QNET\n    DAO --> QWALLET"
+    },
+    "excalidraw": {
+      "wireframe": {
+        "type": "excalidraw",
+        "version": 2,
+        "source": "visual-asset-manager",
+        "elements": [],
+        "appState": {
+          "gridSize": null,
+          "viewBackgroundColor": "#ffffff"
+        }
+      },
+      "diagram": {
+        "type": "excalidraw",
+        "version": 2,
+        "source": "visual-asset-manager",
+        "elements": [],
+        "appState": {
+          "gridSize": 20,
+          "viewBackgroundColor": "#ffffff"
+        }
+      }
+    }
+  },
+  "standards": {
+    "naming": {
+      "pattern": "{category}-{module}-{type}-{version}",
+      "examples": [
+        "diagram-qwallet-architecture-v1",
+        "icon-squid-primary-v2",
+        "screenshot-qmarket-interface-v1"
+      ]
+    },
+    "dimensions": {
+      "icons": { "width": 64, "height": 64 },
+      "logos": { "width": 200, "height": 60 },
+      "screenshots": { "width": 1200, "height": 800 },
+      "diagrams": { "width": 800, "height": 600 }
+    },
+    "formats": {
+      "vector": ["svg"],
+      "raster": ["png", "jpg", "webp"],
+      "diagrams": ["mermaid", "excalidraw"]
+    }
+  },
+  "shotLists": {
+    "global": {
+      "intro": [
+        "Wide shot: Digital landscape with centralized towers",
+        "Close-up: User frustrated with privacy settings",
+        "Animation: AnarQ&Q logo reveal with ecosystem modules"
+      ],
+      "problem": [
+        "Montage: Data harvesting visualization",
+        "Screen recording: Complex privacy settings",
+        "Animation: Services being shut down"
+      ],
+      "solution": [
+        "Animation: Q∞ architecture layers",
+        "Screen recording: User controlling their data",
+        "Diagram: Decentralized network visualization"
+      ],
+      "modules": [
+        "Animation: Module icons appearing in sequence",
+        "Diagram: Integration lines connecting modules",
+        "Screen recording: User journey across modules"
+      ],
+      "callToAction": [
+        "Text overlay: Call to action",
+        "Screen recording: Website and QR code",
+        "Animation: Community growth visualization"
+      ]
+    },
+    "module": {
+      "intro": [
+        "Animation: Module logo and branding",
+        "Screen recording: Module interface overview",
+        "Diagram: Module in ecosystem context"
+      ],
+      "features": [
+        "Screen recording: Feature demonstrations",
+        "Animation: UI/UX walkthroughs",
+        "Diagram: Technical capabilities"
+      ],
+      "integration": [
+        "Diagram: Module connection visualization",
+        "Animation: Data flow between modules",
+        "Screen recording: Cross-module workflows"
+      ],
+      "useCases": [
+        "Screen recording: User scenario demonstrations",
+        "Animation: Real-world applications",
+        "Text overlay: Success stories"
+      ],
+      "callToAction": [
+        "Text overlay: Module-specific CTA",
+        "Screen recording: Getting started steps",
+        "Animation: Documentation resources"
+      ]
+    }
+  },
+  "assetReferences": {
+    "ipfs": {
+      "baseGateway": "https://ipfs.io/ipfs/",
+      "pinningService": "pinata",
+      "cidPrefix": "Qm"
+    },
+    "s3": {
+      "bucket": "q-ecosystem-assets",
+      "region": "us-east-1",
+      "baseUrl": "https://q-ecosystem-assets.s3.amazonaws.com/"
+    },
+    "cdn": {
+      "baseUrl": "https://cdn.q.network/assets/",
+      "cacheTtl": 86400
+    }
+  }
+}

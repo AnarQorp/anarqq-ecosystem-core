@@ -1,0 +1,63 @@
+{
+  "id": "qflow-api-environment",
+  "name": "Qflow API Environment",
+  "values": [
+    {
+      "key": "base_url",
+      "value": "https://api.qflow.anarq.org/v1",
+      "description": "Base URL for Qflow API",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "staging_url",
+      "value": "https://staging-api.qflow.anarq.org/v1",
+      "description": "Staging URL for Qflow API",
+      "type": "default",
+      "enabled": false
+    },
+    {
+      "key": "local_url",
+      "value": "http://localhost:8080/v1",
+      "description": "Local development URL",
+      "type": "default",
+      "enabled": false
+    },
+    {
+      "key": "squid_token",
+      "value": "",
+      "description": "sQuid identity authentication token",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "flow_id",
+      "value": "",
+      "description": "Flow ID for testing (auto-populated)",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "execution_id",
+      "value": "",
+      "description": "Execution ID for testing (auto-populated)",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "dao_subnet",
+      "value": "dao-test-subnet",
+      "description": "DAO subnet for testing",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "webhook_secret",
+      "value": "",
+      "description": "Webhook signature secret",
+      "type": "secret",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/index.schema.json",
+  "title": "Index Schemas",
+  "definitions": {
+    "IndexRecord": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^[a-z_]+$",
+          "minLength": 1,
+          "maxLength": 32,
+          "description": "Record type (e.g., 'file', 'message', 'transaction')"
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "Index key for lookups"
+        },
+        "cid": {
+          "type": "string",
+          "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^bafy[a-z2-7]{55}$",
+          "description": "IPFS CID of the indexed content"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Record version number"
+        },
+        "prevCid": {
+          "type": "string",
+          "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^bafy[a-z2-7]{55}$",
+          "description": "Previous version CID for history tracking"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_-]+$",
+            "maxLength": 32
+          },
+          "maxItems": 20,
+          "description": "Searchable tags"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Record creation timestamp"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Optional record metadata"
+        }
+      },
+      "required": ["type", "key", "cid", "version", "tags", "createdAt"],
+      "additionalProperties": false
+    },
+    "MutablePointer": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "Pointer key identifier"
+        },
+        "currentCid": {
+          "type": "string",
+          "pattern": "^Qm[1-9A-HJ-NP-Za-km-z]{44}$|^bafy[a-z2-7]{55}$",
+          "description": "Current CID being pointed to"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Current version number"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Pointer creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Pointer owner identity"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Optional pointer metadata"
+        }
+      },
+      "required": ["key", "currentCid", "version", "createdAt", "updatedAt", "owner"],
+      "additionalProperties": false
+    },
+    "QueryFilter": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^[a-z_]+$",
+          "maxLength": 32,
+          "description": "Record type filter"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_-]+$",
+            "maxLength": 32
+          },
+          "maxItems": 10,
+          "description": "Tag filters (AND operation)"
+        },
+        "keyPattern": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Key pattern (supports wildcards)"
+        },
+        "dateRange": {
+          "type": "object",
+          "properties": {
+            "from": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "to": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "required": ["from", "to"],
+          "additionalProperties": false,
+          "description": "Date range filter"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Metadata filters"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Result limit"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Result offset for pagination"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

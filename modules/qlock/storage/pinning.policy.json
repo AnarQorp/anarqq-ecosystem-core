@@ -1,0 +1,226 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2024-12-19T00:00:00Z",
+  "policies": [
+    {
+      "name": "audit_logs",
+      "description": "Audit logs for compliance and security",
+      "pattern": "/qlock/audit/**",
+      "pinning": {
+        "strategy": "PERMANENT",
+        "replicationFactor": 3,
+        "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+        "priority": "HIGH"
+      },
+      "retention": {
+        "period": "P7Y",
+        "action": "ARCHIVE",
+        "complianceReason": "SOX, GDPR audit requirements"
+      },
+      "access": {
+        "pattern": "HOT",
+        "cacheTTL": "P1D",
+        "compressionEnabled": true
+      }
+    },
+    {
+      "name": "key_metadata",
+      "description": "Cryptographic key metadata (not key material)",
+      "pattern": "/qlock/keys/**/metadata",
+      "pinning": {
+        "strategy": "PERMANENT",
+        "replicationFactor": 5,
+        "geoDistribution": ["us-east", "us-west", "eu-west", "eu-central", "asia-pacific"],
+        "priority": "CRITICAL"
+      },
+      "retention": {
+        "period": "P10Y",
+        "action": "ARCHIVE",
+        "complianceReason": "Key lifecycle management"
+      },
+      "access": {
+        "pattern": "WARM",
+        "cacheTTL": "P7D",
+        "compressionEnabled": false
+      }
+    },
+    {
+      "name": "encrypted_data",
+      "description": "User encrypted data blobs",
+      "pattern": "/qlock/encrypted/**",
+      "pinning": {
+        "strategy": "USER_CONTROLLED",
+        "replicationFactor": 2,
+        "geoDistribution": ["user_preferred", "backup_region"],
+        "priority": "MEDIUM"
+      },
+      "retention": {
+        "period": "P2Y",
+        "action": "USER_DECISION",
+        "extendable": true,
+        "maxExtension": "P7Y"
+      },
+      "access": {
+        "pattern": "COLD",
+        "cacheTTL": "P30D",
+        "compressionEnabled": true
+      }
+    },
+    {
+      "name": "event_logs",
+      "description": "System event logs for monitoring",
+      "pattern": "/qlock/events/**",
+      "pinning": {
+        "strategy": "TEMPORARY",
+        "replicationFactor": 2,
+        "geoDistribution": ["primary_region", "backup_region"],
+        "priority": "LOW"
+      },
+      "retention": {
+        "period": "P1Y",
+        "action": "DELETE",
+        "complianceReason": "Operational history"
+      },
+      "access": {
+        "pattern": "WARM",
+        "cacheTTL": "P1D",
+        "compressionEnabled": true
+      }
+    },
+    {
+      "name": "configuration_snapshots",
+      "description": "Module configuration snapshots",
+      "pattern": "/qlock/config/**",
+      "pinning": {
+        "strategy": "PERMANENT",
+        "replicationFactor": 3,
+        "geoDistribution": ["us-east", "eu-west", "asia-pacific"],
+        "priority": "HIGH"
+      },
+      "retention": {
+        "period": "P5Y",
+        "action": "ARCHIVE",
+        "complianceReason": "Configuration audit trail"
+      },
+      "access": {
+        "pattern": "COLD",
+        "cacheTTL": "P90D",
+        "compressionEnabled": true
+      }
+    },
+    {
+      "name": "performance_metrics",
+      "description": "Performance and monitoring data",
+      "pattern": "/qlock/metrics/**",
+      "pinning": {
+        "strategy": "TEMPORARY",
+        "replicationFactor": 1,
+        "geoDistribution": ["primary_region"],
+        "priority": "LOW"
+      },
+      "retention": {
+        "period": "P90D",
+        "action": "DELETE",
+        "complianceReason": "Operational monitoring"
+      },
+      "access": {
+        "pattern": "HOT",
+        "cacheTTL": "PT1H",
+        "compressionEnabled": true
+      }
+    },
+    {
+      "name": "debug_logs",
+      "description": "Debug and troubleshooting logs",
+      "pattern": "/qlock/debug/**",
+      "pinning": {
+        "strategy": "TEMPORARY",
+        "replicationFactor": 1,
+        "geoDistribution": ["primary_region"],
+        "priority": "LOW"
+      },
+      "retention": {
+        "period": "P30D",
+        "action": "DELETE",
+        "complianceReason": "Troubleshooting support"
+      },
+      "access": {
+        "pattern": "WARM",
+        "cacheTTL": "PT6H",
+        "compressionEnabled": true
+      }
+    }
+  ],
+  "globalSettings": {
+    "defaultReplicationFactor": 2,
+    "defaultRetentionPeriod": "P1Y",
+    "maxFileSize": "100MB",
+    "compressionThreshold": "1MB",
+    "encryptionRequired": true,
+    "checksumVerification": true
+  },
+  "costOptimization": {
+    "enabled": true,
+    "strategies": [
+      {
+        "name": "compression",
+        "description": "Compress data before storage",
+        "threshold": "1MB",
+        "algorithm": "gzip"
+      },
+      {
+        "name": "deduplication",
+        "description": "Remove duplicate content",
+        "enabled": true,
+        "scope": "global"
+      },
+      {
+        "name": "tiered_storage",
+        "description": "Move old data to cheaper storage",
+        "rules": [
+          {
+            "age": "P30D",
+            "action": "move_to_warm"
+          },
+          {
+            "age": "P1Y",
+            "action": "move_to_cold"
+          }
+        ]
+      }
+    ]
+  },
+  "monitoring": {
+    "enabled": true,
+    "metrics": [
+      "storage_usage",
+      "pin_count",
+      "access_frequency",
+      "retrieval_latency",
+      "cost_per_gb"
+    ],
+    "alerting": {
+      "storageQuotaThreshold": 0.8,
+      "costBudgetThreshold": 0.9,
+      "retrievalLatencyThreshold": "5s"
+    }
+  },
+  "compliance": {
+    "gdpr": {
+      "enabled": true,
+      "dataSubjectRights": true,
+      "rightToErasure": true,
+      "dataPortability": true
+    },
+    "sox": {
+      "enabled": true,
+      "auditTrail": true,
+      "immutableLogs": true
+    },
+    "hipaa": {
+      "enabled": false,
+      "encryptionRequired": true,
+      "accessLogging": true
+    }
+  }
+}

@@ -1,0 +1,441 @@
+openapi: 3.0.3
+info:
+  title: Qwallet API
+  description: Payments & Fees Module for AnarQ&Q Ecosystem
+  version: 1.0.0
+  contact:
+    name: AnarQ&Q Team
+    url: https://anarq.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://api.anarq.com/qwallet
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /intents:
+    post:
+      summary: Create payment intent
+      operationId: createPaymentIntent
+      security:
+        - squidAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentIntentRequest'
+      responses:
+        '201':
+          description: Payment intent created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntentResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sign:
+    post:
+      summary: Sign transaction
+      operationId: signTransaction
+      security:
+        - squidAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignTransactionRequest'
+      responses:
+        '200':
+          description: Transaction signed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignTransactionResponse'
+
+  /pay:
+    post:
+      summary: Process payment
+      operationId: processPayment
+      security:
+        - squidAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessPaymentRequest'
+      responses:
+        '200':
+          description: Payment processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessPaymentResponse'
+
+  /quote:
+    get:
+      summary: Get payment quote
+      operationId: getPaymentQuote
+      parameters:
+        - name: amount
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: currency
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [QToken, PI]
+        - name: network
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment quote
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentQuoteResponse'
+
+  /balance/{squidId}:
+    get:
+      summary: Get balance
+      operationId: getBalance
+      parameters:
+        - name: squidId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: currency
+          in: query
+          schema:
+            type: string
+            enum: [QToken, PI]
+      responses:
+        '200':
+          description: Balance information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+
+  /transactions/{squidId}:
+    get:
+      summary: Get transaction history
+      operationId: getTransactionHistory
+      parameters:
+        - name: squidId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Transaction history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionHistoryResponse'
+
+components:
+  securitySchemes:
+    squidAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        dependencies:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [up, down, degraded]
+              latency:
+                type: number
+              lastCheck:
+                type: string
+                format: date-time
+
+    CreatePaymentIntentRequest:
+      type: object
+      required:
+        - amount
+        - currency
+        - recipient
+      properties:
+        amount:
+          type: number
+          minimum: 0.01
+        currency:
+          type: string
+          enum: [QToken, PI]
+        recipient:
+          type: string
+        purpose:
+          type: string
+        metadata:
+          type: object
+        expiresIn:
+          type: integer
+          description: Expiration time in seconds
+
+    PaymentIntentResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            intentId:
+              type: string
+            amount:
+              type: number
+            currency:
+              type: string
+            recipient:
+              type: string
+            status:
+              type: string
+              enum: [PENDING, SIGNED, SETTLED, FAILED, EXPIRED]
+            createdAt:
+              type: string
+              format: date-time
+            expiresAt:
+              type: string
+              format: date-time
+
+    SignTransactionRequest:
+      type: object
+      required:
+        - intentId
+      properties:
+        intentId:
+          type: string
+        signature:
+          type: string
+
+    SignTransactionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            transactionId:
+              type: string
+            signature:
+              type: string
+            gasEstimate:
+              type: number
+
+    ProcessPaymentRequest:
+      type: object
+      required:
+        - transactionId
+      properties:
+        transactionId:
+          type: string
+
+    ProcessPaymentResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            transactionId:
+              type: string
+            status:
+              type: string
+              enum: [SETTLED, FAILED]
+            settlementHash:
+              type: string
+            settledAt:
+              type: string
+              format: date-time
+
+    PaymentQuoteResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            amount:
+              type: number
+            currency:
+              type: string
+            fees:
+              type: object
+              properties:
+                network:
+                  type: number
+                platform:
+                  type: number
+                total:
+                  type: number
+            estimatedTime:
+              type: string
+            exchangeRate:
+              type: number
+
+    BalanceResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            squidId:
+              type: string
+            balances:
+              type: object
+              additionalProperties:
+                type: number
+            walletAddress:
+              type: string
+            lastUpdated:
+              type: string
+              format: date-time
+
+    TransactionHistoryResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            transactions:
+              type: array
+              items:
+                $ref: '#/components/schemas/Transaction'
+            total:
+              type: integer
+            limit:
+              type: integer
+            offset:
+              type: integer
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+        status:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+        requestId:
+          type: string

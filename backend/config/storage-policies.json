@@ -1,0 +1,332 @@
+{
+  "pinningPolicies": {
+    "default": {
+      "name": "Default Pinning Policy",
+      "description": "Standard pinning for general content",
+      "minReplicas": 2,
+      "maxReplicas": 5,
+      "geoDistribution": ["us-east-1", "eu-west-1"],
+      "priority": "normal",
+      "ttl": 2592000,
+      "cachingStrategy": "standard",
+      "conditions": {
+        "fileSize": {
+          "min": 0,
+          "max": 104857600
+        },
+        "privacy": ["public", "private", "dao-only"]
+      },
+      "costOptimization": {
+        "enabled": true,
+        "maxCostPerGB": 0.05
+      }
+    },
+    "public": {
+      "name": "Public Content Pinning",
+      "description": "High availability for public content",
+      "minReplicas": 3,
+      "maxReplicas": 10,
+      "geoDistribution": [
+        "us-east-1", 
+        "us-west-2", 
+        "eu-west-1", 
+        "ap-southeast-1"
+      ],
+      "priority": "high",
+      "ttl": 7776000,
+      "cachingStrategy": "aggressive",
+      "cdnIntegration": true,
+      "conditions": {
+        "privacy": ["public"],
+        "accessCount": {
+          "min": 0
+        }
+      },
+      "costOptimization": {
+        "enabled": true,
+        "maxCostPerGB": 0.1
+      }
+    },
+    "hot": {
+      "name": "Hot Content Pinning",
+      "description": "Maximum availability for frequently accessed content",
+      "minReplicas": 5,
+      "maxReplicas": 15,
+      "geoDistribution": [
+        "us-east-1",
+        "us-west-2", 
+        "eu-west-1",
+        "eu-central-1",
+        "ap-southeast-1",
+        "ap-northeast-1"
+      ],
+      "priority": "critical",
+      "ttl": 15552000,
+      "cachingStrategy": "edge",
+      "cdnIntegration": true,
+      "edgeOptimization": true,
+      "conditions": {
+        "accessCount": {
+          "min": 100
+        },
+        "accessFrequency": {
+          "period": "24h",
+          "min": 10
+        }
+      },
+      "costOptimization": {
+        "enabled": false,
+        "maxCostPerGB": 0.2
+      }
+    },
+    "cold": {
+      "name": "Cold Storage Pinning",
+      "description": "Cost-effective storage for rarely accessed content",
+      "minReplicas": 1,
+      "maxReplicas": 2,
+      "geoDistribution": ["us-east-1"],
+      "priority": "low",
+      "ttl": 1296000,
+      "cachingStrategy": "minimal",
+      "archivalStorage": true,
+      "conditions": {
+        "lastAccessed": {
+          "olderThan": "90d"
+        },
+        "accessCount": {
+          "max": 5
+        }
+      },
+      "costOptimization": {
+        "enabled": true,
+        "maxCostPerGB": 0.01
+      }
+    },
+    "critical": {
+      "name": "Critical System Data",
+      "description": "Maximum redundancy for critical system data",
+      "minReplicas": 7,
+      "maxReplicas": 20,
+      "geoDistribution": [
+        "us-east-1",
+        "us-west-2",
+        "eu-west-1",
+        "eu-central-1",
+        "ap-southeast-1",
+        "ap-northeast-1",
+        "ca-central-1"
+      ],
+      "priority": "critical",
+      "ttl": 31536000,
+      "cachingStrategy": "aggressive",
+      "cdnIntegration": true,
+      "edgeOptimization": true,
+      "immutable": true,
+      "conditions": {
+        "tags": ["system", "critical", "audit"],
+        "privacy": ["system"]
+      },
+      "costOptimization": {
+        "enabled": false,
+        "maxCostPerGB": 1.0
+      }
+    },
+    "temporary": {
+      "name": "Temporary Content",
+      "description": "Short-term storage for temporary files",
+      "minReplicas": 1,
+      "maxReplicas": 2,
+      "geoDistribution": ["us-east-1"],
+      "priority": "low",
+      "ttl": 86400,
+      "cachingStrategy": "none",
+      "autoDelete": true,
+      "conditions": {
+        "tags": ["temp", "cache", "preview"],
+        "maxAge": "24h"
+      },
+      "costOptimization": {
+        "enabled": true,
+        "maxCostPerGB": 0.001
+      }
+    }
+  },
+  "quotaSettings": {
+    "defaultQuota": 1073741824,
+    "warningThreshold": 0.8,
+    "criticalThreshold": 0.95,
+    "overage": {
+      "enabled": true,
+      "costPerGB": 0.1,
+      "currency": "QToken",
+      "maxOveragePercent": 0.2
+    },
+    "tiers": {
+      "free": {
+        "quota": 1073741824,
+        "description": "1GB free tier"
+      },
+      "basic": {
+        "quota": 10737418240,
+        "description": "10GB basic tier",
+        "cost": 5
+      },
+      "premium": {
+        "quota": 107374182400,
+        "description": "100GB premium tier",
+        "cost": 25
+      },
+      "enterprise": {
+        "quota": 1099511627776,
+        "description": "1TB enterprise tier",
+        "cost": 100
+      }
+    }
+  },
+  "deduplicationSettings": {
+    "enabled": true,
+    "hashAlgorithm": "sha256",
+    "chunkSize": 262144,
+    "minFileSize": 1024,
+    "maxCacheSize": 1000000,
+    "cacheEvictionPolicy": "lru",
+    "verificationEnabled": true
+  },
+  "garbageCollectionSettings": {
+    "interval": 3600000,
+    "batchSize": 100,
+    "gracePeriod": 86400000,
+    "orphanThreshold": 604800000,
+    "maxProcessingTime": 1800000,
+    "retentionPolicies": {
+      "audit-logs": {
+        "period": "P7Y",
+        "policy": "ARCHIVE"
+      },
+      "user-messages": {
+        "period": "P2Y", 
+        "policy": "DELETE"
+      },
+      "transaction-records": {
+        "period": "P10Y",
+        "policy": "ARCHIVE"
+      },
+      "session-data": {
+        "period": "P30D",
+        "policy": "DELETE"
+      },
+      "temp-files": {
+        "period": "P7D",
+        "policy": "DELETE"
+      },
+      "media-files": {
+        "period": "P5Y",
+        "policy": "ARCHIVE"
+      },
+      "backup-data": {
+        "period": "P3Y",
+        "policy": "ARCHIVE"
+      }
+    }
+  },
+  "backupSettings": {
+    "verificationInterval": 86400000,
+    "redundancyCheck": true,
+    "integrityCheck": true,
+    "recoveryTestInterval": 604800000,
+    "backupRetention": {
+      "daily": 30,
+      "weekly": 12,
+      "monthly": 12,
+      "yearly": 7
+    },
+    "recoveryObjectives": {
+      "rto": 3600,
+      "rpo": 900
+    }
+  },
+  "performanceSettings": {
+    "maxConcurrentOperations": 100,
+    "operationTimeout": 30000,
+    "retryPolicy": {
+      "maxAttempts": 3,
+      "baseDelay": 1000,
+      "maxDelay": 30000,
+      "backoffMultiplier": 2,
+      "jitter": true
+    },
+    "circuitBreaker": {
+      "failureThreshold": 5,
+      "recoveryTimeout": 30000,
+      "monitoringWindow": 60000,
+      "halfOpenMaxCalls": 3
+    }
+  },
+  "securitySettings": {
+    "encryptionAtRest": true,
+    "encryptionInTransit": true,
+    "keyRotationInterval": 2592000,
+    "auditLogging": true,
+    "accessLogging": true,
+    "integrityChecking": true,
+    "allowedRegions": [
+      "us-east-1",
+      "us-west-2", 
+      "eu-west-1",
+      "eu-central-1",
+      "ap-southeast-1",
+      "ap-northeast-1",
+      "ca-central-1"
+    ],
+    "dataClassification": {
+      "public": {
+        "encryption": "optional",
+        "replication": "standard"
+      },
+      "private": {
+        "encryption": "required",
+        "replication": "enhanced"
+      },
+      "confidential": {
+        "encryption": "required",
+        "replication": "maximum",
+        "auditLevel": "detailed"
+      },
+      "system": {
+        "encryption": "required",
+        "replication": "critical",
+        "auditLevel": "comprehensive",
+        "immutable": true
+      }
+    }
+  },
+  "costOptimizationSettings": {
+    "enabled": true,
+    "budgetLimits": {
+      "daily": 100,
+      "monthly": 2000,
+      "yearly": 20000
+    },
+    "costAlerts": {
+      "warning": 0.8,
+      "critical": 0.95
+    },
+    "optimizationStrategies": {
+      "deduplication": true,
+      "compression": true,
+      "tieredStorage": true,
+      "lifecycleManagement": true
+    },
+    "reportingInterval": 86400000
+  },
+  "complianceSettings": {
+    "gdprCompliance": true,
+    "dataRetentionPolicies": true,
+    "rightToErasure": true,
+    "dataPortability": true,
+    "consentManagement": true,
+    "auditTrails": true,
+    "dataLineage": true,
+    "privacyByDesign": true
+  }
+}

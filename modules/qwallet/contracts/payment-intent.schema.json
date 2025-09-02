@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.com/qwallet/payment-intent.json",
+  "title": "Payment Intent",
+  "description": "Schema for Qwallet payment intent objects",
+  "type": "object",
+  "properties": {
+    "intentId": {
+      "type": "string",
+      "pattern": "^intent_[a-f0-9]{32}$",
+      "description": "Unique payment intent identifier"
+    },
+    "actor": {
+      "$ref": "https://schemas.anarq.com/common/identity-ref.json",
+      "description": "Identity creating the payment intent"
+    },
+    "amount": {
+      "type": "number",
+      "minimum": 0.01,
+      "maximum": 1000000,
+      "description": "Payment amount"
+    },
+    "currency": {
+      "type": "string",
+      "enum": ["QToken", "PI"],
+      "description": "Payment currency"
+    },
+    "recipient": {
+      "type": "string",
+      "description": "Recipient sQuid ID or wallet address"
+    },
+    "purpose": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Payment purpose description"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Additional payment metadata"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PENDING", "SIGNED", "SETTLED", "FAILED", "EXPIRED"],
+      "description": "Payment intent status"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Expiration timestamp"
+    },
+    "fees": {
+      "type": "object",
+      "properties": {
+        "network": {
+          "type": "number",
+          "minimum": 0
+        },
+        "platform": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": ["network", "platform", "total"]
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "daily": {
+          "type": "number",
+          "minimum": 0
+        },
+        "monthly": {
+          "type": "number",
+          "minimum": 0
+        },
+        "daoLimit": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "required": [
+    "intentId",
+    "actor",
+    "amount",
+    "currency",
+    "recipient",
+    "status",
+    "createdAt",
+    "expiresAt"
+  ],
+  "additionalProperties": false
+}

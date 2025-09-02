@@ -1,0 +1,431 @@
+openapi: 3.0.3
+info:
+  title: Qonsent API
+  description: Policies & Permissions module for Q ecosystem with UCAN policy engine
+  version: 2.0.0
+  contact:
+    name: Q Ecosystem
+    url: https://github.com/anarq/qonsent
+
+servers:
+  - url: http://localhost:3003/api/v1
+    description: Development server
+  - url: https://api.q.anarq.org/qonsent/v1
+    description: Production server
+
+security:
+  - squidAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      tags: [System]
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /qonsent/check:
+    post:
+      summary: Check permissions for a resource
+      tags: [Permissions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckPermissionRequest'
+      responses:
+        '200':
+          description: Permission check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckPermissionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /qonsent/grant:
+    post:
+      summary: Grant permissions to an identity
+      tags: [Permissions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantPermissionRequest'
+      responses:
+        '200':
+          description: Permission granted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GrantPermissionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /qonsent/revoke:
+    post:
+      summary: Revoke permissions from an identity
+      tags: [Permissions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokePermissionRequest'
+      responses:
+        '200':
+          description: Permission revoked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokePermissionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /qonsent/policies:
+    get:
+      summary: List policies for a resource or identity
+      tags: [Policies]
+      parameters:
+        - name: resource
+          in: query
+          schema:
+            type: string
+          description: Resource identifier
+        - name: identity
+          in: query
+          schema:
+            type: string
+          description: Identity DID
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of policies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListPoliciesResponse'
+
+    post:
+      summary: Create or update a policy
+      tags: [Policies]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePolicyRequest'
+      responses:
+        '201':
+          description: Policy created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePolicyResponse'
+
+  /qonsent/policies/{policyId}:
+    delete:
+      summary: Delete a policy
+      tags: [Policies]
+      parameters:
+        - name: policyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Policy deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletePolicyResponse'
+
+components:
+  securitySchemes:
+    squidAuth:
+      type: http
+      scheme: bearer
+      description: sQuid identity token
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        dependencies:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [up, down, degraded]
+              latency:
+                type: number
+              lastCheck:
+                type: string
+                format: date-time
+
+    CheckPermissionRequest:
+      type: object
+      required: [resource, identity, action]
+      properties:
+        resource:
+          type: string
+          description: Resource identifier (e.g., "qdrive:file:abc123")
+        identity:
+          type: string
+          description: Identity DID
+        action:
+          type: string
+          description: Action to check (e.g., "read", "write", "delete")
+        context:
+          type: object
+          description: Additional context for permission check
+
+    CheckPermissionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        data:
+          type: object
+          properties:
+            allowed:
+              type: boolean
+            reason:
+              type: string
+            policy:
+              type: object
+            expiresAt:
+              type: string
+              format: date-time
+
+    GrantPermissionRequest:
+      type: object
+      required: [resource, identity, permissions]
+      properties:
+        resource:
+          type: string
+          description: Resource identifier
+        identity:
+          type: string
+          description: Target identity DID
+        permissions:
+          type: array
+          items:
+            type: string
+          description: List of permissions to grant
+        expiresAt:
+          type: string
+          format: date-time
+          description: Optional expiration time
+        conditions:
+          type: object
+          description: Additional conditions for the grant
+
+    GrantPermissionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        data:
+          type: object
+          properties:
+            grantId:
+              type: string
+            resource:
+              type: string
+            identity:
+              type: string
+            permissions:
+              type: array
+              items:
+                type: string
+            expiresAt:
+              type: string
+              format: date-time
+            createdAt:
+              type: string
+              format: date-time
+
+    RevokePermissionRequest:
+      type: object
+      required: [resource, identity]
+      properties:
+        resource:
+          type: string
+          description: Resource identifier
+        identity:
+          type: string
+          description: Target identity DID
+        permissions:
+          type: array
+          items:
+            type: string
+          description: Specific permissions to revoke (if empty, revokes all)
+
+    RevokePermissionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        data:
+          type: object
+          properties:
+            resource:
+              type: string
+            identity:
+              type: string
+            revokedPermissions:
+              type: array
+              items:
+                type: string
+            revokedAt:
+              type: string
+              format: date-time
+
+    CreatePolicyRequest:
+      type: object
+      required: [name, rules]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        rules:
+          type: array
+          items:
+            type: object
+        scope:
+          type: string
+          enum: [global, dao, resource]
+
+    CreatePolicyResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        data:
+          type: object
+          properties:
+            policyId:
+              type: string
+            name:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+
+    ListPoliciesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        data:
+          type: object
+          properties:
+            policies:
+              type: array
+              items:
+                type: object
+            total:
+              type: integer
+            limit:
+              type: integer
+            offset:
+              type: integer
+
+    DeletePolicyResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+        data:
+          type: object
+          properties:
+            policyId:
+              type: string
+            deletedAt:
+              type: string
+              format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [error]
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

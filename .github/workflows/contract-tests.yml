@@ -1,0 +1,263 @@
+name: Contract Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'modules/**/contracts/**'
+      - 'modules/**/events/**'
+      - 'modules/**/openapi.yaml'
+      - 'modules/**/mcp.json'
+      - 'modules/**/package.json'
+      - 'libs/anarq/common-schemas/**'
+      - 'libs/anarq/testing/**'
+      - '.github/workflows/contract-tests.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'modules/**/contracts/**'
+      - 'modules/**/events/**'
+      - 'modules/**/openapi.yaml'
+      - 'modules/**/mcp.json'
+      - 'modules/**/package.json'
+      - 'libs/anarq/common-schemas/**'
+      - 'libs/anarq/testing/**'
+      - '.github/workflows/contract-tests.yml'
+
+env:
+  NODE_VERSION: '20'
+  CI_COVERAGE_THRESHOLD: 80
+  CI_MAX_WARNINGS: 10
+  CI_FAIL_ON_WARNINGS: true
+  CI_PARALLEL: true
+  CI_TIMEOUT: 60000
+
+jobs:
+  contract-tests:
+    name: Contract Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd libs/anarq/common-schemas && npm ci
+          cd ../testing && npm ci
+
+      - name: Build common libraries
+        run: |
+          cd libs/anarq/common-schemas && npm run build
+          cd ../testing && npm run build
+
+      - name: Create test results directory
+        run: mkdir -p test-results/contract-tests
+
+      - name: Run contract tests
+        id: contract-tests
+        run: |
+          export GITHUB_PR_NUMBER=${{ github.event.number }}
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          node scripts/contract-test-ci.mjs
+        continue-on-error: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: contract-test-results
+          path: test-results/contract-tests/
+          retention-days: 30
+
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Contract Tests
+          path: test-results/contract-tests/contract-test-results.xml
+          reporter: java-junit
+          fail-on-error: true
+
+      - name: Comment PR with results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request' && always()
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            try {
+              const summaryPath = path.join('test-results/contract-tests', 'ci-summary.json');
+              if (fs.existsSync(summaryPath)) {
+                const summary = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+                
+                const statusIcon = summary.status === 'SUCCESS' ? '✅' : '❌';
+                const coverageColor = summary.coverage >= 80 ? '🟢' : summary.coverage >= 60 ? '🟡' : '🔴';
+                
+                const comment = `## Contract Test Results ${statusIcon}
+
+**Status**: ${summary.status}  
+**Tests**: ${summary.tests.passed}/${summary.tests.total} passed  
+**Coverage**: ${coverageColor} ${summary.coverage.toFixed(1)}%  
+**Duration**: ${(summary.duration / 1000).toFixed(2)}s  
+**Warnings**: ${summary.tests.warnings}
+
+### Quality Gates
+${summary.qualityGates.passed ? '✅ All quality gates passed' : '❌ Quality gates failed'}
+
+${summary.qualityGates.failures.length > 0 ? `
+**Gate Failures:**
+${summary.qualityGates.failures.map(f => `- ❌ ${f}`).join('\n')}
+` : ''}
+
+<details>
+<summary>📊 View detailed reports</summary>
+
+The following artifacts are available for download:
+- HTML Report
+- JUnit Results  
+- JSON Report
+
+</details>
+
+---
+*Contract tests run on commit ${context.sha.substring(0, 7)}*`;
+
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: comment
+                });
+              }
+            } catch (error) {
+              console.log('Failed to post PR comment:', error.message);
+            }
+
+      - name: Generate coverage badge
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if [ -f "test-results/contract-tests/badge.json" ]; then
+            echo "Coverage badge data generated"
+            # This could be used with shields.io or similar service
+          fi
+
+      - name: Check contract test results
+        if: always()
+        run: |
+          if [ -f "test-results/contract-tests/ci-summary.json" ]; then
+            STATUS=$(cat test-results/contract-tests/ci-summary.json | jq -r '.status')
+            if [ "$STATUS" != "SUCCESS" ]; then
+              echo "Contract tests failed with status: $STATUS"
+              exit 1
+            fi
+          else
+            echo "No test results found"
+            exit 1
+          fi
+
+  contract-validation:
+    name: Individual Module Validation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    strategy:
+      matrix:
+        module: [
+          'qchat', 'qdrive', 'qerberos', 'qindex', 'qlock', 
+          'qmail', 'qmarket', 'qmask', 'qnet', 'qonsent', 
+          'qpic', 'qwallet', 'squid', 'dao'
+        ]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd libs/anarq/common-schemas && npm ci
+          cd ../testing && npm ci
+
+      - name: Build common libraries
+        run: |
+          cd libs/anarq/common-schemas && npm run build
+          cd ../testing && npm run build
+
+      - name: Validate module contract
+        run: |
+          if [ -d "modules/${{ matrix.module }}" ]; then
+            npx contract-test validate modules/${{ matrix.module }} --verbose
+          else
+            echo "Module ${{ matrix.module }} not found, skipping"
+          fi
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [contract-tests]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  dependency-check:
+    name: Dependency Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: |
+          npm audit --audit-level=high --production
+          cd libs/anarq/common-schemas && npm audit --audit-level=high --production
+          cd ../testing && npm audit --audit-level=high --production
+
+      - name: Check for outdated dependencies
+        run: |
+          npm outdated || true
+          cd libs/anarq/common-schemas && npm outdated || true
+          cd ../testing && npm outdated || true

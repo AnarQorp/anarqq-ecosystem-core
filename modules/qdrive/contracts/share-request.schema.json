@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.anarq.org/qdrive/share-request.json",
+  "title": "File Share Request",
+  "description": "Schema for file sharing requests in Qdrive",
+  "type": "object",
+  "properties": {
+    "recipients": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^squid_[a-zA-Z0-9]{32}$",
+        "description": "sQuid ID of recipient"
+      },
+      "minItems": 1,
+      "maxItems": 100,
+      "uniqueItems": true,
+      "description": "List of recipient sQuid IDs"
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["read", "download", "share"]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "default": ["read"],
+      "description": "Permissions to grant"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Share expiration time (optional)"
+    },
+    "password": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128,
+      "description": "Optional password protection"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Optional message to recipients"
+    },
+    "notifyRecipients": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to notify recipients"
+    },
+    "allowResharing": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether recipients can reshare"
+    },
+    "trackAccess": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to track access to shared file"
+    }
+  },
+  "required": ["recipients"],
+  "additionalProperties": false
+}

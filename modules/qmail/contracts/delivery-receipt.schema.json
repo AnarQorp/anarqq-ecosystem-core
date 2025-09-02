@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.q.network/qmail/delivery-receipt.schema.json",
+  "title": "Qmail Delivery Receipt Schema",
+  "description": "Schema for cryptographic delivery receipts",
+  "type": "object",
+  "properties": {
+    "receiptId": {
+      "type": "string",
+      "pattern": "^rcpt_[a-zA-Z0-9_-]+$",
+      "description": "Unique receipt identifier"
+    },
+    "messageId": {
+      "type": "string",
+      "pattern": "^msg_[a-zA-Z0-9_-]+$",
+      "description": "Associated message ID"
+    },
+    "recipientId": {
+      "type": "string",
+      "pattern": "^squid_[a-zA-Z0-9_-]+$",
+      "description": "Recipient sQuid identity ID"
+    },
+    "senderId": {
+      "type": "string",
+      "pattern": "^squid_[a-zA-Z0-9_-]+$",
+      "description": "Original sender sQuid identity ID"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["DELIVERED", "READ", "FAILED", "EXPIRED"],
+      "description": "Delivery status"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Receipt generation timestamp"
+    },
+    "deliveryTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Message delivery timestamp"
+    },
+    "readTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Message read timestamp (optional)"
+    },
+    "signature": {
+      "type": "string",
+      "description": "Cryptographic signature of receipt"
+    },
+    "receiptData": {
+      "type": "string",
+      "description": "Base64 encoded receipt data"
+    },
+    "verificationHash": {
+      "type": "string",
+      "description": "Hash for receipt verification"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "deliveryMethod": {
+          "type": "string",
+          "enum": ["DIRECT", "RELAY", "STORE_FORWARD"],
+          "description": "Message delivery method"
+        },
+        "networkLatency": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Network latency in milliseconds"
+        },
+        "encryptionVerified": {
+          "type": "boolean",
+          "description": "Whether encryption was verified"
+        },
+        "integrityVerified": {
+          "type": "boolean",
+          "description": "Whether message integrity was verified"
+        },
+        "auditTrail": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "event": {
+                "type": "string"
+              },
+              "nodeId": {
+                "type": "string"
+              }
+            },
+            "required": ["timestamp", "event", "nodeId"]
+          },
+          "description": "Delivery audit trail"
+        }
+      }
+    }
+  },
+  "required": [
+    "receiptId",
+    "messageId",
+    "recipientId",
+    "senderId",
+    "status",
+    "timestamp",
+    "signature",
+    "receiptData",
+    "verificationHash"
+  ],
+  "additionalProperties": false
+}

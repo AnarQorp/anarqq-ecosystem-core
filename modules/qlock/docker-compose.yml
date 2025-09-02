@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  qlock:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - QLOCK_MODE=standalone
+      - QLOCK_KMS_ENDPOINT=mock://localhost
+      - QLOCK_HSM_ENABLED=false
+      - QLOCK_PQC_ENABLED=true
+      - QLOCK_AUDIT_ENABLED=true
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    volumes:
+      - ./src:/app/src
+      - ./security/keys:/app/security/keys
+    networks:
+      - qlock-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - qlock-network
+
+  # Mock services for standalone mode
+  mock-kms:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./mocks/kms-mock.conf:/etc/nginx/nginx.conf
+    networks:
+      - qlock-network
+
+volumes:
+  redis-data:
+
+networks:
+  qlock-network:
+    driver: bridge

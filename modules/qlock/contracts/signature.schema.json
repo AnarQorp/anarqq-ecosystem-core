@@ -1,0 +1,191 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://anarq.com/schemas/qlock/signature.json",
+  "title": "Qlock Signature Schema",
+  "description": "Schema for Qlock digital signature operations",
+  "definitions": {
+    "SignatureRequest": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "Data to sign"
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": ["ECDSA-P256", "RSA-PSS", "Dilithium-3", "Falcon-512"],
+          "default": "ECDSA-P256"
+        },
+        "identityId": {
+          "type": "string",
+          "description": "sQuid identity ID"
+        },
+        "keyId": {
+          "type": "string",
+          "description": "Specific signing key ID"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "hashAlgorithm": {
+              "type": "string",
+              "enum": ["SHA-256", "SHA-384", "SHA-512", "SHAKE-256"],
+              "default": "SHA-256"
+            },
+            "includeTimestamp": {
+              "type": "boolean",
+              "default": true
+            },
+            "includeCertChain": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        }
+      },
+      "required": ["data", "identityId"]
+    },
+    "SignatureResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["ok", "error"]
+        },
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "signature": {
+              "type": "string"
+            },
+            "algorithm": {
+              "type": "string"
+            },
+            "publicKey": {
+              "type": "string"
+            },
+            "keyId": {
+              "type": "string"
+            },
+            "metadata": {
+              "$ref": "#/definitions/SignatureMetadata"
+            }
+          },
+          "required": ["signature", "algorithm", "publicKey", "keyId", "metadata"]
+        }
+      },
+      "required": ["status", "code", "message"]
+    },
+    "VerificationRequest": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "Original data that was signed"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Digital signature to verify"
+        },
+        "publicKey": {
+          "type": "string",
+          "description": "Public key for verification"
+        },
+        "algorithm": {
+          "type": "string",
+          "description": "Signature algorithm used"
+        },
+        "metadata": {
+          "$ref": "#/definitions/SignatureMetadata"
+        }
+      },
+      "required": ["data", "signature", "publicKey"]
+    },
+    "VerificationResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["ok", "error"]
+        },
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "valid": {
+              "type": "boolean"
+            },
+            "algorithm": {
+              "type": "string"
+            },
+            "verifiedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "timestampValid": {
+                  "type": "boolean"
+                },
+                "certChainValid": {
+                  "type": "boolean"
+                },
+                "keyValid": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "required": ["valid", "verifiedAt"]
+        }
+      },
+      "required": ["status", "code", "message"]
+    },
+    "SignatureMetadata": {
+      "type": "object",
+      "properties": {
+        "algorithm": {
+          "type": "string"
+        },
+        "hashAlgorithm": {
+          "type": "string"
+        },
+        "keyId": {
+          "type": "string"
+        },
+        "keySize": {
+          "type": "integer"
+        },
+        "quantumResistant": {
+          "type": "boolean"
+        },
+        "signedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "timestamp": {
+          "type": "integer"
+        },
+        "nonce": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": ["algorithm", "keyId", "signedAt", "version"]
+    }
+  }
+}

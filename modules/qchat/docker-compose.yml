@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  qchat:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - QCHAT_PORT=3001
+      - QCHAT_MODE=standalone
+      - QCHAT_JWT_SECRET=dev-secret-key-change-in-production
+      - QCHAT_ENCRYPTION_KEY=dev-encryption-key-change-in-production
+      - QCHAT_RATE_LIMIT_WINDOW=60000
+      - QCHAT_RATE_LIMIT_MAX=100
+      - QCHAT_WS_HEARTBEAT_INTERVAL=30000
+      - QCHAT_WS_MAX_CONNECTIONS=1000
+      # Mock service URLs (standalone mode)
+      - SQUID_URL=http://qchat-mocks:3010
+      - QLOCK_URL=http://qchat-mocks:3020
+      - QONSENT_URL=http://qchat-mocks:3030
+      - QINDEX_URL=http://qchat-mocks:3040
+      - QERBEROS_URL=http://qchat-mocks:3050
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+    depends_on:
+      - qchat-mocks
+      - redis
+    networks:
+      - qchat-network
+
+  qchat-mocks:
+    build:
+      context: .
+      dockerfile: Dockerfile.mocks
+    ports:
+      - "3010:3010"  # sQuid mock
+      - "3020:3020"  # Qlock mock
+      - "3030:3030"  # Qonsent mock
+      - "3040:3040"  # Qindex mock
+      - "3050:3050"  # Qerberos mock
+    environment:
+      - NODE_ENV=development
+    networks:
+      - qchat-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - qchat-network
+
+  # Optional: IPFS node for development
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - "4001:4001"  # P2P
+      - "5001:5001"  # API
+      - "8080:8080"  # Gateway
+    volumes:
+      - ipfs-data:/data/ipfs
+    networks:
+      - qchat-network
+
+volumes:
+  redis-data:
+  ipfs-data:
+
+networks:
+  qchat-network:
+    driver: bridge

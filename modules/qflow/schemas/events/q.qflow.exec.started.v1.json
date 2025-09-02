@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "q.qflow.exec.started.v1",
+  "title": "Qflow Execution Started Event",
+  "description": "Event emitted when a flow execution is started",
+  "type": "object",
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this event"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the event occurred"
+    },
+    "version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Event schema version"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source system that generated the event"
+    },
+    "actor": {
+      "type": "string",
+      "description": "sQuid identity of the user who started the execution"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "executionId": {
+          "type": "string",
+          "description": "Unique identifier for the execution instance"
+        },
+        "flowId": {
+          "type": "string",
+          "description": "Identifier of the flow being executed"
+        },
+        "flowVersion": {
+          "type": "string",
+          "description": "Version of the flow being executed"
+        },
+        "triggerType": {
+          "type": "string",
+          "enum": ["manual", "webhook", "event", "schedule"],
+          "description": "Type of trigger that started the execution"
+        },
+        "daoSubnet": {
+          "type": "string",
+          "description": "DAO subnet where the execution is running"
+        },
+        "inputData": {
+          "type": "object",
+          "description": "Input data provided to the execution"
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "permissions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "variables": {
+              "type": "object"
+            }
+          }
+        },
+        "estimatedDuration": {
+          "type": "number",
+          "description": "Estimated execution duration in milliseconds"
+        }
+      },
+      "required": ["executionId", "flowId", "flowVersion", "triggerType"]
+    }
+  },
+  "required": ["eventId", "timestamp", "version", "source", "actor", "data"]
+}
