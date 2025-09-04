@@ -189,7 +189,12 @@ Las contribuciones son bienvenidas. Por favor, lee nuestras [pautas de contribuc
 
 ## Licencia
 
-Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más información.
+Este proyecto está disponible bajo una licencia dual:
+
+- **Código fuente**: Licencia MIT - Consulta el archivo [LICENSE](LICENSE) para más información
+- **Documentación y contenido**: Licencia CC BY-NC-SA 4.0 - Consulta el archivo [LICENSE-CC-BY-NC-SA](LICENSE-CC-BY-NC-SA) para más información
+
+La licencia MIT aplica al código fuente, mientras que la licencia Creative Commons BY-NC-SA 4.0 aplica a la documentación, contenido educativo y materiales relacionados.
 
 ## Soporte
 
@@ -197,4 +202,9 @@ Si tienes problemas o preguntas, por favor [abre un issue](https://github.com/tu
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is available under dual licensing:
+
+- **Source code**: MIT License - See [LICENSE](LICENSE) file for details
+- **Documentation and content**: CC BY-NC-SA 4.0 License - See [LICENSE-CC-BY-NC-SA](LICENSE-CC-BY-NC-SA) file for details
+
+The MIT license applies to the source code, while the Creative Commons BY-NC-SA 4.0 license applies to documentation, educational content, and related materials.
