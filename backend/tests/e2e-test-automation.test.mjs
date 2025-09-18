@@ -7,7 +7,7 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { EventBusService } from '../services/EventBusService.mjs';
-import { ObservabilityService } from '../services/ObservabilityService.mjs';
+import ObservabilityService from '../services/ObservabilityService.mjs';
 import { performance } from 'perf_hooks';
 import fs from 'fs/promises';
 import path from 'path';

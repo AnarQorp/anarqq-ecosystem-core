@@ -51,19 +51,49 @@ detect_system() {
     local os_type=""
     local installer=""
     
-    # Detect operating system
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        os_type="Linux"
-        installer="install-anarqq-demo.sh"
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-        os_type="macOS"
-        installer="install-anarqq-demo.sh"
-    elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
-        os_type="Windows (Git Bash/Cygwin)"
-        installer="install-anarqq-demo.sh"
+    # Try to use cross-platform compatibility layer if available
+    if [ -f "cross-platform-compatibility.sh" ]; then
+        source cross-platform-compatibility.sh
+        initialize_platform_compatibility
+        
+        # Use detailed platform information
+        case "$PLATFORM_OS" in
+            Linux)
+                if [[ "$PLATFORM_IS_WSL" == true ]]; then
+                    os_type="WSL ($PLATFORM_DISTRO)"
+                else
+                    os_type="Linux ($PLATFORM_DISTRO)"
+                fi
+                installer="install-anarqq-demo.sh"
+                ;;
+            macOS)
+                os_type="macOS ($PLATFORM_VERSION)"
+                installer="install-anarqq-demo.sh"
+                ;;
+            Windows)
+                os_type="Windows"
+                installer="install-anarqq-demo.sh"
+                ;;
+            *)
+                os_type="$PLATFORM_OS ($PLATFORM_DISTRO)"
+                installer="install-anarqq-demo.sh"
+                ;;
+        esac
     else
-        os_type="Unknown ($OSTYPE)"
-        installer=""
+        # Fallback to basic detection
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            os_type="Linux"
+            installer="install-anarqq-demo.sh"
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            os_type="macOS"
+            installer="install-anarqq-demo.sh"
+        elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
+            os_type="Windows (Git Bash/Cygwin)"
+            installer="install-anarqq-demo.sh"
+        else
+            os_type="Unknown ($OSTYPE)"
+            installer=""
+        fi
     fi
     
     echo "$os_type|$installer"

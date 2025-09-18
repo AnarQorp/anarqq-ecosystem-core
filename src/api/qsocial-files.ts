@@ -4,7 +4,7 @@
  * Frontend service for uploading files to Storj with IPFS CID generation
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3003/api';
 
 export interface FileUploadResult {
   success: boolean;

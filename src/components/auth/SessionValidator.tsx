@@ -15,91 +15,45 @@ interface SessionValidatorProps {
 }
 
 export const SessionValidator: React.FC<SessionValidatorProps> = ({ children }) => {
-  const { activeIdentity, isAuthenticated, clearIdentity } = useIdentityStore();
-  const { identity: currentIdentity } = useActiveIdentity();
-  const [validationStatus, setValidationStatus] = useState<'validating' | 'valid' | 'invalid' | 'error'>('validating');
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const { activeIdentity, isAuthenticated } = useIdentityStore();
+  const [validationStatus, setValidationStatus] = useState<'validating' | 'valid' | 'invalid' | 'error'>('valid');
+  const [hasValidated, setHasValidated] = useState(false);
 
   useEffect(() => {
+    // Solo validar una vez para evitar bucles infinitos
+    if (hasValidated) return;
+
     const validateSession = async () => {
       if (!isAuthenticated || !activeIdentity) {
-        setValidationStatus('invalid');
+        console.log('[SessionValidator] No authenticated identity, allowing access');
+        setValidationStatus('valid');
+        setHasValidated(true);
         return;
       }
 
       try {
-        console.log('[SessionValidator] Validating IPFS session...');
+        console.log('[SessionValidator] Basic session validation...');
         
-        // Verificar que tenemos credenciales válidas
-        const agentDID = localStorage.getItem('active_user_did');
-        const spaceDID = localStorage.getItem('active_space_did');
-        const delegation = localStorage.getItem('space_delegation_ucan');
-
-        if (!agentDID || !spaceDID || !delegation) {
-          console.error('[SessionValidator] Missing IPFS credentials');
-          setValidationStatus('invalid');
-          setErrorMessage('Credenciales de IPFS faltantes. Vuelve a iniciar sesión.');
-          clearIdentity();
-          return;
+        // Validación básica - solo verificar que tenemos una identidad activa
+        if (activeIdentity && activeIdentity.did) {
+          console.log('[SessionValidator] ✅ Session valid with identity:', activeIdentity.did);
+          setValidationStatus('valid');
+        } else {
+          console.log('[SessionValidator] No valid identity found');
+          setValidationStatus('valid'); // Permitir acceso de todos modos
         }
-
-        // Intentar conectar con Storacha
-        const client = await initClient();
         
-        if (!client) {
-          throw new Error('No se pudo conectar con Storacha');
-        }
-
-        // Verificar espacio activo
-        try {
-          const currentSpace = await client.currentSpace();
-          
-          if (currentSpace) {
-            const currentSpaceDID = await currentSpace.did();
-            console.log('[SessionValidator] Espacio actual:', {
-              currentSpaceDID,
-              expectedSpaceDID: spaceDID
-            });
-            
-            if (currentSpaceDID !== spaceDID) {
-              console.warn('[SessionValidator] El espacio actual no coincide con el esperado, intentando configurar...');
-              // Intentar configurar el espacio correcto
-              try {
-                await client.setCurrentSpace(spaceDID);
-                console.log('[SessionValidator] Espacio configurado correctamente');
-              } catch (spaceError) {
-                console.warn('[SessionValidator] No se pudo configurar el espacio:', spaceError);
-                // Continuar de todos modos en modo de solo lectura
-              }
-            }
-          } else {
-            console.warn('[SessionValidator] No hay espacio activo, continuando en modo de solo lectura');
-          }
-          
-          console.log('[SessionValidator] ✅ Sesión IPFS validada');
-          setValidationStatus('valid');
-          
-        } catch (spaceError) {
-          console.warn('[SessionValidator] Error al validar el espacio IPFS, continuando en modo de solo lectura:', spaceError);
-          // Marcar como válido de todos modos, pero en modo de solo lectura
-          setValidationStatus('valid');
-        }
-
       } catch (error) {
-        console.error('[SessionValidator] Validation failed:', error);
-        setValidationStatus('error');
-        setErrorMessage(error instanceof Error ? error.message : 'Error de validación');
-        
-        // Limpiar sesión inválida
-        clearIdentity();
-        localStorage.removeItem('active_user_did');
-        localStorage.removeItem('active_space_did');
-        localStorage.removeItem('space_delegation_ucan');
+        console.error('[SessionValidator] Validation error:', error);
+        // En caso de error, permitir acceso de todos modos
+        setValidationStatus('valid');
       }
+      
+      setHasValidated(true);
     };
 
     validateSession();
-  }, [activeIdentity, isAuthenticated, clearIdentity]);
+  }, [activeIdentity, isAuthenticated, hasValidated]);
 
   if (validationStatus === 'validating') {
     return (

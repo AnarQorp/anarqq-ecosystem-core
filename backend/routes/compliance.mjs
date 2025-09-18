@@ -5,21 +5,22 @@
 
 import express from 'express';
 import { ComplianceService } from '../services/ComplianceService.mjs';
-import { standardAuth } from '../middleware/standardAuth.mjs';
-import { validation } from '../middleware/validation.mjs';
+import { standardAuthMiddleware } from '../middleware/standardAuth.mjs';
+import { validateJoi } from '../middleware/joiValidation.mjs';
+import { validateDSR, validatePIA } from '../middleware/validation.mjs';
 
 const router = express.Router();
 const complianceService = new ComplianceService();
 
 // Middleware for compliance routes
-router.use(standardAuth);
+router.use(standardAuthMiddleware());
 
 /**
  * GDPR Endpoints
  */
 
 // Process Data Subject Request
-router.post('/gdpr/dsr', validation.validateDSR, async (req, res) => {
+router.post('/gdpr/dsr', validateDSR, async (req, res) => {
   try {
     const result = await complianceService.processDSR(req.body);
     
@@ -188,7 +189,7 @@ router.get('/retention/status', async (req, res) => {
  */
 
 // Perform privacy impact assessment
-router.post('/pia/assess', validation.validatePIA, async (req, res) => {
+router.post('/pia/assess', validatePIA, async (req, res) => {
   try {
     const pia = await complianceService.performPrivacyImpactAssessment(req.body);
     

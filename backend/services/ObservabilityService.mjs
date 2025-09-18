@@ -341,6 +341,61 @@ class ObservabilityService extends EventEmitter {
   }
 
   /**
+   * Register a custom metric
+   */
+  registerMetric(name, type, options = {}) {
+    const metric = {
+      name,
+      type,
+      help: options.help || `${name} metric`,
+      labelNames: options.labelNames || [],
+      value: type === 'counter' ? 0 : null,
+      labels: new Map()
+    };
+    
+    this.metrics.set(name, metric);
+    console.log(`[ObservabilityService] Registered metric: ${name} (${type})`);
+    return metric;
+  }
+
+  /**
+   * Update a custom metric value
+   */
+  updateMetric(name, value, labels = {}) {
+    const metric = this.metrics.get(name);
+    if (!metric) {
+      console.warn(`[ObservabilityService] Metric not found: ${name}`);
+      return;
+    }
+
+    if (Object.keys(labels).length > 0) {
+      const labelKey = JSON.stringify(labels);
+      metric.labels.set(labelKey, value);
+    } else {
+      metric.value = value;
+    }
+  }
+
+  /**
+   * Increment a counter metric
+   */
+  incrementMetric(name, labels = {}) {
+    const metric = this.metrics.get(name);
+    if (!metric || metric.type !== 'counter') {
+      console.warn(`[ObservabilityService] Counter metric not found: ${name}`);
+      return;
+    }
+
+    if (Object.keys(labels).length > 0) {
+      const labelKey = JSON.stringify(labels);
+      const currentValue = metric.labels.get(labelKey) || 0;
+      metric.labels.set(labelKey, currentValue + 1);
+    } else {
+      metric.value = (metric.value || 0) + 1;
+    }
+  }
+
+  /**
    * Reset metrics (useful for testing)
    */
   resetMetrics() {

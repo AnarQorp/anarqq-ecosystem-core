@@ -5,7 +5,7 @@
 
 import express from 'express';
 import { QflowDocumentationPipeline } from '../services/QflowDocumentationPipeline.mjs';
-import { standardAuth } from '../middleware/standardAuth.mjs';
+import { standardAuthMiddleware } from '../middleware/standardAuth.mjs';
 import { validateSchema } from '../middleware/jsonSchemaValidation.mjs';
 
 const router = express.Router();
@@ -103,7 +103,7 @@ const configUpdateSchema = {
  * Execute the documentation automation pipeline
  */
 router.post('/execute',
-  standardAuth,
+  standardAuthMiddleware(),
   validateSchema(executePipelineSchema),
   async (req, res) => {
     try {
@@ -151,7 +151,7 @@ router.post('/execute',
  * Get current pipeline status and configuration
  */
 router.get('/status',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const status = docsPipeline.getPipelineStatus();
@@ -184,7 +184,7 @@ router.get('/status',
  * Update pipeline configuration
  */
 router.post('/config',
-  standardAuth,
+  standardAuthMiddleware(),
   validateSchema(configUpdateSchema),
   async (req, res) => {
     try {
@@ -218,7 +218,7 @@ router.post('/config',
  * Get current pipeline configuration
  */
 router.get('/config',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const config = docsPipeline.getConfig();
@@ -247,7 +247,7 @@ router.get('/config',
  * Execute rollback for a specific pipeline execution
  */
 router.post('/rollback/:pipelineId',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const { pipelineId } = req.params;
@@ -278,7 +278,7 @@ router.post('/rollback/:pipelineId',
  * Get detailed pipeline metrics and performance data
  */
 router.get('/metrics',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const metrics = docsPipeline.getMetrics();
@@ -318,7 +318,7 @@ router.get('/metrics',
  * Run only the validation step without executing the full pipeline
  */
 router.post('/validate-only',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const context = {
@@ -359,7 +359,7 @@ router.post('/validate-only',
  * Run only the index regeneration step
  */
 router.post('/regenerate-index-only',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const context = {
@@ -399,7 +399,7 @@ router.post('/regenerate-index-only',
  * Run only the script generation step
  */
 router.post('/build-scripts-only',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const context = {
@@ -439,7 +439,7 @@ router.post('/build-scripts-only',
  * Run only the portal publishing step
  */
 router.post('/publish-portal-only',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const context = {

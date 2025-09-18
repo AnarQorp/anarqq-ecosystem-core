@@ -10,7 +10,7 @@ import { performance } from 'perf_hooks';
 import { ModuleDiscoveryService } from '../services/ModuleDiscoveryService.mjs';
 import { QwalletIntegrationService } from '../services/QwalletIntegrationService.mjs';
 import { EventBusService } from '../services/EventBusService.mjs';
-import { ObservabilityService } from '../services/ObservabilityService.mjs';
+import ObservabilityService from '../services/ObservabilityService.mjs';
 import { RateLimitingService } from '../services/RateLimitingService.mjs';
 import { ComplianceService } from '../services/ComplianceService.mjs';
 import { UnifiedStorageService } from '../services/UnifiedStorageService.mjs';

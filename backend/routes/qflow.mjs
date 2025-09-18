@@ -6,7 +6,7 @@
 import express from 'express';
 import crypto from 'crypto';
 import { QflowService } from '../services/QflowService.mjs';
-import { standardAuth } from '../middleware/standardAuth.mjs';
+import { standardAuthMiddleware } from '../middleware/standardAuth.mjs';
 import { validateSchema } from '../middleware/jsonSchemaValidation.mjs';
 
 const router = express.Router();
@@ -119,7 +119,7 @@ const layerRegistrationSchema = {
  * Main evaluation endpoint for CID evaluation with coherence layers
  */
 router.post('/evaluate', 
-  standardAuth,
+  standardAuthMiddleware(),
   validateSchema(evaluateSchema),
   async (req, res) => {
     try {
@@ -167,7 +167,7 @@ router.post('/evaluate',
  * Get cached evaluation result
  */
 router.get('/evaluate/:cid',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const { cid } = req.params;
@@ -209,7 +209,7 @@ router.get('/evaluate/:cid',
  * Batch evaluation for multiple CIDs
  */
 router.post('/batch-evaluate',
-  standardAuth,
+  standardAuthMiddleware(),
   validateSchema({
     type: 'object',
     required: ['cids'],
@@ -277,7 +277,7 @@ router.post('/batch-evaluate',
  * Get registered coherence layers
  */
 router.get('/layers',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const layers = qflowService.getRegisteredLayers();
@@ -309,7 +309,7 @@ router.get('/layers',
  * Register a new coherence layer
  */
 router.post('/layers/:layerId',
-  standardAuth,
+  standardAuthMiddleware(),
   validateSchema(layerRegistrationSchema),
   async (req, res) => {
     try {
@@ -360,7 +360,7 @@ router.post('/layers/:layerId',
  * Unregister a coherence layer
  */
 router.delete('/layers/:layerId',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const { layerId } = req.params;
@@ -399,7 +399,7 @@ router.delete('/layers/:layerId',
  * Get escalation rules
  */
 router.get('/escalation-rules',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const rules = qflowService.getEscalationRules();
@@ -431,7 +431,7 @@ router.get('/escalation-rules',
  * Add or update escalation rule
  */
 router.post('/escalation-rules/:ruleId',
-  standardAuth,
+  standardAuthMiddleware(),
   validateSchema({
     type: 'object',
     required: ['action', 'priority'],
@@ -503,7 +503,7 @@ router.post('/escalation-rules/:ruleId',
  * Remove escalation rule
  */
 router.delete('/escalation-rules/:ruleId',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const { ruleId } = req.params;
@@ -542,7 +542,7 @@ router.delete('/escalation-rules/:ruleId',
  * Get Qflow service metrics
  */
 router.get('/metrics',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const metrics = qflowService.getMetrics();
@@ -571,7 +571,7 @@ router.get('/metrics',
  * Warmup cache with frequently accessed CIDs
  */
 router.post('/warmup',
-  standardAuth,
+  standardAuthMiddleware(),
   validateSchema({
     type: 'object',
     required: ['cids'],
@@ -630,7 +630,7 @@ router.post('/warmup',
  * Update Qflow configuration
  */
 router.post('/config',
-  standardAuth,
+  standardAuthMiddleware(),
   validateSchema({
     type: 'object',
     properties: {
@@ -710,7 +710,7 @@ router.post('/config',
  * Get execution optimization metrics
  */
 router.get('/optimization-metrics',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const metrics = qflowService.getOptimizationMetrics();
@@ -739,7 +739,7 @@ router.get('/optimization-metrics',
  * Cleanup resource pools
  */
 router.post('/resource-pools/cleanup',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       await qflowService.cleanup();
@@ -767,7 +767,7 @@ router.post('/resource-pools/cleanup',
  * Preload layer components for optimization
  */
 router.post('/preload-components',
-  standardAuth,
+  standardAuthMiddleware(),
   validateSchema({
     type: 'object',
     required: ['layerIds'],
@@ -828,7 +828,7 @@ router.post('/preload-components',
  * Get performance profile for a specific evaluation
  */
 router.get('/performance/profile/:evaluationId',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const { evaluationId } = req.params;
@@ -866,7 +866,7 @@ router.get('/performance/profile/:evaluationId',
  * Get identified performance bottlenecks
  */
 router.get('/performance/bottlenecks',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const bottlenecks = qflowService.getBottlenecks();
@@ -904,7 +904,7 @@ router.get('/performance/bottlenecks',
  * Get optimization recommendations
  */
 router.get('/performance/recommendations',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const limit = parseInt(req.query.limit) || 10;
@@ -942,7 +942,7 @@ router.get('/performance/recommendations',
  * Get execution statistics and trends
  */
 router.get('/performance/statistics',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const statistics = qflowService.getExecutionStatistics();
@@ -971,7 +971,7 @@ router.get('/performance/statistics',
  * Set performance baseline for regression detection
  */
 router.post('/performance/baseline',
-  standardAuth,
+  standardAuthMiddleware(),
   validateSchema({
     type: 'object',
     properties: {
@@ -1033,7 +1033,7 @@ router.post('/performance/baseline',
  * Trigger performance analysis for recent evaluations
  */
 router.post('/performance/analyze',
-  standardAuth,
+  standardAuthMiddleware(),
   async (req, res) => {
     try {
       const statistics = qflowService.getExecutionStatistics();

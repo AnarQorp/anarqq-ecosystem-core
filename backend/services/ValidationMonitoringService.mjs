@@ -6,7 +6,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { ObservabilityService } from './ObservabilityService.mjs';
+import ObservabilityService from './ObservabilityService.mjs';
 import { AlertingService } from './AlertingService.mjs';
 import { NotificationService } from './NotificationService.mjs';
 

@@ -9,8 +9,8 @@ import { ColdStartOptimizationService } from '../services/ColdStartOptimizationS
 import { BatchProcessingService } from '../services/BatchProcessingService.mjs';
 import { CostMonitoringDashboardService } from '../services/CostMonitoringDashboardService.mjs';
 import { GracefulDegradationService } from '../services/GracefulDegradationService.mjs';
-import { standardAuth } from '../middleware/standardAuth.mjs';
-import { validation } from '../middleware/validation.mjs';
+import { standardAuthMiddleware } from '../middleware/standardAuth.mjs';
+import { validateJoi } from '../middleware/joiValidation.mjs';
 
 const router = express.Router();
 
@@ -93,8 +93,8 @@ const batchConfigSchema = {
  * Set invocation limits for a module
  */
 router.post('/limits', 
-  standardAuth, 
-  validation(invocationLimitsSchema),
+  standardAuthMiddleware(), 
+  validateJoi(invocationLimitsSchema),
   async (req, res) => {
     try {
       const { module, limits, budgetAlerts, monthlyBudget } = req.body;
@@ -124,7 +124,7 @@ router.post('/limits',
 /**
  * Check invocation limits for a module
  */
-router.get('/limits/:module/:functionName/check', standardAuth, async (req, res) => {
+router.get('/limits/:module/:functionName/check', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module, functionName } = req.params;
     
@@ -148,7 +148,7 @@ router.get('/limits/:module/:functionName/check', standardAuth, async (req, res)
 /**
  * Record an invocation
  */
-router.post('/invocations', standardAuth, async (req, res) => {
+router.post('/invocations', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module, functionName, duration, memoryUsed, cost } = req.body;
     
@@ -178,7 +178,7 @@ router.post('/invocations', standardAuth, async (req, res) => {
 /**
  * Get cost dashboard data for a module
  */
-router.get('/dashboard/:module', standardAuth, async (req, res) => {
+router.get('/dashboard/:module', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module } = req.params;
     
@@ -202,7 +202,7 @@ router.get('/dashboard/:module', standardAuth, async (req, res) => {
 /**
  * Get cost optimization recommendations
  */
-router.get('/recommendations/:module', standardAuth, async (req, res) => {
+router.get('/recommendations/:module', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module } = req.params;
     
@@ -229,8 +229,8 @@ router.get('/recommendations/:module', standardAuth, async (req, res) => {
  * Configure memory profile for a function
  */
 router.post('/coldstart/profile', 
-  standardAuth, 
-  validation(memoryProfileSchema),
+  standardAuthMiddleware(), 
+  validateJoi(memoryProfileSchema),
   async (req, res) => {
     try {
       const { module, functionName, config } = req.body;
@@ -256,7 +256,7 @@ router.post('/coldstart/profile',
 /**
  * Record cold start event
  */
-router.post('/coldstart/record', standardAuth, async (req, res) => {
+router.post('/coldstart/record', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module, functionName, duration, memoryUsed, memoryAllocated } = req.body;
     
@@ -286,7 +286,7 @@ router.post('/coldstart/record', standardAuth, async (req, res) => {
 /**
  * Get cold start optimization report
  */
-router.get('/coldstart/report/:module/:functionName', standardAuth, async (req, res) => {
+router.get('/coldstart/report/:module/:functionName', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module, functionName } = req.params;
     
@@ -310,7 +310,7 @@ router.get('/coldstart/report/:module/:functionName', standardAuth, async (req, 
 /**
  * Setup warmup schedule
  */
-router.post('/coldstart/warmup/:module/:functionName', standardAuth, async (req, res) => {
+router.post('/coldstart/warmup/:module/:functionName', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module, functionName } = req.params;
     const { schedule } = req.body;
@@ -338,8 +338,8 @@ router.post('/coldstart/warmup/:module/:functionName', standardAuth, async (req,
  * Configure batch processing
  */
 router.post('/batch/config', 
-  standardAuth, 
-  validation(batchConfigSchema),
+  standardAuthMiddleware(), 
+  validateJoi(batchConfigSchema),
   async (req, res) => {
     try {
       const { module, operationType, config } = req.body;
@@ -365,7 +365,7 @@ router.post('/batch/config',
 /**
  * Add item to batch queue
  */
-router.post('/batch/add', standardAuth, async (req, res) => {
+router.post('/batch/add', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module, operationType, item, options } = req.body;
     
@@ -389,7 +389,7 @@ router.post('/batch/add', standardAuth, async (req, res) => {
 /**
  * Get batch processing statistics
  */
-router.get('/batch/stats/:module/:operationType', standardAuth, async (req, res) => {
+router.get('/batch/stats/:module/:operationType', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module, operationType } = req.params;
     
@@ -415,7 +415,7 @@ router.get('/batch/stats/:module/:operationType', standardAuth, async (req, res)
 /**
  * Get comprehensive dashboard data
  */
-router.get('/dashboard', standardAuth, async (req, res) => {
+router.get('/dashboard', standardAuthMiddleware(), async (req, res) => {
   try {
     const { timeRange = '24h' } = req.query;
     
@@ -439,7 +439,7 @@ router.get('/dashboard', standardAuth, async (req, res) => {
 /**
  * Get dashboard summary
  */
-router.get('/dashboard/summary', standardAuth, async (req, res) => {
+router.get('/dashboard/summary', standardAuthMiddleware(), async (req, res) => {
   try {
     const result = await dashboardService.getDashboardSummary();
     
@@ -463,7 +463,7 @@ router.get('/dashboard/summary', standardAuth, async (req, res) => {
 /**
  * Configure degradation strategies
  */
-router.post('/degradation/config', standardAuth, async (req, res) => {
+router.post('/degradation/config', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module, config } = req.body;
     
@@ -487,7 +487,7 @@ router.post('/degradation/config', standardAuth, async (req, res) => {
 /**
  * Trigger degradation
  */
-router.post('/degradation/trigger', standardAuth, async (req, res) => {
+router.post('/degradation/trigger', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module, trigger, severity, metadata } = req.body;
     
@@ -511,7 +511,7 @@ router.post('/degradation/trigger', standardAuth, async (req, res) => {
 /**
  * Get degradation status
  */
-router.get('/degradation/status/:module', standardAuth, async (req, res) => {
+router.get('/degradation/status/:module', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module } = req.params;
     
@@ -535,7 +535,7 @@ router.get('/degradation/status/:module', standardAuth, async (req, res) => {
 /**
  * Force recovery from degradation
  */
-router.post('/degradation/recover/:module', standardAuth, async (req, res) => {
+router.post('/degradation/recover/:module', standardAuthMiddleware(), async (req, res) => {
   try {
     const { module } = req.params;
     

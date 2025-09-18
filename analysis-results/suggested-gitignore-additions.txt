@@ -1,0 +1,4 @@
+# Suggested gitignore additions - dom 07 sep 2025 18:57:41 CEST
+# Review and add to appropriate sections of .gitignore
+
+test-*

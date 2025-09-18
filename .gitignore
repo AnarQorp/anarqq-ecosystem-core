@@ -1,35 +1,67 @@
-# Dependencies
+# ========================================
+# DEVELOPMENT DEPENDENCIES & TOOLS
+# ========================================
+# Standard development dependencies and tooling files
+
+# Node.js dependencies
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
 
-# Production builds
-dist/
-build/
-.next/
-out/
+# Package manager files (excluded from version control)
+# Note: package-lock.json is preserved via negation rules below
+.npm
+.yarn-integrity
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# IDE
+# IDE and Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
+# Operating System files
 .DS_Store
 Thumbs.db
 
-# Logs
+# ========================================
+# BUILD ARTIFACTS & GENERATED FILES
+# ========================================
+# Files generated during build process that should not be versioned
+
+# Production builds
+dist/
+build/
+.next/
+out/
+frontend-build/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Cache directories
+.cache/
+.parcel-cache/
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Test coverage
+coverage/
+*.lcov
+.nyc_output
+
+# ESLint cache
+.eslintcache
+
+# ========================================
+# RUNTIME & TEMPORARY FILES
+# ========================================
+# Files created during runtime that are temporary in nature
+
+# General logs
 logs/
 *.log
 
@@ -39,42 +71,16 @@ pids/
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Docker
-.docker/
-
 # Temporary folders
 tmp/
 temp/
 
-# Database
+# Database files (temporary/local)
 *.db
 *.sqlite
 
-# Cache
-.cache/
-.parcel-cache/
-
-# TypeScript
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
+# Docker temporary files
+.docker/
 
 # Optional REPL history
 .node_repl_history
@@ -82,17 +88,248 @@ temp/
 # Output of 'npm pack'
 *.tgz
 
-# Yarn Integrity file
-.yarn-integrity
+# ========================================
+# ENVIRONMENT & CONFIGURATION
+# ========================================
+# Environment-specific files that should not be shared
 
-# dotenv environment variables file
+# Environment variables (sensitive data)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 .env.test
 
-# Stores VSCode versions used for testing VSCode extensions
+# VSCode testing extensions
 .vscode-test
 
-# Rollback files
+# ========================================
+# ANARQ-Q ECOSYSTEM SPECIFIC EXCLUSIONS
+# ========================================
+# Files specific to the AnarQ-Q ecosystem that should not be versioned
+
+# Installer and setup logs
+anarqq-*.log
+*-installer-*.log
+anarqq-modular-installer-*.log
+
+# Test artifacts and temporary test directories
+test-unified-installer-*/
+test-modular-installation/
+test-results/
+
+# Rollback and backup files
 .rollback/
 
-# Test results
-test-results/
+# Distribution and release files
+*.tar.gz
+*.zip
+*-release/
+anarqq-ecosystem-demo-v*/
+anarqq-ecosystem-demo-release/
+
+# Generated artifacts and reports
+artifacts/
+*-artifacts/
+comprehensive-*-report.*
+enhanced-*-report.*
+validation-report.txt
+*-validation-report.*
+monitoring-*.json
+monitoring-*.html
+
+# Implementation and analysis documentation (auto-generated)
+*-implementation-summary.md
+*_IMPLEMENTATION_SUMMARY.md
+docs-audit-*.json
+docs-audit-*.md
+*-audit-*.json
+*-audit-*.md
+
+# ========================================
+# SIZE-BASED FILTERING RULES
+# ========================================
+# Patterns to exclude large temporary files while preserving essential large files
+
+# Large temporary and generated files
+# Exclude large log files (typically > 1MB)
+*.log.[0-9]*
+*.log.old
+*.log.backup
+
+# Large build artifacts and caches
+# Webpack and bundler outputs
+*.bundle.js.map
+*.chunk.js.map
+webpack-stats.json
+
+# Large test artifacts
+test-*.tar.gz
+test-*.zip
+*-test-results.tar.gz
+*-test-output.zip
+
+# Large generated documentation files
+docs-output-*.tar.gz
+generated-docs-*.zip
+
+# Large temporary database dumps
+*.sql.backup
+*.db.backup
+dump-*.sql
+
+# Large media files in temporary directories
+tmp/**/*.mp4
+tmp/**/*.avi
+tmp/**/*.mov
+temp/**/*.mp4
+temp/**/*.avi
+temp/**/*.mov
+
+# Large compressed archives in temporary locations
+tmp/**/*.tar.gz
+tmp/**/*.zip
+temp/**/*.tar.gz
+temp/**/*.zip
+
+# Build system large outputs
+build/**/*.map
+dist/**/*.map
+out/**/*.map
+
+# Large node_modules artifacts (sometimes left behind)
+node_modules/**/*.tar.gz
+node_modules/**/*.zip
+
+# ========================================
+# CORE PRESERVATION RULES (NEGATION PATTERNS)
+# ========================================
+# These negation patterns ensure essential files are NEVER ignored
+# even if they match patterns above. Order matters - these must come last.
+
+# ----------------------------------------
+# Main Installation Scripts
+# ----------------------------------------
+# Core installer scripts that users need to run the ecosystem
+!install-anarqq.sh
+!install-anarqq-demo.sh
+!install-anarqq-demo.ps1
+!install-anarqq-demo.py
+!verify-installation.sh
+
+# ----------------------------------------
+# Core Source Code Directories
+# ----------------------------------------
+# Essential source code that defines the ecosystem functionality
+
+# Modules directory - Core ecosystem modules
+!modules/
+!modules/*/
+!modules/**/*.js
+!modules/**/*.mjs
+!modules/**/*.ts
+!modules/**/*.tsx
+!modules/**/*.json
+!modules/**/*.md
+
+# Libraries directory - Shared libraries
+!libs/
+!libs/*/
+!libs/**/*.js
+!libs/**/*.mjs
+!libs/**/*.ts
+!libs/**/*.tsx
+!libs/**/*.json
+!libs/**/*.md
+
+# Source directory - Main application source
+!src/
+!src/*/
+!src/**/*.js
+!src/**/*.mjs
+!src/**/*.ts
+!src/**/*.tsx
+!src/**/*.css
+!src/**/*.json
+!src/**/*.md
+
+# ----------------------------------------
+# Configuration Files
+# ----------------------------------------
+# Essential configuration files for the ecosystem to function
+
+# Package management
+!package.json
+!package-lock.json
+
+# TypeScript configuration
+!tsconfig.json
+!tsconfig.*.json
+
+# Build and development tools configuration
+!*.config.js
+!*.config.mjs
+!*.config.ts
+!*.config.cjs
+!eslint.config.js
+!.eslintrc.*
+!tailwind.config.js
+!postcss.config.cjs
+
+# Testing configuration
+!vitest.config.ts
+!vitest.*.config.ts
+
+# ----------------------------------------
+# Essential Documentation
+# ----------------------------------------
+# Core documentation that users and developers need
+
+!README.md
+!README*.md
+!LICENSE
+!LICENSE-*
+!CODEOWNERS
+
+# Core documentation files
+!docs/README.md
+!docs/INDEX.md
+!docs/NAVIGATION.md
+!docs/GLOSSARY.md
+!docs/STYLEGUIDE.md
+!docs/CONTRIBUTING.md
+
+# ----------------------------------------
+# Ecosystem-Specific Configuration
+# ----------------------------------------
+# Configuration files specific to the AnarQ-Q ecosystem
+
+!ecosystem.config.js
+!ecosystem.config.cjs
+!deploy.config.js
+!sonar-project.properties
+
+# Environment templates (safe to share)
+!.env.example
+!.env.production.example
+
+# ----------------------------------------
+# Smart Contracts and Schemas
+# ----------------------------------------
+# Blockchain contracts and data schemas
+
+!contracts/
+!contracts/*.sol
+!schemas/
+!schemas/*.json
+
+# ----------------------------------------
+# Essential Scripts
+# ----------------------------------------
+# Core scripts needed for ecosystem operation
+
+!scripts/
+!scripts/*.sh
+!scripts/*.mjs
+!scripts/*.js

@@ -35,8 +35,8 @@ export const useActiveIdentity = (): UseActiveIdentityReturn => {
   const canCreateSubidentities = useMemo(() => {
     if (!activeIdentity) return false;
 
-    // Check basic permission
-    if (!activeIdentity.permissions.canCreateSubidentities) {
+    // Check if permissions exist and have the required property
+    if (!activeIdentity.permissions || !activeIdentity.permissions.canCreateSubidentities) {
       return false;
     }
 
@@ -45,9 +45,9 @@ export const useActiveIdentity = (): UseActiveIdentityReturn => {
       return false;
     }
 
-    // Check type-specific rules
-    const typeRules = IDENTITY_TYPE_RULES[activeIdentity.type];
-    if (!typeRules.canCreateSubidentities) {
+    // Check type-specific rules if they exist
+    const typeRules = IDENTITY_TYPE_RULES && IDENTITY_TYPE_RULES[activeIdentity.type];
+    if (typeRules && !typeRules.canCreateSubidentities) {
       return false;
     }
 
@@ -179,7 +179,7 @@ export const useActiveIdentity = (): UseActiveIdentityReturn => {
     // Check KYC requirements for certain actions
     const kycRequiredActions = ['financial', 'governance', 'verification'];
     if (kycRequiredActions.includes(action.toLowerCase())) {
-      if (!activeIdentity.kyc.approved) {
+      if (!activeIdentity.kyc?.approved) {
         return false;
       }
     }
@@ -196,7 +196,7 @@ export const useActiveIdentity = (): UseActiveIdentityReturn => {
       return [];
     }
 
-    return activeIdentity.creationRules.allowedChildTypes;
+    return activeIdentity.creationRules?.allowedChildTypes || [];
   }, [activeIdentity, canCreateSubidentities]);
 
   /**
@@ -217,7 +217,7 @@ export const useActiveIdentity = (): UseActiveIdentityReturn => {
         return permissions.canModifyProfile;
       
       case 'kyc_verified':
-        return activeIdentity.kyc.approved;
+        return activeIdentity.kyc?.approved || false;
       
       case 'governance_participation':
         return governanceType === GovernanceType.DAO || governanceType === GovernanceType.SELF;
@@ -272,7 +272,7 @@ export const useActiveIdentity = (): UseActiveIdentityReturn => {
       restrictedActions.push('delete', 'transfer', 'financial');
     }
 
-    if (!activeIdentity.kyc.approved) {
+    if (!activeIdentity.kyc?.approved) {
       restrictedActions.push('financial', 'governance', 'verification');
     }
 
@@ -280,7 +280,7 @@ export const useActiveIdentity = (): UseActiveIdentityReturn => {
       canCreateSubidentities,
       canDeleteSubidentities: permissions.canDeleteSubidentities,
       canModifyProfile: permissions.canModifyProfile,
-      hasKYC: activeIdentity.kyc.approved,
+      hasKYC: activeIdentity.kyc?.approved || false,
       isGovernanceParticipant: governanceType === GovernanceType.DAO || governanceType === GovernanceType.SELF,
       isAnonymous: privacyLevel === PrivacyLevel.ANONYMOUS,
       isPublic: privacyLevel === PrivacyLevel.PUBLIC,
@@ -314,7 +314,7 @@ export const useActiveIdentity = (): UseActiveIdentityReturn => {
     if (canCreateSubidentities) capabilities.push('Can create subidentities');
     if (permissions.canDeleteSubidentities) capabilities.push('Can delete subidentities');
     if (permissions.canModifyProfile) capabilities.push('Can modify profile');
-    if (activeIdentity.kyc.approved) capabilities.push('KYC verified');
+    if (activeIdentity.kyc?.approved) capabilities.push('KYC verified');
 
     // Build warnings list
     if (activeIdentity.status !== 'ACTIVE') {
@@ -323,7 +323,7 @@ export const useActiveIdentity = (): UseActiveIdentityReturn => {
     if (activeIdentity.depth >= 2) {
       warnings.push('Maximum nesting depth reached');
     }
-    if (!activeIdentity.kyc.approved && activeIdentity.kyc.required) {
+    if (!activeIdentity.kyc?.approved && activeIdentity.kyc?.required) {
       warnings.push('KYC verification required');
     }
 

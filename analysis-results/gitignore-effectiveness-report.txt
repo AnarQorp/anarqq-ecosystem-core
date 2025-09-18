@@ -1,0 +1,28 @@
+# CURRENT .GITIGNORE EFFECTIVENESS REPORT
+# Generated on sáb 06 sep 2025 16:49:26 CEST
+
+## Files that should be ignored but are tracked:
+
+### Log files in git:
+None found
+
+### Temporary test directories in git:
+None found
+
+### Distribution files in git:
+anarqq-ecosystem-demo-installers-v1.0.0.tar.gz
+anarqq-ecosystem-demo-installers-v1.0.0.zip
+
+### Implementation summaries in git:
+backend/docs/compliance-automation-implementation-summary.md
+backend/docs/dao-implementation-summary.md
+backend/docs/module-discovery-implementation-summary.md
+backend/docs/observability-implementation-summary.md
+backend/docs/qwallet-implementation-summary.md
+backend/docs/serverless-cost-control-implementation-summary.md
+backend/docs/unified-storage-implementation-summary.md
+docs/metadata-system-implementation-summary.md
+src/composables/useDAO-implementation-summary.md
+
+### Rollback files in git:
+None found

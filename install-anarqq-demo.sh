@@ -6,7 +6,41 @@
 # Autor: AnarQorp
 # Licencia: MIT
 
-set -e
+# Initialize comprehensive error handling system
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source the cross-platform compatibility layer first
+if [ -f "$SCRIPT_DIR/cross-platform-compatibility.sh" ]; then
+    source "$SCRIPT_DIR/cross-platform-compatibility.sh"
+    
+    # Initialize platform compatibility
+    initialize_platform_compatibility
+    
+    # Check platform compatibility
+    if ! check_platform_compatibility; then
+        echo "Platform compatibility check failed. Installation may not work correctly."
+        read -p "Continue anyway? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Installation cancelled"
+            exit 1
+        fi
+    fi
+else
+    echo "Warning: Cross-platform compatibility layer not found, using basic compatibility"
+fi
+
+# Source the integrated error handling system
+if [ -f "$SCRIPT_DIR/installer-error-system.sh" ]; then
+    source "$SCRIPT_DIR/installer-error-system.sh"
+    
+    # Setup error system with command line arguments
+    setup_error_system "$@"
+else
+    # Fallback to basic error handling
+    set -e
+    echo "Warning: Advanced error handling system not found, using basic error handling"
+fi
 
 # Colores para output
 RED='\033[0;31m'
@@ -46,24 +80,31 @@ retry_with_backoff() {
     return 1
 }
 
-# Enhanced error logging
+# Enhanced error logging (now handled by error system)
 log_error() {
     local error_type="$1"
     local error_message="$2"
     local context="$3"
-    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    local log_file="/tmp/anarqq-installer-$(date +%Y%m%d-%H%M%S).log"
     
-    echo "[$timestamp] ERROR [$error_type]: $error_message" >> "$log_file"
-    if [ -n "$context" ]; then
-        echo "[$timestamp] CONTEXT: $context" >> "$log_file"
+    # Use the comprehensive error logging if available
+    if command -v enhanced_log_message >/dev/null 2>&1; then
+        enhanced_log_message "ERROR" "$error_type" "$error_message" "$context"
+    else
+        # Fallback to basic logging
+        local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+        local log_file="/tmp/anarqq-installer-$(date +%Y%m%d-%H%M%S).log"
+        
+        echo "[$timestamp] ERROR [$error_type]: $error_message" >> "$log_file"
+        if [ -n "$context" ]; then
+            echo "[$timestamp] CONTEXT: $context" >> "$log_file"
+        fi
+        
+        print_error "$error_message"
+        if [ -n "$context" ]; then
+            print_info "Contexto: $context"
+        fi
+        print_info "Log detallado en: $log_file"
     fi
-    
-    print_error "$error_message"
-    if [ -n "$context" ]; then
-        print_info "Contexto: $context"
-    fi
-    print_info "Log detallado en: $log_file"
 }
 
 # Configuración
@@ -113,6 +154,13 @@ print_substep() {
 
 # Función para detectar el gestor de paquetes del sistema
 detect_package_manager() {
+    # Use cross-platform compatibility layer if available
+    if [[ -n "${PLATFORM_PKG_MANAGER:-}" ]]; then
+        echo "$PLATFORM_PKG_MANAGER"
+        return 0
+    fi
+    
+    # Fallback to basic detection
     if command_exists apt-get; then
         echo "apt"
     elif command_exists yum; then
@@ -123,6 +171,14 @@ detect_package_manager() {
         echo "brew"
     elif command_exists pacman; then
         echo "pacman"
+    elif command_exists zypper; then
+        echo "zypper"
+    elif command_exists apk; then
+        echo "apk"
+    elif command_exists choco; then
+        echo "choco"
+    elif command_exists winget; then
+        echo "winget"
     else
         echo "manual"
     fi
@@ -136,6 +192,18 @@ install_missing_dependency() {
     
     print_substep "Intentando instalar $dep_name automáticamente..."
     
+    # Use cross-platform compatibility layer if available
+    if command -v install_package >/dev/null 2>&1; then
+        if install_package "$dep_name" "$pkg_manager"; then
+            print_success "$dep_name instalado exitosamente"
+            return 0
+        else
+            print_warning "Falló la instalación automática de $dep_name"
+            return 1
+        fi
+    fi
+    
+    # Fallback to basic installation logic
     case $pkg_manager in
         apt)
             if sudo apt-get update && sudo apt-get install -y "$dep_name"; then
@@ -167,6 +235,31 @@ install_missing_dependency() {
                 return 0
             fi
             ;;
+        zypper)
+            if sudo zypper install -y "$dep_name"; then
+                print_success "$dep_name instalado exitosamente"
+                return 0
+            fi
+            ;;
+        apk)
+            if sudo apk add "$dep_name"; then
+                print_success "$dep_name instalado exitosamente"
+                return 0
+            fi
+            ;;
+        choco)
+            if choco install -y "$dep_name"; then
+                print_success "$dep_name instalado exitosamente"
+                return 0
+            fi
+            ;;
+        winget)
+            local platform_package=$(get_package_name "$dep_name" "winget" 2>/dev/null || echo "$dep_name")
+            if winget install --id "$platform_package" --silent --accept-package-agreements --accept-source-agreements; then
+                print_success "$dep_name instalado exitosamente"
+                return 0
+            fi
+            ;;
         *)
             print_warning "No se pudo detectar un gestor de paquetes compatible"
             ;;
@@ -177,7 +270,10 @@ install_missing_dependency() {
 
 # Función para verificar prerrequisitos con instalación automática
 check_prerequisites() {
-    print_step "Verificando prerrequisitos del sistema..."
+    execute_step "check_prerequisites" "Verificando prerrequisitos del sistema" "check_prerequisites_impl"
+}
+
+check_prerequisites_impl() {
     
     local errors=0
     local auto_install=false
@@ -322,7 +418,16 @@ check_prerequisites() {
 
 # Función para crear directorio de instalación
 create_install_directory() {
-    print_step "Creando directorio de instalación..."
+    execute_step "create_install_directory" "Creando directorio de instalación" "create_install_directory_impl"
+}
+
+create_install_directory_impl() {
+    # Normalize installation directory path
+    if command -v normalize_path >/dev/null 2>&1; then
+        INSTALL_DIR=$(normalize_path "$INSTALL_DIR")
+        DEMO_DIR=$(normalize_path "$DEMO_DIR")
+        CORE_DIR=$(normalize_path "$CORE_DIR")
+    fi
     
     if [ -d "$INSTALL_DIR" ]; then
         print_warning "El directorio $INSTALL_DIR ya existe"
@@ -335,49 +440,94 @@ create_install_directory() {
         rm -rf "$INSTALL_DIR"
     fi
     
-    mkdir -p "$INSTALL_DIR"
-    print_success "Directorio creado: $INSTALL_DIR"
+    # Use cross-platform directory creation if available
+    if command -v create_directory_safe >/dev/null 2>&1; then
+        if create_directory_safe "$INSTALL_DIR" "755"; then
+            print_success "Directorio creado: $INSTALL_DIR"
+        else
+            print_error "No se pudo crear el directorio: $INSTALL_DIR"
+            return 1
+        fi
+    else
+        # Fallback to basic mkdir
+        mkdir -p "$INSTALL_DIR"
+        print_success "Directorio creado: $INSTALL_DIR"
+    fi
 }
+
+# Source the robust download engine
+if [ -f "./install-download-engine.sh" ]; then
+    source ./install-download-engine.sh
+else
+    print_warning "Robust download engine not found, using basic methods"
+fi
 
 # Función para descargar repositorios con manejo de acceso público/privado
 download_repositories() {
-    print_step "Descargando repositorios del ecosistema AnarQ&Q..."
+    execute_step "download_repositories" "Descargando repositorios del ecosistema AnarQ&Q" "download_repositories_impl"
+}
+
+download_repositories_impl() {
+    
+    # Initialize download engine if available
+    if command -v initialize_download_engine >/dev/null 2>&1; then
+        initialize_download_engine "installer-$(date +%Y%m%d-%H%M%S)"
+        print_substep "Using robust download engine"
+    else
+        print_substep "Using basic download methods"
+    fi
     
     # Configuración de repositorios
     local repositories=(
-        "demo|https://github.com/AnarQorp/anarqq-ecosystem-demo|$DEMO_DIR|required"
-        "core|https://github.com/AnarQorp/anarqq-ecosystem-core|$CORE_DIR|optional"
+        "demo|https://github.com/AnarQorp/anarqq-ecosystem-demo|$DEMO_DIR|required|main"
+        "core|https://github.com/AnarQorp/anarqq-ecosystem-core|$CORE_DIR|optional|main"
     )
     
-    # Crear directorio temporal
-    local temp_dir=$(mktemp -d)
-    
     for repo_config in "${repositories[@]}"; do
-        IFS='|' read -r repo_name repo_url target_dir requirement <<< "$repo_config"
+        IFS='|' read -r repo_name repo_url target_dir requirement branch <<< "$repo_config"
         
         print_substep "Descargando repositorio: $repo_name..."
         
-        # Intentar múltiples métodos de descarga
         local success=false
         
-        # Método 1: Git clone (mejor para repositorios públicos)
-        if command_exists git; then
-            print_substep "Intentando git clone..."
-            if git clone --depth 1 "$repo_url.git" "$target_dir" 2>/dev/null; then
-                print_success "Repositorio $repo_name clonado exitosamente"
+        # Try robust download engine first if available
+        if command -v download_repository >/dev/null 2>&1; then
+            print_substep "Using robust download engine for $repo_name..."
+            if download_repository "$repo_url" "$target_dir" "$branch" "$repo_name"; then
+                print_success "Repositorio $repo_name descargado exitosamente"
                 success=true
             else
-                print_substep "Git clone falló, intentando descarga ZIP..."
+                print_warning "Robust download engine failed, trying basic methods..."
             fi
         fi
         
-        # Método 2: Descarga ZIP (fallback)
+        # Fallback to basic methods if robust engine failed or not available
         if [ "$success" = false ]; then
-            local zip_url="$repo_url/archive/refs/heads/main.zip"
-            if download_and_extract_zip "$zip_url" "$target_dir" "$repo_name" "$temp_dir"; then
-                print_success "Repositorio $repo_name descargado como ZIP"
-                success=true
+            # Crear directorio temporal para métodos básicos
+            local temp_dir=$(mktemp -d)
+            
+            # Método 1: Git clone (mejor para repositorios públicos)
+            if command_exists git; then
+                print_substep "Intentando git clone básico..."
+                if git clone --depth 1 "$repo_url.git" "$target_dir" 2>/dev/null; then
+                    print_success "Repositorio $repo_name clonado exitosamente"
+                    success=true
+                else
+                    print_substep "Git clone falló, intentando descarga ZIP básica..."
+                fi
             fi
+            
+            # Método 2: Descarga ZIP básica (fallback)
+            if [ "$success" = false ]; then
+                local zip_url="$repo_url/archive/refs/heads/$branch.zip"
+                if download_and_extract_zip "$zip_url" "$target_dir" "$repo_name" "$temp_dir"; then
+                    print_success "Repositorio $repo_name descargado como ZIP"
+                    success=true
+                fi
+            fi
+            
+            # Limpiar directorio temporal
+            rm -rf "$temp_dir"
         fi
         
         # Manejo de errores según el tipo de repositorio
@@ -388,11 +538,13 @@ download_repositories() {
                 print_info "  1. Repositorio privado sin acceso configurado"
                 print_info "  2. Problemas de conectividad de red"
                 print_info "  3. Repositorio no disponible o movido"
+                print_info "  4. Rama '$branch' no existe (intenta con 'master')"
                 echo ""
                 print_info "Soluciones:"
                 print_info "  1. Configura acceso SSH: ssh-keygen -t ed25519 -C 'tu-email@ejemplo.com'"
                 print_info "  2. Agrega la clave a GitHub: https://github.com/settings/keys"
                 print_info "  3. Contacta a anarqorp@proton.me para obtener acceso"
+                print_info "  4. Verifica la conectividad: ping github.com"
                 echo ""
                 cleanup_and_exit 1
             else
@@ -421,9 +573,6 @@ download_repositories() {
             fi
         fi
     done
-    
-    # Limpiar directorio temporal
-    rm -rf "$temp_dir"
 }
 
 # Función para limpiar y salir
@@ -559,7 +708,10 @@ move_extracted_content() {
 
 # Función para instalar dependencias
 install_dependencies() {
-    print_step "Instalando dependencias..."
+    execute_step "install_dependencies" "Instalando dependencias" "install_dependencies_impl"
+}
+
+install_dependencies_impl() {
     
     # Instalar dependencias de la demo
     print_substep "Instalando dependencias de la demo..."
@@ -587,7 +739,10 @@ install_dependencies() {
 
 # Función para configurar entorno
 setup_environment() {
-    print_step "Configurando entorno..."
+    execute_step "setup_environment" "Configurando entorno" "setup_environment_impl"
+}
+
+setup_environment_impl() {
     
     cd "$DEMO_DIR"
     
@@ -616,7 +771,10 @@ setup_environment() {
 
 # Función para ejecutar tests básicos
 run_basic_tests() {
-    print_step "Ejecutando tests básicos..."
+    execute_step "run_basic_tests" "Ejecutando tests básicos" "run_basic_tests_impl"
+}
+
+run_basic_tests_impl() {
     
     cd "$DEMO_DIR"
     
@@ -641,7 +799,10 @@ run_basic_tests() {
 
 # Función para crear scripts de acceso rápido
 create_shortcuts() {
-    print_step "Creando scripts de acceso rápido..."
+    execute_step "create_shortcuts" "Creando scripts de acceso rápido" "create_shortcuts_impl"
+}
+
+create_shortcuts_impl() {
     
     # Script para iniciar la demo
     cat > "$INSTALL_DIR/start-demo.sh" << 'EOF'
@@ -760,6 +921,11 @@ main() {
     echo "  • Scripts de acceso rápido"
     echo ""
     
+    # Show system status if in verbose/debug mode
+    if [ "$VERBOSE_ENABLED" = true ] || [ "$DEBUG_ENABLED" = true ]; then
+        show_system_status
+    fi
+    
     read -p "¿Continuar con la instalación? (y/N): " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -769,7 +935,10 @@ main() {
     
     echo ""
     
-    # Ejecutar pasos de instalación
+    # Register installation directory for cleanup on error
+    register_cleanup_dir "$INSTALL_DIR"
+    
+    # Ejecutar pasos de instalación con manejo de errores mejorado
     check_prerequisites
     create_install_directory
     download_repositories
@@ -782,8 +951,50 @@ main() {
     show_final_info
 }
 
-# Manejo de errores
-trap 'print_error "Error durante la instalación. Revisa los logs arriba."; exit 1' ERR
+# Show usage information
+show_usage() {
+    echo "Usage: $0 [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  -v, --verbose       Enable verbose output"
+    echo "  -d, --debug         Enable debug mode with detailed logging"
+    echo "  -t, --trace         Enable command tracing"
+    echo "  --no-recovery       Disable automatic error recovery"
+    echo "  --no-cleanup        Disable automatic cleanup on error"
+    echo "  --support-bundle    Generate support bundle on error"
+    echo "  -h, --help          Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  $0                  # Normal installation"
+    echo "  $0 --verbose        # Verbose installation"
+    echo "  $0 --debug          # Debug installation with detailed logs"
+    echo "  $0 --trace          # Trace all commands during installation"
+    echo ""
+}
+
+# Parse command line arguments
+parse_args() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                show_usage
+                exit 0
+                ;;
+            -v|--verbose|--debug|-d|--trace|-t|--no-recovery|--no-cleanup|--support-bundle)
+                # These are handled by the error system
+                shift
+                ;;
+            *)
+                echo "Unknown option: $1"
+                show_usage
+                exit 1
+                ;;
+        esac
+    done
+}
+
+# Parse arguments first
+parse_args "$@"
 
 # Ejecutar instalador
 main "$@"

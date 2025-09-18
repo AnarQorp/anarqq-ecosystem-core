@@ -9,8 +9,8 @@ import express from 'express';
 import { QwalletIntegrationService } from '../services/QwalletIntegrationService.mjs';
 import { QmailPaymentService } from '../services/QmailPaymentService.mjs';
 import { QdrivePaymentService } from '../services/QdrivePaymentService.mjs';
-import { standardAuth } from '../middleware/standardAuth.mjs';
-import { validation } from '../middleware/validation.mjs';
+import { standardAuthMiddleware } from '../middleware/standardAuth.mjs';
+import { validateJoi } from '../middleware/joiValidation.mjs';
 import Joi from 'joi';
 
 const router = express.Router();
@@ -73,7 +73,7 @@ const subscriptionSchema = Joi.object({
 });
 
 // Middleware
-router.use(standardAuth);
+router.use(standardAuthMiddleware());
 
 // ===== QMAIL PAYMENT ROUTES =====
 
@@ -81,7 +81,7 @@ router.use(standardAuth);
  * Process Qmail premium message payment
  */
 router.post('/qmail/premium-message', 
-  validation(qmailPaymentSchema), 
+  validateJoi(qmailPaymentSchema), 
   async (req, res) => {
     try {
       const squidId = req.user.squidId;
@@ -112,7 +112,7 @@ router.post('/qmail/premium-message',
  * Process Qmail subscription
  */
 router.post('/qmail/subscription', 
-  validation(subscriptionSchema), 
+  validateJoi(subscriptionSchema), 
   async (req, res) => {
     try {
       const squidId = req.user.squidId;
@@ -202,7 +202,7 @@ router.get('/qmail/payment-history', async (req, res) => {
  * Process Qdrive storage quota
  */
 router.post('/qdrive/quota', 
-  validation(qdriveQuotaSchema), 
+  validateJoi(qdriveQuotaSchema), 
   async (req, res) => {
     try {
       const squidId = req.user.squidId;
@@ -233,7 +233,7 @@ router.post('/qdrive/quota',
  * Process Qdrive premium feature
  */
 router.post('/qdrive/premium-feature', 
-  validation(qdrivePremiumFeatureSchema), 
+  validateJoi(qdrivePremiumFeatureSchema), 
   async (req, res) => {
     try {
       const squidId = req.user.squidId;
@@ -264,7 +264,7 @@ router.post('/qdrive/premium-feature',
  * Process Qdrive subscription
  */
 router.post('/qdrive/subscription', 
-  validation(subscriptionSchema), 
+  validateJoi(subscriptionSchema), 
   async (req, res) => {
     try {
       const squidId = req.user.squidId;

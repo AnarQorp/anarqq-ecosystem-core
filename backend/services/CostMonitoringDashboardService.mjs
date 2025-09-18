@@ -4,7 +4,7 @@
  */
 
 import { EventBusService } from './EventBusService.mjs';
-import { ObservabilityService } from './ObservabilityService.mjs';
+import ObservabilityService from './ObservabilityService.mjs';
 import { ServerlessCostControlService } from './ServerlessCostControlService.mjs';
 import { ColdStartOptimizationService } from './ColdStartOptimizationService.mjs';
 import { BatchProcessingService } from './BatchProcessingService.mjs';

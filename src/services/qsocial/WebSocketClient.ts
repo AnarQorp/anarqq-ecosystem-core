@@ -56,7 +56,7 @@ class WebSocketClient {
    */
   connect(token?: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const serverUrl = process.env.VITE_API_URL || 'http://localhost:3001';
+      const serverUrl = process.env.VITE_API_URL || 'http://localhost:3003';
       
       this.socket = io(serverUrl, {
         transports: ['websocket', 'polling'],

@@ -4,7 +4,7 @@
  */
 
 import { EventBusService } from './EventBusService.mjs';
-import { ObservabilityService } from './ObservabilityService.mjs';
+import ObservabilityService from './ObservabilityService.mjs';
 
 export class ServerlessCostControlService {
   constructor() {

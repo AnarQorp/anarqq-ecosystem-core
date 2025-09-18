@@ -12,7 +12,7 @@ import { EventBusService } from '../services/EventBusService.mjs';
 import { QwalletIntegrationService } from '../services/QwalletIntegrationService.mjs';
 import { UnifiedStorageService } from '../services/UnifiedStorageService.mjs';
 import { QmarketService } from '../services/QmarketService.mjs';
-import { ObservabilityService } from '../services/ObservabilityService.mjs';
+import ObservabilityService from '../services/ObservabilityService.mjs';
 import { performance } from 'perf_hooks';
 
 describe('E2E Complete User Workflow', () => {
